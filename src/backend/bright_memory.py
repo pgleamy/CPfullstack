@@ -31,7 +31,7 @@ def form_bright_memory(user_prompt, prompt_context_history):
     # Submit the prompt to the OpenAI API
     response = openai.ChatCompletion.create(
         model=model,
-        temperature=0.0,
+        temperature=0.1,
         messages=[
             {"role": "system", "content": "You task is the comply with the user prompt precisely and to the best of your abilities."},
             {"role": "user", "content": bright_prompt}
