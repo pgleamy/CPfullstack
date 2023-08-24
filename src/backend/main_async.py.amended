@@ -10,9 +10,9 @@ import time
 from embedV3 import add_to_index
 from queryV3 import query_index
 from user_ner_re import add_edit_ner_re
-#from task_list import prompt_task_list
+#from task_list import prompt_task_list # Not working properly yet
 from database import verify_create_database
-#from bright_memory import form_bright_memory
+#from bright_memory import form_bright_memory # Not working properly yet
 from response_to_file import write_to_file, stream_to_file
 
 ## Unit Testing
@@ -143,12 +143,12 @@ class ChatSession:
     def __init__(self, chat_history_file, index_filename):
         self.chat_history_file = chat_history_file
         self.index_filename = index_filename
-        self.chat_history = self.load_or_create_chat_history()
+        #self.chat_history = self.load_or_create_chat_history() # This was moved to the chat() method because it needed to run asynchronously
         self.prompt_context_history = ""
         self.user_input = ""
         
 
-    def load_or_create_chat_history(self):
+    async def load_or_create_chat_history(self):
         if os.path.exists(self.chat_history_file):
             with open(self.chat_history_file, 'r') as file:
                 return file.read()[-3000:]  # Get the last 3000 words
@@ -216,31 +216,20 @@ class ChatSession:
 
     async def chat(self):
         while True:
+            self.chat_history = await self.load_or_create_chat_history()
             self.user_input = ""
             self.prompt_context_history = ""
             
-            #pdb.set_trace()
-            
             self.user_input = await self.get_user_input()
-            
-            #pdb.set_trace()
             
             await self.query_result()
             
-            #pdb.set_trace()
-            
             await add_to_index(self.index_filename, self.user_input)
-            
-            #pdb.set_trace()
             
             response = await self.get_response()
             
-            pdb.set_trace()
-            
+            await self.display_response(response)
             await write_to_file(response) # Write the entire response to the file at once at src/backend/messages/llm-response.txt
-            #await self.display_response(response)
-            
-            #pdb.set_trace()
 
 async def main():
     ### need to add capacity for different users, which is already supported under the data directory. It currently
