@@ -1,8 +1,8 @@
 [package]
-name = "ChatPerfect"
-version = "1.0 beta"
-description = "Permanent memory GPT, learns, with versatility"
-authors = ["Patrick G. Leamy"]
+name = "app"
+version = "0.1.0"
+description = "A Tauri App"
+authors = ["you"]
 license = ""
 repository = ""
 default-run = "app"

@@ -22,6 +22,6 @@ impl From<CustomError> for InvokeError {
 #[command]
 pub fn send_prompt(message_text: String) -> Result<(), CustomError> {
     let path = Path::new("..\\src\\backend\\messages\\user_prompt.txt");
-    println!("Writing to file: {}", message_text); 
+    println!("\nWriting to ..\\src\\backend\\messages\\user_prompt.txt. LLM responses are passed by file at the same location. \n\n{}", message_text); 
     write(path, message_text).map_err(CustomError::from)
 }
