@@ -38,7 +38,7 @@ async def get_ner_re(user_prompt, llm_response, user_info):
     The llm responded to the TEXT with:
     {llm_response}   
     
-    What you already know about the user from your existing memory (this might be blank):
+    What you already know about the user from your existing memory (this might be blank). You will use this information to remind yourself of already existing entities, attributes and relationships to the user in your memory, so that you can more fully understand the TEXT where those existing entities may be mentioned again:
     {user_info} 
     
     ##TEXT:
@@ -88,7 +88,7 @@ async def get_ner_re(user_prompt, llm_response, user_info):
       model=model,
       temperature=0.1,
       messages=[
-            {"role": "system", "content": f"{date_time} Your task is to follow a question that is entirely within your capabilities. Your task is to follow the prompt. The prompt is a clear and linear conversation to help you to prepare your response. Each part including main is enclosed by ###. Loops are enclosed in ##. The TEXT to analyse is enclosed by ####. The prompt revision map is a single question considered a defined number of times, like a map. The prompt revision map is not code. It is a single conversation which guides you through a clear and linear process of preparing your response. In the TEXT your messages are prefaced with ""JARVIS: "" and the user's messages are enclosed with ""--> HUMAN: message <--"". You will refer to the Human by their name if that is known. It is crucial that you do not review any text except for the user's message enclosed in ""--> message <--"" for the purposes of the question. NEVER analyse any text whatsoever outside of that text for the purposes of the algorithm. Completely disregard any such extraneous text you may encounter outside of the specific TEXT required. You will only provide your output when you are expressly directed to provide your output. Then you will only provide that output and stop with no additional commentary or summary. Do not output even a single token of output unless you are expressly directed to do so, even if an error has occurred. If the user's message is blank or it did not include any entities or relationships that you could identify, then output only a ""3"" and continue. "},
+            {"role": "system", "content": "Your task is to follow a question that is entirely within your capabilities. Your task is to follow the prompt. The prompt is a clear and linear conversation to help you to prepare your response. Each part including main is enclosed by ###. Loops are enclosed in ##. The TEXT to analyse is enclosed by ####. The prompt revision map is a single question considered a defined number of times, like a map. The prompt revision map is not code. It is a single conversation which guides you through a clear and linear process of preparing your response. In the TEXT your messages are prefaced with ""JARVIS: "" and the user's messages are enclosed with ""--> HUMAN: message <--"". You will refer to the Human by their name if that is known. It is crucial that you do not review any text except for the user's message enclosed in ""--> message <--"" for the purposes of the question. NEVER analyse any text whatsoever outside of that text for the purposes of the algorithm. Completely disregard any such extraneous text you may encounter outside of the specific TEXT required. You will only provide your output when you are expressly directed to provide your output. Then you will only provide that output and stop with no additional commentary or summary. Do not output even a single token of output unless you are expressly directed to do so, even if an error has occurred. If the user's message is blank or it did not include any entities or relationships that you could identify, then output only a ""3"" and continue. "},
             {"role": "user", "content": prompt}
         ]
     )
@@ -97,7 +97,7 @@ async def get_ner_re(user_prompt, llm_response, user_info):
     return response['choices'][0]['message']['content']
     
    
-async def add_edit_ner_re(user_prompt):
+async def add_edit_ner_re(user_prompt, llm_response):
      
     # Check if the file exists
     if os.path.isfile(user_info_filepath):
@@ -110,9 +110,9 @@ async def add_edit_ner_re(user_prompt):
             f.write("")
         entity_history = ""
 
-    # Pass the user's prompt to the get_ner_re function
+    # Pass the user's prompt, llm response and entity history from memory to the get_ner_re function
     #print(user_prompt)
-    new_entity_info = await get_ner_re(user_prompt, llm_response) # corrected to input the entity analysis to a new string.
+    new_entity_info = await get_ner_re(user_prompt, llm_response, entity_history) # corrected to input the entity analysis to a new string.
     
     ## print for testing
     # Add colorama to allow colored testing outputs noted below with autoreset on
@@ -120,13 +120,16 @@ async def add_edit_ner_re(user_prompt):
     #print(Fore.GREEN + Back.WHITE +"\nExisting user information: " + entity_history + "\n")
     #print(Fore.BLUE + Back.WHITE + "New user information: " + new_entity_info + "\n\n")
    
+    now = datetime.now()
+    date_time = now.strftime("CURRENT DATE: %B %d, %Y. CURRENT TIME: %I:%M%p. ")
+   
     # Make the ChatCompletion call
     response = openai.ChatCompletion.create(
         model=model,
         temperature=0.1,
         messages=[
-            {"role": "system", "content": "Your task is to review two strings which are both about the same user and which may each contain important entity and relationship information about the user and their relationships (personal, financial, familial, etc). You must consolidate all the entities and relationships contained in both strings into a single accurate string. Make no assumptions about the entities or the relationships because assumptions are inherently unreliable. All your conclusions must be based on the facts and evidence available to you. The information in the second string may add to or modify some of the information in the first string, so take this into account. The first string may also be completely empty."},
-            {"role": "user", "content": f"First String about the user: {entity_history}. Second String about the user: {new_entity_info}. The first string is earlier in time than the second string. Both strings are about the same user. If only one of the strings contains entity or relationshp information then that is fine. Just work with what you have. Consolidate all the entity and relationship information in the two strings together into one string in a logical and readable way. For example, if something in the second string modifies something contained in the first string, ensure this is taken into account when consolidating the two strings into the final paragraph, which may include deleting or modifying some of the information contained in the first string for the final paragraph. Then output that paragraph, with no other commentary whatsoever. Do not output any questions to the paragraph, only statements of fact. If there are no entities or relationships in {new_entity_info} then do not comment on that and only output a ""4"" and continue."}
+            {"role": "system", "content": f"{date_time}.\n\nYour task is to review two strings which are both about the same user and which may each contain important entity information about the user and their relationships (personal, organizational, financial, familial, ownership). You must distill all the entities, attributes and relationships to the user contained in both strings into a single accurate NEW STRING. Make no assumptions about the entities or the relationships to the user, because assumptions are inherently unreliable. All your conclusions must be based on the facts and evidence available to you. The information in the FIRST STRING is what you already know about the user from your memory. The FIRST STRING is important. The SECOND STRING may contain new, updated or corrected information about entities already in the FIRST STRING. The information in the SECOND STRING may add to or modify some of the information in the FIRST STRING, so take this into account. The FIRST STRING may also be completely empty if you have not yet learned anything about the user."},
+            {"role": "user", "content": f"This is the FIRST STRING about the user, and it is what you already remember about them:\n {entity_history}.\n\nThis is the SECOND STRING about the user: {new_entity_info}.\n\nThe FIRST STRING is earlier in time than the second string. Both strings are about the same user. If only one of the strings contains entity or relationshp information then that is fine. Just work with what you have. Consolidate all the entity and relationship information in the two strings together into one NEW STRING in a logical, very consise and readable way. If something in the SECOND STRING modifies something contained in the FIRST STRING, ensure this is taken into account when consolidating the two strings into the NEW STRING. Maintain dates between the FIRST STRING, the SECOND STRING and the NEW STRING. You know the current date and time. Any inferred dates in the NEW STRING must be expressed in actual dates wherever possible. Then output the NEW STRING, with no other commentary whatsoever. Do not output any questions to the string, only very concise statements of fact using as few words as possible. If there are no entities or relationships in {new_entity_info} then do not comment on that and only output a ""4"" and continue."}
         ]
     )
 
