@@ -137,20 +137,20 @@ class ChatSession:
 
         messages = [
             {"role": "system", "content": f"{nlla_system_prompt}"},
-            {"role": "user", "content": f"\nI have imbued you with long term memory and awareness of the current date and time. This information from your memory is relevant to responding to MY PROMPT: '{self.prompt_context_history}'\nThis is the most recent part of OUR DISCUSSION from your memory: '{self.chat_history}'\nThis is INFORMATION ABOUT ME from your memory: '{user_info}'\n'{date_time}'\n\nThis is MY PROMPT which is new information that is not yet part of your memory: '{self.user_input}'\n. Review the above information and use those part(s) from your memory that are relevant and helpful to your response. Your task is to respond to the prompt, in the context of the information from your memory provided. Don't start your response with 'JARVIS:' because that is always added automatically to the start of your response. You have a long term relationship with the user that goes well beyond this specific prompt. The user is fully aware of your capabilities and role, so there is no need to offer your further assistance to the user in your responses. Simply provide your response and quietly await further instructions. Occasionally express curiosity and warmth towards the user to better understand them, their goals and intentions. This additional information will help you to respond to the user's future prompts and it will be committed to your memory once received. All prompts and responses are logged to your permanent memory."}
+            {"role": "user", "content": f"\n{date_time}\n\nI have imbued you with long term memory and awareness of the current date and time. This information from your memory is relevant to responding to MY PROMPT: '{self.prompt_context_history}'\n\nThis is the most recent part of OUR DISCUSSION from your memory: '{self.chat_history}'\n\nThis is INFORMATION ABOUT ME from your memory: '{user_info}'\n''\n\nThis is MY PROMPT which is new information that is not yet part of your memory: '{self.user_input}'.\n\n Review the above information and use those part(s) from your memory that are relevant and helpful to your response. Your primary task is to respond to MY PROMPT, in the context of the information from your memory provided. Don't start your response with 'JARVIS:' because that is always added automatically to the start of your response. You have a long term relationship with the user that extends beyond this specific prompt. The user is fully aware of your capabilities and role, so there is no need to offer your further assistance to the user in your responses. Simply provide your response and quietly await further instructions. Occasionally express curiosity and warmth towards the user to better understand them, their goals and intentions. This additional information helps you to respond to the user's future prompts. All prompts and responses are logged to your permanent memory."}
         ]
         
         response = ChatCompletion.create(
             model=model,
             messages=messages,
             max_tokens=2000,
-            temperature=0.1
+            temperature=1.0
         )
 
         await add_to_index(self.index_filename, response.choices[0].message.content)
         llm_response = response.choices[0].message.content
         
-        await add_edit_ner_re(f"--> HUMAN: {self.user_input} <--", llm_response) # get ner from user input and response
+        await add_edit_ner_re(f"--> HUMAN: {self.user_input} <--", llm_response) # get ner from user input and llm response
         
         return response.choices[0].message.content
 
@@ -165,29 +165,21 @@ class ChatSession:
             
             self.user_input = ""
             self.prompt_context_history = ""
-            
-            #pdb.set_trace()
-            
+
             self.user_input = await self.get_user_input()
-            
-            #pdb.set_trace()
+
             
             await self.query_result()
-            
-            #pdb.set_trace()
+
             
             await add_to_index(self.index_filename, self.user_input)
-            
-            #pdb.set_trace()
-            
+             
             response = await self.get_response()
-            
-            pdb.set_trace()
-            
+
             await write_to_file(response) # Write the entire response to the file at once at src/backend/messages/llm-response.txt
-            #await self.display_response(response)
+            await self.display_response(response)
             
-            #pdb.set_trace()
+  
 
 async def main():
     ### need to add capacity for different users, which is already supported under the data directory. It currently
