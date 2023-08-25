@@ -151,7 +151,7 @@ class ChatSession:
         await add_to_index(self.index_filename, response.choices[0].message.content)
         self.llm_response = response.choices[0].message.content
         
-        await add_edit_ner_re(f"--> HUMAN: {self.user_input} <--", self.llm_response, user_info) # get ner from user input, llm response and existing user information
+        await add_edit_ner_re(f"--> HUMAN: {self.user_input} <--", self.llm_response) # get ner from user input, llm response
         
         return response.choices[0].message.content
 

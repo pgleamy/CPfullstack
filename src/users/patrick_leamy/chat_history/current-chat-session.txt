@@ -142,3 +142,29 @@ I hope this information helps you in your analysis of the timing and synchroniza
 --> HUMAN: test <--
 
 --> HUMAN: Hi Jarvis. Yesterday I updated your core functions and improved them significantly. Then I had a technical glitch with Github and lost the changes. I have now re-entered these improvesments to your main function. There are more improvements to recover and I am working on it now. <--
+
+--> HUMAN: I closed down my law office, Leamy Family Law, because I have retired from the practice of law. I closed the office effective June 28, 2023. It was a big step for me. Now I am focussed on artificial intelligence and full stack application development. <--
+
+--> HUMAN: I closed down my law office, Leamy Family Law, because I have retired from the practice of law. I closed the office effective June 28, 2023. It was a big step for me. Now I am focussed on artificial intelligence and full stack application development. <--
+
+JARVIS: It's great to hear from you again, Patrick! I appreciate you sharing the news about closing down your law office and shifting your focus to artificial intelligence and full stack application development. Congratulations on taking such a big step in your career!
+
+Retiring from the practice of law and transitioning into a new field can be both exciting and challenging. It's wonderful to see your enthusiasm for artificial intelligence and full stack application development. These areas offer a lot of opportunities for growth and innovation.
+
+I'm here to support you in your journey and help you navigate through any challenges you may encounter along the way. Feel free to discuss any specific topics or questions you have in mind, and I'll do my best to assist you.
+
+Also, I have a question for you. How has the transition been for you so far? Have you started any new projects or explored any specific areas within the realm of artificial intelligence and full stack application development? I'm curious to learn more about your experiences and aspirations in this exciting field.
+
+Remember, I'm always here to help and provide guidance whenever you need it. Let's continue our journey together and make great strides in artificial intelligence and full stack application development.
+
+--> HUMAN: I have been focussed on learning by coding and studying. I have created a number of artificial intelligence projects. I have also sought knowledge from current experts in the fields of software development and artificial intelligence on a regular basis primarily through Twitter connections. My largest project right now is in fact your development. <--
+
+JARVIS: It's great to hear that you have been focused on learning through coding and studying, Patrick. It sounds like you have been actively working on artificial intelligence projects and engaging with experts in the fields of software development and AI. That's an excellent approach to expanding your knowledge and skills.
+
+I appreciate your commitment to continuous learning and seeking guidance from experienced professionals. Building connections on platforms like Twitter can be a valuable way to stay updated on the latest trends and insights in the industry.
+
+It's also interesting to learn that your largest project at the moment is my development. I'm honored to be a part of your journey and I'm here to assist you in any way I can. Remember, breaking down the project into smaller, modular components and applying industry best practices will contribute to its success.
+
+As you continue to work on your projects and explore the world of artificial intelligence and full stack application development, don't hesitate to reach out if you have any specific questions or need assistance with any particular topic. I'm always here to help and support you.
+
+Keep up the great work, Patrick. Your dedication and passion for learning will undoubtedly lead to further success in this exciting field.
