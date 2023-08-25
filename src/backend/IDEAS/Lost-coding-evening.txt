@@ -1,0 +1,19 @@
+I had a git problem and all my code changes from the whole afternoon were lost. They really improved the inference in these two key modules.  I have to reproduce the work. Here is what I remember about what I added this afternoon.
+
+main_async.py 
+    simplified and shorted the superprompt
+    added clarity around memories vs the prompt, the task is to respond to the prompt, and to mainly use the memories to better inform that response, treating the memories in the same way as the LLM's training data. 
+    Also added some topically relevant wit, humor or simulated emotion sometimes.
+    clarified concept of conversion of inferred dates to actual dates, do the calculation quietly and don't show your work, just use the calculated date.
+    Increased temperature to 1.0
+
+ner_re.py (added model response as second input variable, moved the call to the get_response method just after the response)
+    Added current time
+    Added concept of before and after, the first line is before, and the next line updates that
+    simplified and shortened
+    simplied the entities sought, which include people, organizations, companies, money, places, family and pets, and described attributes
+    removed reference to paragraph and simply used "information" so the LLM can determine the best way to organize it extremely concisely.
+    removed reference to relationship steps, the only relationship of importance is the relationship the entity has to the user
+    added the LLM response to the analysis
+    ended with distill to a listing of facts, using as few words and possible
+    added that when the user first shared their name, it will be the first line as USER: <first_name> <last_name>

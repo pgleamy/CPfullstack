@@ -21,19 +21,22 @@ model = "gpt-3.5-turbo-16k"
 ### must be modified to allow multiple users. HC to patrick_leamy for now.
 user_info_filepath = os.path.join('..', 'src', 'users', 'patrick_leamy', 'user_information.txt')
 
-async def get_ner_re(user_prompt):
+async def get_ner_re(user_prompt, llm_response):
     
     now = datetime.now()
     date_time = now.strftime("CURRENT DATE: %B %d, %Y. CURRENT TIME: %I:%M%p. ")
 
     # Define the NER+RE extraction prompt
     prompt = f"""
-    *** The below is a question that follows a defined path. You will never be asked to execute any code at any time, which is outside your capabilities. Instead, the below is a carefully crafted single question to help you extract named entities and relationships from the user's message. ***
+    *** The below is a question that follows a defined path. You will never be asked to execute any code at any time, which is outside your capabilities. Instead, the below is a carefully crafted single conversation to help you extract named entities and relationships from the user's message. ***
     skip directly to main()
     x=0
     ###part_one(): 
     {{
-    Carefully review the below TEXT. Identify every named entity, including but not limited to: people, organizations, places, and other categories appropriate for each entity found. For each entity identified, provide a detailed one-sentence summary that includes the entity's type (person, organization, place, or other appropriate category), all attributes or characteristics mentioned, and all relationships to other entities, including accurate time relationships based on the current date and time. Be sure to explicitly name all entities involved in each relationship, whether above or below each entity, and state the time relationship accurately. So a child can own a dog, so the dog is 'below' the child as an entity relationship. However, from the dog's perspective, the child is 'above' the dog as an entity by ownership. These above and below relationships can span more than one entity at a time, like a chain of relationships above and below each entity. Disclose all such above and below relationships between the entities for each and every single entity. Verify that no entities in the TEXT have been omitted. Here's the format to follow: <entity name>: <entity type: person, org, place, or if none of those, a one-word description for that entity that is descriptive of the entity>, <entity attributes>, <entity relationships to all other named entities, if any, in form "is <relationship> with/to <specific other entity, is <relationship> with/to <specific other entity, is <relationship>, etc.
+    Carefully review the below TEXT. Identify every named entity in the follow categories: people, organizations, companies, money, places, family and pets. For each entity identified, provide a detailed one-sentence summary that includes the entity's type (person, organization, place, or other appropriate category), all attributes or characteristics mentioned, and all relationships to the user, including accurate time relationships based on the current date and time. Be sure to explicitly name all entities involved in each relationship, whether above or below each entity, and state the time relationship accurately. So a child can own a dog, so the dog is 'below' the child as an entity relationship. However, from the dog's perspective, the child is 'above' the dog as an entity by ownership. These above and below relationships can span more than one entity at a time, like a chain of relationships above and below each entity. Disclose all such above and below relationships between the entities for each and every single entity. Verify that no entities in the TEXT have been omitted. Here's the format to follow: <entity name>: <entity type: person, org, place, or if none of those, a one-word description for that entity that is descriptive of the entity>, <entity attributes>, <entity relationships to all other named entities, if any, in form "is <relationship> with/to <specific other entity, is <relationship> with/to <specific other entity, is <relationship>, etc.
+    
+    The llm responded with:
+    {llm_response}
     
     ##TEXT:
     {user_prompt} 
