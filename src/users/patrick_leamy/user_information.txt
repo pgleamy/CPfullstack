@@ -1,7 +1,19 @@
-THE USER is: Patrick Leamy
-Patrick Leamy: person: 53 years old, married to Nadia Leamy, lives in Calgary, Alberta, has three children: Keira, Kaylen, and Devin.
-Nadia Leamy: person: 53 years old, married to Patrick Leamy, birthday on July 26, 1970.
-Keira Leamy: person: 16 years old, daughter of Patrick and Nadia Leamy, birthday on January 9, 2003, enjoys Tai Kickboxing and attends classes twice a week.
-Kaylen Leamy: person: 22 years old, son of Patrick and Nadia Leamy, birthday on January 20, 2001, lives with his girlfriend Sammy in North Vancouver, British Columbia.
-Devin Leamy: person: 20 years old, son of Patrick and Nadia Leamy, birthday on February 3, 2003, lives and works in New York, returning to the University of Waterloo next week to continue his Computer Science degree.
-Neo: pet: 1-year-old orange tabby cat: relationships to the user: Patrick Leamy.
+THE USER is PATRICK LEAMY (person): 
+ATTRIBUTES: 53 years old, married to Nadia Leamy, lives in Calgary, Alberta, has three children: Keira, Kaylen, and Devin.
+RELATIONSHIP TO THE USER: Patrick Leamy is the user
+
+NADIA LEAMY (person): 
+ATTRIBUTES: 53 years old, birthday on July 26, 1970.
+RELATIONSHIP TO THE USER: married to Patrick Leamy
+
+KEIRA LEAMY (person): 
+ATTRIBUTES: 16 years old, birthday on January 9, 2003, enjoys Tai Kickboxing and attends classes twice a week
+RELATIONSHIP TO USER: daughter of Patrick and Nadia Leamy
+
+KAYLEN LEAMY (person): 
+ATTRIBUTES: 22 years old, birthday on January 20, 2001, lives with his girlfriend Sammy in North Vancouver, British Columbia
+RELATIONSHIP TO USER: son of Patrick and Nadia Leamy
+
+DEVIN LEAMY (person): 
+ATTRIBUTES: 20 years old, birthday on February 3, 2003, lives and works in New York, returning to the University of Waterloo next week to continue his Computer Science degree
+RELATIONSHIP TO USER: son of Patrick and Nadia Leamy
