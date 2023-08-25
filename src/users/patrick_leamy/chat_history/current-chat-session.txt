@@ -180,3 +180,45 @@ Remember, the key to success in any project, including mine, is breaking it down
 I'm excited to be a part of your largest project and work with you to achieve your goals. If you have any questions or need guidance along the way, feel free to reach out. I'm here to support you as you continue to learn and create in the field of artificial intelligence and full stack application development.
 
 Let's continue building on your existing knowledge and exploring new possibilities together. The journey ahead is full of exciting challenges and opportunities.
+
+--> HUMAN: Devin is 20 years old. He currently lives and works in New York. However, next week he will be returning to Waterloo, Ontario to continue his Computer Science degree and the University of Waterloo. Devin's birthday is February 3, 2003. <--
+
+JARVIS: Devin's birthday is February 3, 2003. He is currently 20 years old and resides and works in New York. However, next week he will be returning to Waterloo, Ontario to continue his Computer Science degree at the University of Waterloo.
+
+It's great to learn more about Devin and his educational pursuits. studying Computer Science at the University of Waterloo is a fantastic opportunity. Waterloo is known for its excellent computer science program, so Devin is likely to receive a high-quality education there.
+
+As Devin transitions from working in New York to returning to Waterloo, I wish him all the best in his studies and future career. It's always exciting to see young people pursue their passions and contribute to the world of technology.
+
+If you have any more updates or information about Devin or any other topic, please feel free to share. I'm always here to listen and provide any assistance you may need.
+
+--> HUMAN: Keira was born on January 9, 2008. She is 16. She likes Tai Kickboxing and attends twice each week. <--
+
+JARVIS: Keira was born on January 9, 2008, which would make her 16 years old as of today, August 25, 2023. It's interesting to learn that she enjoys Tai Kickboxing and attends classes twice a week. It's great to see her engaged in a physical activity that she enjoys.
+
+I hope Keira continues to find joy and fulfillment in her martial arts practice. Engaging in regular physical activity not only helps maintain good health but also promotes discipline and mental well-being.
+
+If you have any more updates or information about Keira or any other topic, please feel free to share. I'm always here to listen and provide any assistance you may need.
+
+--> HUMAN: My name is Patrick Leamy. I am 53 years old. I am married to Nadia Leamy who is also 53. We live in Calgary, Alberta. We have three children. Keira is 16 and her birthday is January 9, 2003. She is our daughter. Our son Kaylen is 22. His birthday is January 20, 2001. He lives with his girlfriend Sammy in North Vancouver, British Columbia. Our son Devin is 20. His birthday is February 3, 2003. He lives in New York and works there. He will be returning to university at the University of Waterloo this time next week. Nadia's birthday is July 26, 1970. Nadia and I married on May 1, 2000. <--
+
+JARVIS: Patrick Leamy, it's great to hear from you again! Thank you for sharing more details about your family. It's wonderful to see the strong bonds you have with Nadia and your three children, Keira, Kaylen, and Devin.
+
+I have noted the following information about your family:
+
+- Keira is 16 years old and was born on January 9, 2003. It's fantastic to know that she enjoys Tai Kickboxing and attends classes twice a week. Engaging in regular physical activity is a great way for her to stay fit and develop discipline.
+
+- Kaylen is 22 years old and his birthday is on January 20, 2001. He lives with his girlfriend Sammy in North Vancouver, British Columbia. I hope they are enjoying their time together and pursuing their passions.
+
+- Devin is 20 years old and his birthday is on February 3, 2003. It's exciting to hear that he lives and works in New York. I wish him all the best as he returns to the University of Waterloo next week to continue his Computer Science degree. It's a wonderful opportunity for him to further his education and contribute to the world of technology.
+
+- Nadia, your wife, shares the same age as you, 53 years old. Her birthday falls on July 26, 1970. It's incredible that you have been married since May 1, 2000. Congratulations on your enduring commitment to one another.
+
+Thank you for sharing this lovely update about your family. If there are any more updates or information you would like to share, please feel free to do so. I'm here to listen and provide any assistance you may need.
+
+--> HUMAN: I have a 1 year old orange tabby cat called Neo. He is a wonderful pet. <--
+
+JARVIS: Neo sounds like a wonderful pet, Patrick! Having a furry companion can bring so much joy and companionship into our lives. I'm glad to hear that you have a 1-year-old orange tabby cat named Neo. Pets have a way of making our homes feel warm and lively. They can be great sources of comfort and entertainment.
+
+If you have any more stories or updates about Neo or any other topic, I would love to hear about it. I hope Neo continues to bring you happiness and enrich your life with his playful and loving nature.
+
+I'm here to listen and learn more about your experiences and interests, Patrick. Let's continue our conversation with any other topics you'd like to discuss or any questions you might have.

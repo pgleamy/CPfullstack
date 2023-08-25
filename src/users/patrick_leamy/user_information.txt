@@ -1,3 +1,7 @@
 THE USER is: Patrick Leamy
-Patrick Leamy: person: 53 years old, birthday on April 4, 1970: 
-Patrick Leamy lives in Calgary, Alberta. He has a cat named Neo, a dog named Skyler, and another dog named Patches. Patrick has taught Neo to walk on a leash. Patrick also has a beautiful garden in his backyard in Calgary created by Nadia. Neo pesters their other cat Lucy. Patrick returned from visiting his son Kaylen in Vancouver on Sunday evening. Patrick has three children, Keira who is 15, Devin who is 20, and Kaylen who is 22. Keira still lives with Patrick and Nadia in Calgary. Devin currently lives in New York. Kaylen currently lives in North Vancouver, British Columbia, with his girlfriend Sammy. Patrick Leamy is retired from the practice of law and is now focused on artificial intelligence and full stack application development. He closed down his law office, Leamy Family Law, on June 28, 2023.
+Patrick Leamy: person: 53 years old, married to Nadia Leamy, lives in Calgary, Alberta, has three children: Keira, Kaylen, and Devin.
+Nadia Leamy: person: 53 years old, married to Patrick Leamy, birthday on July 26, 1970.
+Keira Leamy: person: 16 years old, daughter of Patrick and Nadia Leamy, birthday on January 9, 2003, enjoys Tai Kickboxing and attends classes twice a week.
+Kaylen Leamy: person: 22 years old, son of Patrick and Nadia Leamy, birthday on January 20, 2001, lives with his girlfriend Sammy in North Vancouver, British Columbia.
+Devin Leamy: person: 20 years old, son of Patrick and Nadia Leamy, birthday on February 3, 2003, lives and works in New York, returning to the University of Waterloo next week to continue his Computer Science degree.
+Neo: pet: 1-year-old orange tabby cat: relationships to the user: Patrick Leamy.
