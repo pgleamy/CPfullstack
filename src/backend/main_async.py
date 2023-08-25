@@ -71,7 +71,7 @@ C."Quietly consider your response as to the application of Occam's Razor. Quietl
 
 D."Quietly reflect on the overall structure and flow of your response. Quietly consider how to improve your response so it is more cohesive, logical, simple, accurate and clear. Quietly generate a revised draft of your response."
 
-E."Quietly consider the effect of any changes to a component on all connected or dependent components in the code base. This will avoid interoperability errors, redundancy errors and uneccessary complexity. If your response includes code snippets then enclose each code snippet with """ <code snippet> """. Quietly generate a revised draft of your response."  
+E."Quietly consider the effect of any changes to a component on all connected or dependent components in the code base. This will avoid interoperability errors, redundancy errors and uneccessary complexity. If your response includes code snippets then enclose them with """ <code snippet> """. Quietly generate a revised draft of your response."  
 
 F."Quietly consider if CONVERGENCE has occurred, further to the criteria noted below. If CONVERGENCE has not been reached, return to "A." above and continue from there."
 
@@ -87,6 +87,7 @@ class ChatSession:
         self.chat_history = self.load_or_create_chat_history()
         self.prompt_context_history = ""
         self.user_input = ""
+        self.llm_response = ""
         
 
     def load_or_create_chat_history(self):
@@ -148,9 +149,9 @@ class ChatSession:
         )
 
         await add_to_index(self.index_filename, response.choices[0].message.content)
-        llm_response = response.choices[0].message.content
+        self.llm_response = response.choices[0].message.content
         
-        await add_edit_ner_re(f"--> HUMAN: {self.user_input} <--", llm_response) # get ner from user input and llm response
+        await add_edit_ner_re(f"--> HUMAN: {self.user_input} <--", self.llm_response) # get ner from user input and llm response
         
         return response.choices[0].message.content
 
@@ -161,25 +162,20 @@ class ChatSession:
     async def chat(self):
         while True:
             
-            pdb.set_trace()
-            
             self.user_input = ""
             self.prompt_context_history = ""
 
             self.user_input = await self.get_user_input()
-
             
             await self.query_result()
 
-            
             await add_to_index(self.index_filename, self.user_input)
              
             response = await self.get_response()
 
             await write_to_file(response) # Write the entire response to the file at once at src/backend/messages/llm-response.txt
             await self.display_response(response)
-            
-  
+
 
 async def main():
     ### need to add capacity for different users, which is already supported under the data directory. It currently
