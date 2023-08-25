@@ -140,3 +140,5 @@ I hope this information helps you in your analysis of the timing and synchroniza
 --> HUMAN: Hi <--
 
 --> HUMAN: test <--
+
+--> HUMAN: Hi Jarvis. Yesterday I updated your core functions and improved them significantly. Then I had a technical glitch with Github and lost the changes. I have now re-entered these improvesments to your main function. There are more improvements to recover and I am working on it now. <--
