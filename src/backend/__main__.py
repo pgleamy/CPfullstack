@@ -1,5 +1,6 @@
 import asyncio
-
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
 import os
 import aiofiles
 import configparser
@@ -94,6 +95,35 @@ class ChatSession:
         self.user_input = ""
         self.llm_response = ""
         
+    class Handler(FileSystemEventHandler):
+        def __init__(self, loop, callback):
+            self.loop = loop
+            self.callback = callback
+
+        def process(self, event):
+            asyncio.run_coroutine_threadsafe(self.callback(event.src_path), asyncio.get_event_loop())
+
+        def on_modified(self, event):
+            asyncio.run_coroutine_threadsafe(self.callback(event.src_path), self.loop)
+            
+    async def monitor_files(self):
+        loop = asyncio.get_event_loop()
+        event_handler = self.Handler(loop, self.file_changed_callback)
+        observer = Observer()
+        observer.schedule(event_handler, path='./messages/', recursive=False)
+        observer.start()
+
+    async def file_changed_callback(self, filename):
+        if "user_prompt.txt" in filename:
+            with open("./messages/user_prompt.txt", "r") as f:
+                self.user_input = f.read().strip()
+                print("\n\nNew user prompt was submitted...\n\n")
+            # Here, you can pass `self.user_input` to your chatbot for processing
+        elif "llm_response.txt" in filename:
+            with open("./messages/llm_response.txt", "r") as f:
+                self.llm_response = f.read().strip()
+            # Here, you can update the UI with the new LLM response
+            
     async def initialize(self):
         # Verify the 'users' and 'messages' directories exist, and create them if not
         main_dir = os.path.dirname(os.path.abspath(__file__))
@@ -105,6 +135,7 @@ class ChatSession:
             full_path = os.path.abspath(full_path)
             if not os.path.exists(full_path):
                 os.makedirs(full_path)
+        await self.monitor_files()
         # load or create the chat history file
         self.chat_history = await self.load_or_create_chat_history()
         
@@ -125,7 +156,6 @@ class ChatSession:
         self.user_input = input("\n--> HUMAN: ")
         await asyncio.gather (
             self.update_chat_history("\n--> HUMAN: " + self.user_input + " <--"),
-            #add_edit_ner_re(f"--> HUMAN: {self.user_input} <--")  # get ner from user input # moved to get_response() below
         )
         return self.user_input
 
