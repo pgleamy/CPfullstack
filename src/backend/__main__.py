@@ -1,5 +1,11 @@
 import asyncio
+
 import os
+import aiofiles
+import configparser
+
+import sys
+
 from dotenv import load_dotenv
 import openai
 from openai import ChatCompletion
@@ -84,23 +90,35 @@ class ChatSession:
     def __init__(self, chat_history_file, index_filename):
         self.chat_history_file = chat_history_file
         self.index_filename = index_filename
-        self.chat_history = self.load_or_create_chat_history()
         self.prompt_context_history = ""
         self.user_input = ""
         self.llm_response = ""
         
-
-    def load_or_create_chat_history(self):
+    async def initialize(self):
+        # Verify the 'users' and 'messages' directories exist, and create them if not
+        main_dir = os.path.dirname(os.path.abspath(__file__))
+        config = configparser.ConfigParser()
+        config.read('setup.ini')
+        directories = config['Directories']    
+        for dir_name in directories.values():
+            full_path = os.path.join(main_dir, dir_name)
+            full_path = os.path.abspath(full_path)
+            if not os.path.exists(full_path):
+                os.makedirs(full_path)
+        # load or create the chat history file
+        self.chat_history = await self.load_or_create_chat_history()
+        
+    async def load_or_create_chat_history(self):
         if os.path.exists(self.chat_history_file):
-            with open(self.chat_history_file, 'r') as file:
-                return file.read()[-3000:]  # Get the last 3000 words
+            async with aiofiles.open(self.chat_history_file, 'r') as file:
+                return (await file.read())[-3000:]  # Get the last 3000 words
         else:
-            with open(self.chat_history_file, 'w') as file:  # Create the file if it does not exist
+            async with aiofiles.open(self.chat_history_file, 'w') as file:  # Create the file if it does not exist
                 return ''
 
     async def update_chat_history(self, message):
-        with open(self.chat_history_file, 'a') as file:
-            file.write(message + '\n')
+        async with aiofiles.open(self.chat_history_file, 'a') as file:
+            await file.write(message + '\n')
         self.chat_history += message + '\n'
 
     async def get_user_input(self):
@@ -121,10 +139,10 @@ class ChatSession:
         now = datetime.now()
         date_time = now.strftime("CURRENT DATE: %B %d, %Y. CURRENT TIME: %I:%M%p. ")
         
-        user_info_file = os.path.join("..", "src", "users", "patrick_leamy", "user_information.txt")
+        user_info_file = os.path.join("..", "users", "patrick_leamy", "user_information.txt")
         if os.path.isfile(user_info_file):
-            with open(user_info_file, 'r') as f:
-                user_info = f.read()
+           async with aiofiles.open(user_info_file, 'r') as f:
+                user_info = await f.read()
         else:
             user_info = ""
             
@@ -173,7 +191,7 @@ class ChatSession:
              
             response = await self.get_response()
 
-            await write_to_file(response) # Write the entire response to the file at once at src/backend/messages/llm-response.txt
+            await write_to_file(response) # Write the entire response to the file at /messages/llm-response.txt
             await self.display_response(response)
 
 
@@ -192,22 +210,22 @@ async def main():
     #unittest.TextTestRunner().run(suite) # Run the test suite
     
     ## MUST comment below out for UNIT TESTING
-    
        
     # Open user's database file, if any exists
-    database_directory = os.path.join("..", "src", "users", "patrick_leamy", "database")
+    database_directory = os.path.join("..", "users", "patrick_leamy", "database")
     await verify_create_database(database_directory)
     
     # Open user's chat history, if any exists
-    chat_session_filepath = os.path.join("..", "src", "users", "patrick_leamy", "chat_history", "current-chat-session.txt")
+    chat_session_filepath = os.path.join("..", "users", "patrick_leamy", "chat_history", "current-chat-session.txt")
     chat_history_file = chat_session_filepath
     
     # Open user's index, if any exists
-    index_filepath = os.path.join("..", "src", "users", "patrick_leamy", "index", "index.faiss")
+    index_filepath = os.path.join("..", "users", "patrick_leamy", "index", "index.faiss")
     index_filename = index_filepath
     
     # Start specific user's chat session
     chat_session = ChatSession(chat_history_file, index_filename)
+    await chat_session.initialize() # Load or create the chat history file
     await chat_session.chat()
     
 asyncio.run(main())

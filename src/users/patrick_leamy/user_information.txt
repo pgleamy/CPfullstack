@@ -1,4 +1,4 @@
-THE USER is PATRICK LEAMY (person):
+THE USER is: Patrick Leamy (person):
 ATTRIBUTES: 53 years old, married to Nadia Leamy, lives in Calgary, Alberta, has three children: Keira, Kaylen, and Devin
 RELATIONSHIP TO THE USER: Patrick Leamy is the user
 
@@ -21,3 +21,7 @@ RELATIONSHIP TO USER: son of Patrick and Nadia Leamy
 PATCHES (pet):
 ATTRIBUTES: 10-year-old dog
 RELATIONSHIP TO USER: owned by Patrick Leamy
+
+PNLEAMY HOLDINGS INC. (company):
+ATTRIBUTES: Incorporated in Alberta
+RELATIONSHIP TO USER: Patrick Leamy and Nadia Leamy are the sole equal shareholders

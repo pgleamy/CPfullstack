@@ -8,13 +8,12 @@ import numpy as np
 import spacy
 from retrieve_text import get_full_text
 import pdb
-import aiofiles
 
 ## DIAGNOSTICS. Set to 1 to run the testing print statements and 0 to not run them 
 testing = 0
 
 ## SQLite database path
-db_path = os.path.join(os.getcwd(), '..', 'users', 'patrick_leamy', 'database', 'full_text_store.db')
+db_path = os.path.join(os.getcwd(), '..', '..', 'src', 'users', 'patrick_leamy', 'database', 'full_text_store.db')
 
 logging.set_verbosity_error()  # to only display error messages
 nlp = spacy.load("en_core_web_sm")
@@ -47,8 +46,8 @@ async def query_index(index_filename: str, query_text: str, top_k=2): # the numb
         return
 
     index = faiss.read_index(index_filename)
-    async with aiofiles.open(f"{index_filename}_metadata_mapping.pkl", "rb") as f:
-        metadata_mapping = pickle.loads(await f.read())
+    with open(f"{index_filename}_metadata_mapping.pkl", "rb") as f:
+        metadata_mapping = pickle.load(f)
         if testing == 1:
             print("metadata_mapping: ", metadata_mapping)
 

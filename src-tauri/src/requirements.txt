@@ -58,4 +58,3 @@ urllib3==2.0.4
 wasabi==1.1.2
 yarl==1.9.2
 zope.interface==6.0
-watchdog==3.0.0

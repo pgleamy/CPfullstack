@@ -1,3 +1,5 @@
 {
-    "DockerRun.DisableDockerrc": true
+    "DockerRun.DisableDockerrc": true,
+    "rust-analyzer.showUnlinkedFileNotification": false,
+    "git.ignoreLimitWarning": true
 }

@@ -19,7 +19,7 @@ model = "gpt-3.5-turbo-16k"
 
 ## User information file location
 ### must be modified to allow multiple users. HC to patrick_leamy for now.
-user_info_filepath = os.path.join('..', 'users', 'patrick_leamy', 'user_information.txt')
+user_info_filepath = os.path.join('..', '..', 'src', 'users', 'patrick_leamy', 'user_information.txt')
 
 async def get_ner_re(user_prompt, llm_response, user_info):
     

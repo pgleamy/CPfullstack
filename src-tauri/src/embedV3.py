@@ -12,7 +12,7 @@ from datetime import datetime
 #import sqlite3
 
 ## SQLite3 Database path
-db_path = os.path.join(os.getcwd(), '..', 'users', 'patrick_leamy', 'database', 'full_text_store.db')
+db_path = os.path.join(os.getcwd(), '..', '..', 'src', 'users', 'patrick_leamy', 'database', 'full_text_store.db')
 
 logging.set_verbosity_error()  # to only display error messages
 nlp = spacy.load("en_core_web_sm")
