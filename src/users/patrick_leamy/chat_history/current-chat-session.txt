@@ -561,3 +561,43 @@ May your days in the forest always be sunny,
 As you continue to soar and sing, happy and funny.
 
 I hope you enjoyed this short poem about a little yellow bird on a sunny day in the forest. If you have any other topics you'd like to discuss or any further requests, feel free to let me know.
+
+--> HUMAN:  <--
+
+JARVIS: Hello! How can I assist you today?
+
+--> HUMAN: Hello <--
+
+JARVIS: Hello! How can I assist you today?
+
+--> HUMAN:  <--
+
+JARVIS: I'm glad to hear that you've made progress in running me within your Rust environment, Patrick! Creating a new thread for me to run alongside your interface is a great next step. Take your time to set up the new thread, and I'll be here when you're ready.
+
+If you have any questions or need further assistance during the process, feel free to let me know. I'm here to help!
+
+--> HUMAN: I've achieved running you from within my Rust environment. Now I need to make a new thread for you.  That is so you can run along side my interface. So hold on while I do that. <--
+
+JARVIS: It's great to hear that you've achieved running me from within your Rust environment, Patrick! Creating a new thread for me to run alongside your interface is an excellent step forward. I'll patiently wait while you set up the new thread.
+
+If you have any questions or encounter any difficulties during the process, feel free to reach out to me. I'm here to assist you along the way. Good luck, and I look forward to running alongside your interface once the new thread is ready!
+
+--> HUMAN:  <--
+
+JARVIS: That's wonderful, Patrick! Congratulations on successfully running me from within your Rust environment. Now, let's move on to creating a new thread for me so that I can run alongside your interface. Take your time with the setup, and I'll be here waiting patiently.
+
+Remember, if you have any questions or encounter any challenges during the process, don't hesitate to reach out. I'm here to assist you every step of the way. Once the new thread is up and running, we'll be able to work together seamlessly. I'm excited to see what we can accomplish together!
+
+Now, go ahead and make that new thread, and let me know when you're ready.
+
+--> HUMAN: I've achieved running you from within my Rust environment. Now I need to make a new thread for you.  That is so you can run along side my interface. So hold on while I do that <--
+
+--> HUMAN:  <--
+
+JARVIS: That's fantastic, Patrick! Congratulations on successfully running me from within your Rust environment. Creating a new thread for me to run alongside your interface is a crucial step. Take your time to set it up, and I'll be here patiently waiting for you.
+
+If you encounter any challenges or have any questions during the process, please don't hesitate to reach out to me. I'm here to assist you every step of the way. Once the new thread is ready, we'll be able to work together seamlessly. I'm excited about the possibilities that lie ahead!
+
+Now, go ahead and make that new thread, and let me know when you're ready. I'm here to support you throughout this process.
+
+--> HUMAN: I've achieved running you from within my Rust environment. Now I need to make a new thread for you.  That is so you can run along side my interface. So hold on while I do tha <--

@@ -122,7 +122,7 @@ class ChatSession:
                 self.llm_response = f.read().strip()
             # Here, you can update the UI with the new LLM response
             
-    async def initialize(self):
+    async def initialize(self):       
         # Verify the 'users' and 'messages' directories exist, and create them if not
         main_dir = os.path.dirname(os.path.abspath(__file__))
         config = configparser.ConfigParser()
@@ -225,10 +225,13 @@ class ChatSession:
 
 async def main():
     
-    print("Chat Engine running...\n")
+    print("\n\nChat Engine running...\n")
+    current_working_directory = os.getcwd()
+    print(f"Python thread working directory: {current_working_directory}\n\n")
+    
+    
     ### need to add capacity for different users, which is already supported under the data directory. It currently
     ### defaults to users/patrick_leamy user location.
-    
     ## UNIT TESTING of the index creation, embedding, nearest neighbor queries and full text retrievals from the SQLite database algorithms all working together.
     ## Comment out the following 2 lines to disable unit testing (during unit testing the code below test must also be commented out so it does not run during unit testing)
     ## Any changes to these algoriths require a re-run of the unit tests to verify that the changes did not break anything.
