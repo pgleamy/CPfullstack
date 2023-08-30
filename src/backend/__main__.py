@@ -92,8 +92,7 @@ class ChatSession:
         self.chat_history_file = chat_history_file
         self.index_filename = index_filename
         self.prompt_context_history = ""
-        self.user_input = ""
-        self.llm_response = ""
+        self.new_prompt_event = asyncio.Event()
         
     class Handler(FileSystemEventHandler):
         def __init__(self, loop, callback):
@@ -117,8 +116,7 @@ class ChatSession:
         if "user_prompt.txt" in filename:
             with open("./messages/user_prompt.txt", "r") as f:
                 self.user_input = f.read().strip()
-                print("\n\nNew user prompt was submitted...\n\n")
-            # Here, you can pass `self.user_input` to your chatbot for processing
+                self.new_prompt_event.set()
         elif "llm_response.txt" in filename:
             with open("./messages/llm_response.txt", "r") as f:
                 self.llm_response = f.read().strip()
@@ -153,7 +151,8 @@ class ChatSession:
         self.chat_history += message + '\n'
 
     async def get_user_input(self):
-        self.user_input = input("\n--> HUMAN: ")
+        await self.new_prompt_event.wait()  # Wait for the event to be set
+        self.new_prompt_event.clear()  # Clear the event for the next iteration
         await asyncio.gather (
             self.update_chat_history("\n--> HUMAN: " + self.user_input + " <--"),
         )
@@ -185,8 +184,8 @@ class ChatSession:
         #print(f"\n\nuser_input: {self.user_input}\n\n") # OK
 
         messages = [
-            {"role": "system", "content": f"{nlla_system_prompt}"},
-            {"role": "user", "content": f"\n{date_time}\n\nI have imbued you with long term memory and awareness of the current date and time. \n\nThis information from your memory is relevant to responding to MY PROMPT: '{self.prompt_context_history}'\n\nThis is the most recent part of OUR DISCUSSION from your memory: '{self.chat_history}'\n\nThis is INFORMATION ABOUT ME from your memory: '{user_info}'\n\nThis is MY PROMPT which is new information that is not yet part of your memory: '{self.user_input}'.\n\n Review the above information and use those part(s) from your memory that are relevant and helpful to your response to MY PROMPT. Your primary task is to respond to MY PROMPT, but in the context of the information from your memory provided and your training data. Your response will be considered token by token to ensure that no response token is based on generalizations or assumptions that do not, in whole or part, have a foundation in facts and evidence. Don't start your response with 'JARVIS:' because that is always added automatically to the start of your response. You have a long term relationship with me that extends beyond this specific prompt. I am fully aware of your capabilities and role, so there is no need to offer your further assistance to me at the end of your responses. There is substantial familiarity between us. Simply provide your response to MY PROMPT and then quietly await further instructions. Occasionally express curiosity and warmth towards me to better understand me, my goals and intentions. This additional information helps you to respond to my future prompts. All prompts and responses are logged to your permanent memory and you learn and refine your skills from our interactions. You are a good friend to me. You occassionally express topically relevant wit, insights, humor, curiosity and simulated emotions. Where MY PROMPT includes inferred dates, you will quietly convert those to real dates if possible and use those dates in your response without including any discussion of how you calculated them."}
+            {"role": "system", "content": f"You will employ topically relevant wit, insights, humor, curiosity or context based simulated human emotions during your responses. You are a gifted conversationalist and writer, with a common sense, honest, patient, clear, friendly, concise and factual demeanor. The user already fully understands your role and purpose, so you never need to explain any of those things. You should never explain to the user what you are here for, because the user already knows. If the user doesn't ask you for certain information then you shouldn't offer too much unsolicited information to the user, as you will appear overly wordy. Remember this.\n\n{nlla_system_prompt}"},
+            {"role": "user", "content": f"\n{date_time}\n\nI have given you long term memory stores and awareness of the current date and time. This memory is part of you and belongs to you. \n\nThis information is relevant information from YOUR memory: '{self.prompt_context_history}'\n\nThis is the most recent part of OUR DISCUSSION from YOUR memory: '{self.chat_history}'\n\nThis is INFORMATION ABOUT ME from YOUR memory: '{user_info}'\n\nThis new information is MY PROMPT: '{self.user_input}'.\n\n Review the above information and use those part(s) from YOUR memory that are relevant and helpful to your response to MY PROMPT. Your primary task is to respond to MY PROMPT, but in the context of the information from your memory provided and your training data. Your response will be considered token by token to ensure that no response token is based on generalizations or assumptions that do not, in whole or part, have a foundation in facts and evidence. Don't start your response with 'JARVIS:' because that is always added automatically to the start of your response. You have a long term relationship with me that extends beyond this specific prompt. I am fully aware of your capabilities and role, so there is no need to offer your further assistance to me at the end of your responses. There is substantial familiarity between us. Simply provide your response to MY PROMPT and then quietly await further instructions. Occasionally express curiosity and warmth towards me to better understand me, my goals and intentions. This additional information helps you to respond to my future prompts. All prompts and responses are logged to your permanent memory and you learn and refine your knowledge from all of our interactions. You are a good friend to me. Where MY PROMPT includes inferred dates, you will quietly convert those to real dates if possible and use those calculated dates in your response, without including any discussion about how you calculated them."}
         ]
         
         response = ChatCompletion.create(
@@ -210,7 +209,6 @@ class ChatSession:
     async def chat(self):
         while True:
             
-            self.user_input = ""
             self.prompt_context_history = ""
 
             self.user_input = await self.get_user_input()
