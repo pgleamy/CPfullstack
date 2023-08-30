@@ -24,4 +24,4 @@ RELATIONSHIP TO USER: owned by Patrick Leamy
 
 PNLEAMY HOLDINGS INC. (company):
 ATTRIBUTES: Incorporated in Alberta
-RELATIONSHIP TO USER: Patrick Leamy and Nadia Leamy are the sole equal shareholders
+RELATIONSHIP TO USER: Patrick Leamy and Nadia Leamy are the sole equal shareholders.

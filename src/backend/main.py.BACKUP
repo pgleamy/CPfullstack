@@ -116,10 +116,8 @@ class ChatSession:
         if "user_prompt.txt" in filename:
             with open("./messages/user_prompt.txt", "r") as f:
                 self.user_input = f.read().strip()
-                print(f"\nFlag up? Should say 'False' ==> {self.new_prompt_event.is_set()}\n")
                 self.new_prompt_event.set()
-                print("Flag raised...\n")
-                print(f"Flag up? Should say 'True' ==> {self.new_prompt_event.is_set()}\n\n")
+                print(f"New prompt flag set to True? Should say 'True' ==> {self.new_prompt_event.is_set()}\n\n")
         elif "llm_response.txt" in filename:
             with open("./messages/llm_response.txt", "r") as f:
                 self.llm_response = f.read().strip()
@@ -155,7 +153,8 @@ class ChatSession:
 
     async def get_user_input(self):
         await self.new_prompt_event.wait()  # Wait for the event to be set
-        self.new_prompt_event.clear() # Clear the event for the next iteration
+        self.new_prompt_event.clear()
+        print(f"New prompt flag set to False? Should say 'False' ==> {self.new_prompt_event.is_set()}\n\n") # Clear the event for the next iteration
         await asyncio.gather (
             self.update_chat_history("\n--> HUMAN: " + self.user_input + " <--"),
         )

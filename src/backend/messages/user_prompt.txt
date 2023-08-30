@@ -1,1 +1,1 @@
-I've achieved running you from within my Rust environment. Now I need to make a new thread for you.  That is so you can run along side my interface. So hold on while I do tha
+I am working on the double prompt bug. Just reply with OK.
