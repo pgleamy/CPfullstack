@@ -224,6 +224,8 @@ class ChatSession:
 
 
 async def main():
+    
+    print("Chat Engine running...\n")
     ### need to add capacity for different users, which is already supported under the data directory. It currently
     ### defaults to users/patrick_leamy user location.
     
@@ -254,6 +256,7 @@ async def main():
     # Start specific user's chat session
     chat_session = ChatSession(chat_history_file, index_filename)
     await chat_session.initialize() # Load or create the chat history file
+    
     await chat_session.chat()
     
-asyncio.run(main())
+#asyncio.run(main())

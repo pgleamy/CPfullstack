@@ -1,11 +1,6 @@
 import os
 import asyncio
 
-# Monitors prompt and response files in the messages folder for changes. Run continuously each 0.5 seconds
-# Usage in __main__.main()
-# async def main():
-#    await monitor_files()
-
 async def monitor_files():
     user_prompt_path = "/messages/user_prompt.txt"
     llm_response_path = "/messages/llm_response.txt"

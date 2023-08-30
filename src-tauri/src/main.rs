@@ -1,65 +1,51 @@
-use std::env;
-
-extern crate tauri;
-//use pyo3::types::IntoPyDict;
-use pyo3::types::PyList;
+// Prevents additional console window on Windows in release, DO NOT REMOVE!!
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod backend_commands; // Include the module
 use backend_commands::send_prompt; // Import the function
 
 use pyo3::prelude::*;
+use pyo3::types::IntoPyDict;
+use std::env;
 use std::thread;
 
-fn main() -> tauri::Result<()> {
+fn main() -> PyResult<()> {
+    // Spawn a new thread to run the Python code
+    thread::spawn(|| -> PyResult<()> {
+        
+        pyo3::prepare_freethreaded_python(); // Initialize the Python interpreter
 
-    println!("running main.rs 1");
+        let py_main = include_str!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../src/backend/__main__.py"
+        ));
 
-    let gil = Python::acquire_gil();
-    let py = gil.python();
-    let sys = py.import("sys").unwrap();
-    let executable = sys.getattr("executable").unwrap();
-    println!("Python executable: {:?}", executable);
-    
+        Python::with_gil(|py| -> PyResult<()> {
+            let locals = [("asyncio", py.import("asyncio")?)].into_py_dict(py);
+            let path = format!("{}/../src/backend", env!("CARGO_MANIFEST_DIR").replace("\\", "/"));
+            py.run(&format!("import sys; sys.path.append('{}')", path), None, None)?;
 
+            // Load the Python code
+            py.run(py_main, Some(locals), None)?;
 
-    pyo3::prepare_freethreaded_python();
+            // Run the main_async.main() function within an asyncio event loop
+            py.run(
+                "loop = asyncio.get_event_loop()\n\
+                 result = loop.run_forever(__main__.main())",
 
-    println!("running main.rs 2");
+                Some(locals),
+                None,
+            )?;
 
-    let path = "F:\\WindowsDesktop\\Users\\Leamy\\Desktop\\ChatPerfect\\src\\backend";
-    // Spawn a new thread for running Python code
-    thread::spawn(move|| {
-
-        println!("running main.rs 3");
-
-        let gil = Python::acquire_gil();
-        let py = gil.python();
-        let sys = py.import("sys").unwrap();
-
-        // Add your script's directory to the Python path
-        // Get sys.path
-        let sys_path = sys.getattr("path").expect("Failed to get sys.path");
-        println!("sys.path: {:?}", sys_path);
-
-        // Cast to PyList
-        let py_list = sys_path.cast_as::<PyList>().expect("Failed to cast sys.path to PyList");
-        println!("PyList: {:?}", py_list);
-
-        // Append new path
-        py_list.append(path).expect("Failed to append path to sys.path");
-        println!("Path appended: {}", path);
-
-        // Import and run your Python code
-let code = r#"
-import main_async
-main_async.main()
-"#;
-        py.run(code, None, None).unwrap();
+            Ok(())
+        })
     });
 
-    // Run the Tauri UI in the main thread
+    // Run the Tauri application
     tauri::Builder::default()
+        
         .invoke_handler(tauri::generate_handler![send_prompt])
+
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 
