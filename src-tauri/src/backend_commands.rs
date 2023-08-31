@@ -22,6 +22,5 @@ impl From<CustomError> for InvokeError {
 #[command]
 pub fn send_prompt(message_text: String) -> Result<(), CustomError> {
     let path = Path::new("F:\\WindowsDesktop\\Users\\Leamy\\Desktop\\ChatPerfect\\src\\backend\\messages\\user_prompt.txt");
-    println!("\nWriting user prompt to ..\\src\\backend\\messages\\user_prompt.txt.\n\n{}", message_text); 
     write(path, message_text).map_err(CustomError::from)
 }

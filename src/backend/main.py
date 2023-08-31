@@ -92,39 +92,8 @@ class ChatSession:
         self.chat_history_file = chat_history_file
         self.index_filename = index_filename
         self.prompt_context_history = ""
-        self.new_prompt_event = asyncio.Event()
+        self.last_modified_time = None
         
-    class Handler(FileSystemEventHandler):
-        def __init__(self, loop, callback):
-            self.loop = loop
-            self.callback = callback
-
-        def process(self, event):
-            asyncio.run_coroutine_threadsafe(self.callback(event.src_path), asyncio.get_event_loop())
-
-        def on_modified(self, event):
-            asyncio.run_coroutine_threadsafe(self.callback(event.src_path), self.loop)
-            
-    async def monitor_files(self):
-        loop = asyncio.get_event_loop()
-        event_handler = self.Handler(loop, self.file_changed_callback)
-        observer = Observer()
-        observer.schedule(event_handler, path='./messages/', recursive=False)
-        observer.start()
-
-    async def file_changed_callback(self, filename):
-        if "user_prompt.txt" in filename:
-            with open("./messages/user_prompt.txt", "r") as f:
-                self.user_input = f.read().strip()
-                print(f"\nFlag up? Should say 'False' ==> {self.new_prompt_event.is_set()}\n")
-                self.new_prompt_event.set()
-                print("Flag raised...\n")
-                print(f"Flag up? Should say 'True' ==> {self.new_prompt_event.is_set()}\n\n")
-        elif "llm_response.txt" in filename:
-            with open("./messages/llm_response.txt", "r") as f:
-                self.llm_response = f.read().strip()
-            # Here, you can update the UI with the new LLM response
-            
     async def initialize(self):       
         # Verify the 'users' and 'messages' directories exist, and create them if not
         main_dir = os.path.dirname(os.path.abspath(__file__))
@@ -136,7 +105,6 @@ class ChatSession:
             full_path = os.path.abspath(full_path)
             if not os.path.exists(full_path):
                 os.makedirs(full_path)
-        await self.monitor_files()
         # load or create the chat history file
         self.chat_history = await self.load_or_create_chat_history()
         
@@ -154,12 +122,20 @@ class ChatSession:
         self.chat_history += message + '\n'
 
     async def get_user_input(self):
-        await self.new_prompt_event.wait()  # Wait for the event to be set
-        self.new_prompt_event.clear() # Clear the event for the next iteration
-        await asyncio.gather (
-            self.update_chat_history("\n--> HUMAN: " + self.user_input + " <--"),
-        )
-        return self.user_input
+        while True:
+            new_modified_time = os.path.getmtime("./messages/user_prompt.txt")
+            
+            if self.last_modified_time is None or new_modified_time > self.last_modified_time:
+                self.last_modified_time = new_modified_time
+                
+                with open("./messages/user_prompt.txt", "r") as f:
+                    self.user_input = f.read().strip()
+                
+                await self.update_chat_history("\n--> HUMAN: " + self.user_input + " <--")
+                
+                return self.user_input
+            
+            await asyncio.sleep(1)  # Sleep for a short duration before checking again
 
     async def query_result(self):
         self.prompt_context_history = await query_index(self.index_filename, self.user_input)
