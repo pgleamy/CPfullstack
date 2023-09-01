@@ -1,1 +1,1 @@
-Try not to be too wordy answering. What time is it?
+I'm good Jarvis. For now, only respond with "acknowledged". This is because I am updating the user interface and I only want to ensure it is showing up correctly in the interface.

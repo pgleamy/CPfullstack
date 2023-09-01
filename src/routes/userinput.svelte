@@ -85,14 +85,15 @@ function sendMessage() {
 <style>
 
     #wrapper {
-        position: fixed;
-        bottom: 0; /* Stick to the bottom */
-        left: 0;
-        right: 0;
+        width: 95%;
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
-        padding: 20px;
+        position: relative;
+        Left: 0;
+        right: 0;
+        padding-right: 50px;
+        padding-top: 5px;
     }
 
     #message-input {
@@ -118,7 +119,7 @@ function sendMessage() {
     border-radius: 5px;
     background-color: #1b1b1b;
     font-size: 12px;
-    line-height: 13px;
+    line-height: 15px;
     color: #e3e3e3;
     resize: none;
     overflow: hidden;
@@ -188,7 +189,7 @@ function sendMessage() {
 
     #title {
         display: flex;
-        font-size: 0.55em;
+        font-size: 0.6em;
         justify-content: space-between;
         align-items: baseline;
         color: lightblue;

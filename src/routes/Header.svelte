@@ -40,7 +40,7 @@
 		justify-content: flex-start;
 		padding-left: 33px;
 		padding-top: 0px;
-		z-index: 0;
+		z-index: 2;
 	}
 
     .write {
