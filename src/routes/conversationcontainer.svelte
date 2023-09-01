@@ -8,8 +8,8 @@
     let conversation = [
         { 
             type: 'user', 
-            username: 'Patrick Leamy', 
-            text: 'Hello, Jarvis!', 
+            userName: 'Patrick Leamy', 
+            messageText: 'Hello, Jarvis!', 
             timestampStart: 'Sep 1, 2023, 12:00 PM',
             timestampEnd: 'Sep 1, 2023, 12:00:30 PM',
             llmName: 'Jarvis',
@@ -18,28 +18,29 @@
         { 
             type: 'llm', 
             llmName: 'Jarvis', 
-            text: 'Hello, Patrick! How can I assist you today?', 
-            timestamp: 'Sep 1, 2023, 12:01 PM',
+            messageText: 'Hello, Patrick! How can I assist you today?', 
+            responseTime: 'Sep 1, 2023, 12:01 PM',
             role: 'Talker'
         }
     ];
 
   </script>
-  
+
   <div id="conversation-container">
     {#each conversation as entry}
         {#if entry.type === 'user'}
-            <UserInputSent {entry} />
+            <UserInputSent {...entry} />
         {:else if entry.type === 'llm'}
-            <LLMResponse {entry} />
+            <LLMResponse {...entry} />
         {/if}
     {/each}
     <UserInput />
-</div>
+  </div>
+
    
   <style>
     #conversation-container {
-      /* Your styling here */
+      transition: all 2.0s ease-in-out;
       display: flex;
       flex-direction: column;
       align-items: flex-end;
@@ -49,7 +50,7 @@
       left: 30;
       padding-top: 100px;
       padding-bottom: 20px;
-      mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+      mask-image: linear-gradient(to top, transparent, black 10%, black 90%, transparent);
     }
   </style>
   

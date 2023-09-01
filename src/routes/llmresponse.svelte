@@ -1,8 +1,10 @@
 <script>
     import { onMount } from 'svelte';
-    let messageText = ''; // This will be populated from the LLM response
-    const llmName = 'Jarvis'; // Hardcoded for now
-    let responseTime;
+
+    export let llmName; // Hardcoded for now
+    export let messageText; // This will be populated from the LLM response
+    export let responseTime;
+    export let role;
 
     function resizeTextarea(event) {
         event.target.style.height = 'auto'; // Reset height
@@ -11,7 +13,6 @@
 
     onMount(() => {
         resizeTextarea({ target: document.querySelector('#message-input textarea') });
-        responseTime = new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true });
     });
 </script>
 
@@ -58,8 +59,8 @@
 
     #message-input textarea {
     padding: 10px;
-    padding-bottom: 1px;
-    border: rgb(115, 115, 115) 1px solid;
+    padding-bottom: 0px;
+    border: rgb(144, 119, 101) 2px solid;
     border-radius: 5px;
     background-color: #1b1b1b;
     font-size: 12px;
@@ -78,17 +79,17 @@
 
     #message-input textarea:focus {
         outline: none;
-        box-shadow: 0 0 0 1px #6E9BFF;
-        transition: box-shadow 0.15s ease-in-out;
+        box-shadow: 0 0 0 0.5px #ffbc5f;
+        transition: box-shadow 0.25s ease-in-out;
     }
 
     #title {
         display: flex;
-        font-size: 0.6em;
+        font-size: 0.5em;
         justify-content: space-between;
         align-items: baseline;
-        color: lightblue;
-        padding-left: 10px;
+        color: rgb(193, 138, 66);
+        padding-left: 3px;
         padding-bottom: 2px;
     }
 

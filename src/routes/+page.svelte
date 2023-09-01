@@ -27,7 +27,7 @@
 </script>
 
 <section class="chatWindow">
-    <div transition:fade="{{ duration: 200, delay: 30 }}">
+    <div transition:fade="{{ duration: 100, delay: 100 }}">
         <ConversationContainer /> <!-- Add the conversation container here -->
     </div>
 </section>

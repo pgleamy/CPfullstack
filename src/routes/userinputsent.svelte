@@ -1,9 +1,12 @@
 <script>
     import { onMount } from 'svelte';
-    let messageText = ''; // This will be populated from the user's input
-    let userName = 'Patrick Leamy'; // This will be populated from the user's profile
-    let timestampStart = ''; // will hold the start timestamp
-    let timestampEnd = ''; // will hold the end timestamp
+
+    export let userName; // This will be populated from the user's profile
+    export let messageText; // This will be populated from the array   
+    export let timestampStart; // will hold the start timestamp
+    export let timestampEnd; // will hold the end timestamp
+    export let llmName; 
+    export let role; 
   
     function resizeTextarea(event) {
       event.target.style.height = 'auto'; // Reset height
@@ -37,7 +40,7 @@
         Left: 0;
         right: 0;
         padding-right: 50px;
-        padding-top: 5px;
+        padding-top: 5px; 
     }
 
     #message-input {
@@ -52,8 +55,8 @@
 
     #message-input textarea {
     padding: 10px;
-    padding-bottom: 1px;
-    border: rgb(115, 115, 115) 1px solid;
+    padding-bottom: 0px;
+    border: rgb(82, 112, 143) 2px solid;
     border-radius: 5px;
     background-color: #1b1b1b;
     font-size: 12px;
@@ -72,17 +75,17 @@
 
     #message-input textarea:focus {
         outline: none;
-        box-shadow: 0 0 0 1px #6E9BFF;
-        transition: box-shadow 0.15s ease-in-out;
+        box-shadow: 0 0 0 0.5px #a7c3ff;
+        transition: box-shadow 0.25s ease-in-out;
     }
 
     #title {
         display: flex;
-        font-size: 0.6em;
+        font-size: 0.5em;
         justify-content: space-between;
         align-items: baseline;
-        color: lightblue;
-        padding-left: 10px;
+        color: rgb(49, 150, 186);
+        padding-left: 3px;
         padding-bottom: 2px;
     }
 

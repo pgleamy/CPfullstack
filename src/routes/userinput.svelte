@@ -115,7 +115,8 @@ function sendMessage() {
     #message-input textarea {
     padding: 10px;
     padding-bottom: 1px;
-    border: rgb(115, 115, 115) 1px solid;
+    border: rgb(196, 181, 19) 1.5px solid;
+    box-shadow: 0 0 0 0.4px #a0a0a0;
     border-radius: 5px;
     background-color: #1b1b1b;
     font-size: 12px;
@@ -134,13 +135,14 @@ function sendMessage() {
 
     #message-input textarea:focus {
         outline: none;
-        box-shadow: 0 0 0 1px #6E9BFF;
+        border: rgb(141, 158, 255) 1.5px solid;
+        box-shadow: 0 0 0 0.4px #ffffff;
         transition: box-shadow 0.15s ease-in-out;
     }
 
     #button-container {
         width: 100%;
-        margin-top: 2.5px;
+        margin-top: 4px;
         margin-bottom: 0px;
         display: flex;
         justify-content: center;
@@ -148,7 +150,7 @@ function sendMessage() {
 
     #message-input button {
         width: 97%;
-        height: 12px;
+        height: 14px;
         border: 0px solid;
         border-radius: 4px;
         background-color: #3b79ff;
@@ -189,11 +191,11 @@ function sendMessage() {
 
     #title {
         display: flex;
-        font-size: 0.6em;
+        font-size: 0.7em;
         justify-content: space-between;
         align-items: baseline;
-        color: lightblue;
-        padding-left: 10px;
+        color: rgb(158, 241, 170);
+        padding-left: 12px;
         padding-bottom: 2px;
     }
 
