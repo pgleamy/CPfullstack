@@ -37,6 +37,6 @@
 		height: 100vh;
         overflow-x: hidden; /* Hide overflow */
 		overflow-y: auto;
-        box-sizing: border-box; 
+        box-sizing: border-box;
     }
 </style>

@@ -56,7 +56,9 @@
         "height": 768,
         "resizable": true,
         "title": "ChatPerfect",
-        "width": 1024
+        "width": 1024,
+        "minHeight": 600,
+        "minWidth": 800
       }
     ]
   }

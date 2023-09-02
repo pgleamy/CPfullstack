@@ -32,14 +32,13 @@
 <style>
 
     #wrapper {
-        width: 95%;
+        width: 100%;
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
         position: relative;
         Left: 0;
         right: 0;
-        padding-right: 50px;
         padding-top: 5px; 
     }
 
@@ -54,8 +53,8 @@
     }
 
     #message-input textarea {
-    padding: 5px;
-    padding-bottom: 0px;
+    padding: 8px;
+    padding-bottom: 8px;
     border: rgb(82, 112, 143) 2px solid;
     border-radius: 5px;
     background-color: #1b1b1b;
@@ -67,6 +66,7 @@
     white-space: pre-wrap;
     word-wrap: break-word;
     min-height: 24px;
+    margin-right: 50px;
     }
 
     #message-input textarea::placeholder {
@@ -92,7 +92,7 @@
     #timestamp {
         font-size: 0.6em;
         color: darkgoldenrod;
-        padding-right: 10px;
+        padding-right: 60px;
     }
 </style> 
   

@@ -40,17 +40,15 @@
    
   <style>
     #conversation-container {
-      transition: all 0.5s ease-in-out;
+      transition: all 0.4s ease-in-out;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
       width: 100%;
       position: fixed;
       bottom: 0;
-      left: 5px !important;
-      padding-top: 100px;
-      padding-bottom: 20px;
-      mask-image: linear-gradient(to top, transparent, black 10%, black 90%, transparent);
+      left: 8px !important;
+      padding-bottom: 10px;
     }
   </style>
   
