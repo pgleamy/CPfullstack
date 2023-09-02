@@ -34,13 +34,9 @@
 
 <style>
     .chatWindow {
-		position: sticky;
-		left: 0px;
-        width: 100%;
-        height: 100vh;
+		height: 100vh;
         overflow-x: hidden; /* Hide overflow */
 		overflow-y: auto;
-        position: absolute;
-		box-sizing: border-box;
+        box-sizing: border-box; 
     }
 </style>

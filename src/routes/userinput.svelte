@@ -113,10 +113,10 @@ function sendMessage() {
     }
 
     #message-input textarea {
-    padding: 10px;
+    padding: 5px;
     padding-bottom: 1px;
     border: rgb(196, 181, 19) 1.5px solid;
-    box-shadow: 0 0 0 0.4px #a0a0a0;
+    box-shadow: 0 0 0 0.6px #ffffff;
     border-radius: 5px;
     background-color: #1b1b1b;
     font-size: 12px;
