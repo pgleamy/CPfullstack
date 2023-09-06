@@ -23,9 +23,8 @@
             <span id="timestamp"> ({responseTime}) </span>
         </div>
         <textarea readonly>{messageText}</textarea>  <!-- Make it read-only -->
-    </div>
+    </div>  
 </div>
-
 
 <style>
 
@@ -98,4 +97,8 @@
         color: darkgoldenrod;
         padding-right: 60px;
     }
+
+    .text-selectable {
+    user-select: text; /* Enable text selection */
+  }
 </style> 

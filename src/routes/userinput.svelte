@@ -205,4 +205,8 @@ function sendMessage() {
         color: darkgoldenrod;
         padding-right: 60px;
     }
+
+    .text-selectable {
+    user-select: text; /* Enable text selection */
+  }
 </style> 

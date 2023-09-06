@@ -2,14 +2,15 @@
     import ConversationContainer from './conversationcontainer.svelte'; 
     import UserInput from './userinput.svelte';
     import { writable } from 'svelte/store';
-	import { fade } from "svelte/transition";
+    import { fade } from "svelte/transition";
+    import ScrollSearch from './scrollsearch.svelte';
 
-	let CurrentPage; // Reference to the current page component
+    let CurrentPage; // Reference to the current page component
 
-	// Function to switch to a new page with fade transition
-	function switchPage(pageComponent) {
-  	CurrentPage = pageComponent; // Update to the new page component
-	}
+    // Function to switch to a new page with fade transition
+    function switchPage(pageComponent) {
+        CurrentPage = pageComponent; // Update to the new page component
+    }
 
     const initialInputs = JSON.parse(localStorage.getItem('inputs') || '[""]');
     const inputs = writable(initialInputs);
@@ -26,17 +27,32 @@
     }
 </script>
 
-<section class="chatWindow">
-    <div transition:fade="{{ duration: 100, delay: 100 }}">
-        <ConversationContainer /> <!-- Add the conversation container here -->
+<div class="contentWrapper" id='flex'>
+    <section class="chatWindow">
+        <div transition:fade="{{ duration: 100, delay: 100 }}">
+            <ConversationContainer />
+        </div>
+    </section>
+    <div class="scrollSearchWrapper" transition:fade="{{ duration: 200, delay: 50 }}">
+        <ScrollSearch />
     </div>
-</section>
+</div>
 
 <style>
+    .contentWrapper {
+        justify-content: flex-start;
+    }
     .chatWindow {
-		height: 100vh;
-        overflow-x: hidden; /* Hide overflow */
-		overflow-y: auto;
-        box-sizing: border-box;
+        flex-grow: 1;
+
+    }
+    .scrollSearchWrapper {
+        flex-shrink: 0;
+        width: 60px;
+        display: inline-flex;
+    }
+    #flex{
+        display: flex;
     }
 </style>
+

@@ -15,7 +15,7 @@ ATTRIBUTES: 22 years old, lives with his girlfriend Sammy in North Vancouver, Br
 RELATIONSHIP TO USER: son of Patrick and Nadia Leamy
 
 DEVIN LEAMY (person):
-ATTRIBUTES: 20 years old, lives and works in New York, returning to the University of Waterloo next week to continue his Computer Science degree
+ATTRIBUTES: 20 years old, lives and works in New York, returning to the University of Waterloo on September 12, 2023, to continue his Computer Science degree
 RELATIONSHIP TO USER: son of Patrick and Nadia Leamy
 
 PATCHES (pet):
@@ -25,3 +25,7 @@ RELATIONSHIP TO USER: owned by Patrick Leamy
 PNLEAMY HOLDINGS INC. (company):
 ATTRIBUTES: Incorporated in Alberta
 RELATIONSHIP TO USER: Patrick Leamy and Nadia Leamy are the sole equal shareholders
+
+udon soup (food):
+MADE BY: Keira Leamy
+ENJOYED BY: Patrick Leamy and his family.
