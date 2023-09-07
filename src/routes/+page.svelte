@@ -25,6 +25,7 @@
         }
         $inputs[index] = value;
     }
+
 </script>
 
 <div class="contentWrapper" id='flex'>
@@ -41,6 +42,9 @@
 <style>
     .contentWrapper {
         justify-content: flex-start;
+        overflow: auto;
+        height: 100vh;
+        flex-grow: 1;
     }
     .chatWindow {
         flex-grow: 1;
@@ -48,8 +52,9 @@
     }
     .scrollSearchWrapper {
         flex-shrink: 0;
-        width: 60px;
+        margin-left: 10px;
         display: inline-flex;
+        width: auto;
     }
     #flex{
         display: flex;

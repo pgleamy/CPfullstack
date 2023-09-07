@@ -53,8 +53,8 @@
     }
 
     #message-input textarea {
-    padding: 8px;
-    padding-bottom: 8px;
+    padding: 6px;
+    padding-bottom: 0px;
     border: rgb(82, 112, 143) 2px solid;
     border-radius: 5px;
     background-color: #1b1b1b;

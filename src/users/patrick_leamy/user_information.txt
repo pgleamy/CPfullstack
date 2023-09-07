@@ -1,5 +1,5 @@
 THE USER is Patrick Leamy (person):
-ATTRIBUTES: 53 years old, married to Nadia Leamy, lives in Calgary, Alberta, has three children: Keira, Kaylen, and Devin
+ATTRIBUTES: 53 years old, married to Nadia Leamy, lives in Calgary, Alberta, has three children: Keira, Kaylen, and Devin, owns a pet dog named Patches
 RELATIONSHIP TO THE USER: Patrick Leamy is the user
 
 NADIA LEAMY (person):
@@ -25,7 +25,3 @@ RELATIONSHIP TO USER: owned by Patrick Leamy
 PNLEAMY HOLDINGS INC. (company):
 ATTRIBUTES: Incorporated in Alberta
 RELATIONSHIP TO USER: Patrick Leamy and Nadia Leamy are the sole equal shareholders
-
-udon soup (food):
-MADE BY: Keira Leamy
-ENJOYED BY: Patrick Leamy and his family.

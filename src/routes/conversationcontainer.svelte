@@ -48,12 +48,19 @@
             role: 'Talker'
         },
     ];
-
+     
+  
+  // Function to scroll to the bottom
+  function scrollToBottom() {
+    console.log('Scrolling to bottom');
+    const conversationContainer = document.getElementById('conversation-container');
+    conversationContainer.scrollTop = conversationContainer.scrollHeight;
+  }
 
   </script>
 
 <div id="clip-container">
-  <div id="conversation-container">
+  <div id="conversation-container" on:scrollToLatest={scrollToBottom}> 
     {#each conversation as entry}
       {#if entry.type === 'user'}
         <UserInputSent {...entry} />
@@ -73,10 +80,11 @@
       flex-direction: column;
       align-items: flex-start;
       width: 100%;
-      position: fixed;
+      position: relative;
       bottom: 0;
-      left: 8px !important;
+      left: 6px !important;
       padding-bottom: 10px;
+      padding-right: 0px;
       overflow: hidden;
     }
 

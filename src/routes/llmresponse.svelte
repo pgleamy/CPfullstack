@@ -4,7 +4,7 @@
     export let llmName; // Hardcoded for now
     export let messageText; // This will be populated from the LLM response
     export let responseTime;
-    export let role;
+    //export let role;
 
     function resizeTextarea(event) {
         event.target.style.height = 'auto'; // Reset height
@@ -98,7 +98,5 @@
         padding-right: 60px;
     }
 
-    .text-selectable {
-    user-select: text; /* Enable text selection */
-  }
+
 </style> 
