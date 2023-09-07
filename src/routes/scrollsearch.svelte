@@ -1,5 +1,7 @@
 <script>
-    
+    //@ts-nocheck
+    import { onMount, onDestroy } from "svelte";
+
     let isDragging = false;
     let circleY  = 0; // Y-coordinate of the circle
     let circleColor = "#008000"; // Default color
@@ -9,9 +11,13 @@
     const bottomPadding = 96; // Padding at the bottom of the container
     let arrowPath;
     let arrowColor = "#FF0000";
-    
-    
-  
+    let updateArrowColorInterval; // Declare a variable to store the interval ID
+
+    onDestroy(() => {
+      clearInterval(updateArrowColorInterval); // Clear the interval
+      window.removeEventListener('resize', setInitialPosition); // Remove window resize listener
+    });
+
     // Set initial position based on container height
     function setInitialPosition() {
       const container = document.getElementById("custom-scrollbar");
@@ -21,13 +27,11 @@
       // Update position when window is resized
     window.addEventListener('resize', setInitialPosition);
 
-  
     // Call this function when the component mounts
-    import { onMount } from "svelte";
     onMount(() => {
       setInitialPosition();
       window.addEventListener('resize', setInitialPosition);
-      //setInterval(updateArrowColor, stepInterval);
+      updateArrowColorInterval = setInterval(updateArrowColor, stepInterval); // Store the interval ID
     });
   
     function startDrag(e) {
@@ -90,8 +94,10 @@ function interpolateColor(start, end, step, maxSteps) {
 }
 
 function updateArrowColor() {
-  let arrowPath = document.getElementById("arrow-path");
-  arrowPath.setAttribute("stroke", interpolateColor(startColor, endColor, currentStep, steps));
+  arrowPath = document.getElementById("arrow-path"); // Moved inside the function
+  if (arrowPath) { // Check if element exists
+    arrowPath.setAttribute("stroke", interpolateColor(startColor, endColor, currentStep, steps));
+  }
   currentStep++;
   if (currentStep > steps) {
     [startColor, endColor] = [endColor, startColor];
@@ -103,8 +109,6 @@ function updateArrowColor() {
   function handleNewMessage(isOffScreen) {
     isArrowThrobbing = isOffScreen;
   }
-
-  setInterval(updateArrowColor, stepInterval);
 
   </script>
 
