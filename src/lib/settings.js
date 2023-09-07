@@ -14,4 +14,4 @@ function createCookieStore(key, startValue) {
 	return store;
 }
 
-export const selectedGender = createCookieStore('selectedGender', 'Jarvis');
+export const selectedGender = createCookieStore('selectedGender', 'Argus');

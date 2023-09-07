@@ -1,5 +1,5 @@
 <script>
-	import { selectedGender } from '$lib/store.js'; // Import shared state
+	import { selectedGender } from '$lib/settings.js'; // Import shared state
 	import { fade } from "svelte/transition";
 
 	$: gender = $selectedGender;
@@ -11,13 +11,13 @@
   </script>
   
   <svelte:head>
-	  <title>Role Settings</title>
+	  <title>Settings</title>
 	  <meta name="description" content="Select LLMs, role and parameters" />
   </svelte:head>
   
   <div transition:fade="{{ duration: 200, delay: 30 }}">
   <div class="settings-page">
-	  <h1 class="settings">Role Settings</h1>
+	  <h1 class="settings">Settings</h1>
   
 	  <ul class="settings-list">
 		
@@ -25,7 +25,7 @@
 			  <div class="column1"><label for="gender">Gender:</label></div>
 			  <div class="column2">
 				  <select bind:value={gender} on:change={handleGenderChange} id="gender">
-					  <option value="Jarvis">Male - Jarvis</option>
+					  <option value="Argus">Male - Argus</option>
 					  <option value="Iris">Female - Iris</option>
 				  </select>
 			  </div>
@@ -57,7 +57,6 @@
 					<select id=writingmodel>
 						<option>OpenAI 3.5</option>
 						<option>OpenAI 4.0</option>
-						<option>Local LLM</option>
 					</select>
 				</div>
 		  </li>
@@ -68,7 +67,6 @@
 			  	<select id="talkingModel">
 					<option>OpenAI 3.5</option>
 					<option>OpenAI 4.0</option>
-					<option>Local LLM</option>
 			  	</select>
 			</div>
 		  </li>

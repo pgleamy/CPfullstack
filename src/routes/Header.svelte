@@ -1,10 +1,10 @@
 <script>
 	import { page } from '$app/stores';
-	import { selectedGender } from '$lib/store.js'; // Import the shared state
+	import { selectedGender } from '$lib/settings.js'; // Import the shared state
 	
 	// Reactive values for logo and name based on selected gender
-	$: logo = $selectedGender === 'Jarvis' ? 'src/lib/images/Jarvis_logo.jpg' : 'src/lib/images/Iris_logo.jpg';
-	$: name = $selectedGender === 'Jarvis' ? 'JARVIS' : 'IRIS';
+	$: logo = $selectedGender === 'Argus' ? 'src/lib/images/Argus_logo.jpg' : 'src/lib/images/Iris_logo.jpg';
+	$: name = $selectedGender === 'Argus' ? 'ARGUS' : 'IRIS';
 
 	let role = "write"; // default role is Write. Also Code, Talk
 	// Reactive statement to determine the class based on role
