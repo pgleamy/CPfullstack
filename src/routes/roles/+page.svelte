@@ -1,17 +1,35 @@
 <script>
 	//@ts-nocheck
 
+	import { onMount } from 'svelte';
 	import { setSetting, getSetting, loadSettings } from '$lib/settings.js';
 	import { fade } from "svelte/transition";
 	import { settings } from '$lib/settings.js';
+
+	let set = {}; // Initialize local state
+
+	// Subscribe to Svelte store and update local state
+	settings.subscribe(value => {
+  		set = value;
+	});
+
+	onMount(() => {
+  		const loadedSettings = loadSettings();
+  		settings.set({
+    Gender: 'Argus',
+    Role: 'write',
+    CodingModel: 'GPT3.5',
+    WritingModel: 'GPT3.5',
+    TalkingModel: 'GPT3.5',
+    ...loadedSettings
+  });
+});
   
-	let set = loadSettings();
-  
-	function handleSettingChange(event, settingKey) {
-  		set[settingKey] = event.target.value;
-  		setSetting(settingKey, set[settingKey]);
-  		settings.update(s => ({ ...s, [settingKey]: set[settingKey] }));
-	}
+function handleSettingChange(event, settingKey) {
+  set[settingKey] = event.target.value;
+  setSetting(settingKey, set[settingKey]);
+  settings.update(s => ({ ...s, [settingKey]: set[settingKey] }));
+}
 
 	function handleGenderChange(event) {
 	  set.Gender = event.target.value;
@@ -53,7 +71,7 @@
 		  <li>
 			  <div class="column1"><label for="gender">Gender:</label></div>
 			  <div class="column2">
-				<select bind:value={settings.Gender} on:change={(e) => handleSettingChange(e, 'Gender')} id="gender">
+				<select bind:value={set.Gender} on:change={(e) => handleSettingChange(e, 'Gender')} id="gender">
 					<option value="Argus">Argus</option>
 					<option value="Iris">Iris</option>
 				</select>
@@ -63,7 +81,7 @@
 		  <li>
 			  <div class="column1"><label for="role">Role:</label></div>
 			  <div class="column2">
-				<select bind:value={settings.Role} on:change={(e) => handleSettingChange(e, 'Role')} id="role">
+				<select bind:value={set.Role} on:change={(e) => handleSettingChange(e, 'Role')} id="role">
 					<option>Code</option>
 					<option>Write</option>
 					<option>Talk</option>
@@ -74,7 +92,7 @@
 		  <li>
 			  <div class="column1"><label for="codingmodel">Model - Coding:</label></div>
 			  <div class="column2">
-				<select bind:value={settings.CodingModel} on:change={(e) => handleSettingChange(e, 'CodingModel')} id="codingmodel">
+				<select bind:value={set.CodingModel} on:change={(e) => handleSettingChange(e, 'CodingModel')} id="codingmodel">
 					<option>GPT3.5</option>
 					<option>GPT4.0</option>
 				</select>
@@ -84,7 +102,7 @@
 		  <li>
 			  <div class="column1"><label for="writingmodel">Model - Writing:</label></div>
 			  <div class="column2">
-				<select bind:value={settings.WritingModel} on:change={(e) => handleSettingChange(e, 'WritingModel')} id="writingmodel">
+				<select bind:value={set.WritingModel} on:change={(e) => handleSettingChange(e, 'WritingModel')} id="writingmodel">
 					<option>GPT3.5</option>
 					<option>GPT4.0</option>
 				</select>
@@ -94,7 +112,7 @@
 		  <li>
 			<div class="column1"><label for="talkingmodel">Model - Talking:</label></div>
 			<div class="column2">
-				<select bind:value={settings.TalkingModel} on:change={(e) => handleSettingChange(e, 'TalkingModel')} id="talkingmodel">
+				<select bind:value={set.TalkingModel} on:change={(e) => handleSettingChange(e, 'TalkingModel')} id="talkingmodel">
 					<option>GPT3.5</option>
 					<option>GPT4.0</option>
 				</select>

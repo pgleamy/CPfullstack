@@ -1,5 +1,6 @@
 <script>
 	//@ts-nocheck
+	
 	import { page } from '$app/stores';
 	import { settings } from '$lib/settings.js'; // Assuming 'settings' is a Svelte store
 	import { onMount } from 'svelte';
