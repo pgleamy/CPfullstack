@@ -1,21 +1,24 @@
 <script>
+	//@ts-nocheck
 	import { page } from '$app/stores';
-	import { selectedGender } from '$lib/settings.js'; // Import the shared state
+	import { settings } from '$lib/settings.js'; // Assuming 'settings' is a Svelte store
+	import { onMount } from 'svelte';
+	import { loadSettings, updateSettings } from '$lib/settings.js';
+
+	onMount(() => {
+  		const initialSettings = loadSettings();
+  		updateSettings(initialSettings);
+	});
 	
-	// Reactive values for logo and name based on selected gender
-	$: logo = $selectedGender === 'Argus' ? 'src/lib/images/Argus_logo.jpg' : 'src/lib/images/Iris_logo.jpg';
-	$: name = $selectedGender === 'Argus' ? 'ARGUS' : 'IRIS';
-
-	let role = "write"; // default role is Write. Also Code, Talk
-	// Reactive statement to determine the class based on role
-	$: roleClass = role === 'write' ? 'write' : role === 'code' ? 'code' : 'talk';
-
+	$: logo = $settings.Gender === 'Argus' ? 'src/lib/images/Argus_logo.jpg' : 'src/lib/images/Iris_logo.jpg';
+	$: name = $settings.Gender === 'Argus' ? 'Argus' : 'Iris';
+	$: roleClass = $settings.Role === 'Write' ? 'write' : $settings.Role === 'Code' ? 'code' : 'talk';
 </script>
 
 <header > <!-- Add the transition directive here -->
 	
 	<div class="corner">
-		<a href="https://github.com/pgleamy">
+		<a>
 			<img src= {logo} alt="" /> <!-- Updated logo src -->
 		</a>
 	</div>
@@ -26,7 +29,7 @@
 				<a href="/">{name}</a> <!-- Updated name -->
 			</li>
 			<li aria-current={$page.url.pathname === '/roles' ? 'page' : undefined}>
-				<a href="/roles">(<span class={roleClass}>{role}</span>)</a>
+				<a href="/roles">(<span class={roleClass}>{$settings.Role}</span>)</a>
 			</li>
 		</ul>
 	</nav>

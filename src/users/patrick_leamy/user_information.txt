@@ -1,5 +1,5 @@
 THE USER is Patrick Leamy (person):
-ATTRIBUTES: 53 years old, married to Nadia Leamy, lives in Calgary, Alberta, has three children: Keira, Kaylen, and Devin, owns a pet dog named Patches
+ATTRIBUTES: 53 years old, married to Nadia Leamy, lives in Calgary, Alberta, has three children: Keira, Kaylen, and Devin, owns a 10-year-old dog named Patches
 RELATIONSHIP TO THE USER: Patrick Leamy is the user
 
 NADIA LEAMY (person):
@@ -17,10 +17,6 @@ RELATIONSHIP TO USER: son of Patrick and Nadia Leamy
 DEVIN LEAMY (person):
 ATTRIBUTES: 20 years old, lives and works in New York, returning to the University of Waterloo on September 12, 2023, to continue his Computer Science degree
 RELATIONSHIP TO USER: son of Patrick and Nadia Leamy
-
-PATCHES (pet):
-ATTRIBUTES: 10-year-old dog
-RELATIONSHIP TO USER: owned by Patrick Leamy
 
 PNLEAMY HOLDINGS INC. (company):
 ATTRIBUTES: Incorporated in Alberta

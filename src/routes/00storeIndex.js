@@ -4,7 +4,7 @@
 import chatStore from './chatStore.svelte';
 import gripButtonStore from './gripButtonStore.svelte';
 import arrowButtonStore from './arrowButtonStore.svelte';
-import 
+import selectedGender from '$lib/settings.js';
 // ... any other stores
 
 export {
