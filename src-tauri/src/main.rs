@@ -9,6 +9,7 @@ use pyo3::types::{PyList};
 use std::thread;
 use std::env;
 
+extern crate keyring;
 use keyring::Keyring;
 
 
@@ -49,7 +50,7 @@ fn main() -> PyResult<()> {
 
         // Run the Tauri application in the main thread
         tauri::Builder::default()
-            .invoke_handler(tauri::generate_handler![send_prompt])
+            .invoke_handler(tauri::generate_handler![store_openai_key, get_openai_key, send_prompt])
             .run(tauri::generate_context!())
             .expect("error while running tauri application");
     
@@ -58,3 +59,28 @@ fn main() -> PyResult<()> {
     
         Ok(())
     }
+
+  
+    #[tauri::command]
+    fn store_openai_key(key: String) -> Result<(), String> {
+        let service = "ChatPerfect";
+        let username = "openai_key";
+        let keyring = Keyring::new(service, username);
+        keyring.set_password(&key).map_err(|e| e.to_string()) // Map KeyringError to String
+    }
+
+    #[tauri::command]
+    fn get_openai_key() -> Result<String, String> {
+        let service = "ChatPerfect";
+        let username = "openai_key";
+        let keyring = Keyring::new(service, username);
+        match keyring.get_password() {
+            Ok(key) => Ok(key),
+            Err(e) => Err(e.to_string()),
+    }
+}
+
+
+
+    
+    

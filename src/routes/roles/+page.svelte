@@ -6,7 +6,10 @@
 	import { fade } from "svelte/transition";
 	import { settings } from '$lib/settings.js';
 
+	import { invoke } from '@tauri-apps/api/tauri';
+
 	let set = {}; // Initialize local state
+	let openAiKey = '';
 
 	// Subscribe to Svelte store and update local state
 	settings.subscribe(value => {
@@ -16,15 +19,26 @@
 	onMount(() => {
   		const loadedSettings = loadSettings();
   		settings.set({
-    Gender: 'Argus',
-    Role: 'write',
-    CodingModel: 'GPT3.5',
-    WritingModel: 'GPT3.5',
-    TalkingModel: 'GPT3.5',
-	openAiKey: '',
-    ...loadedSettings
-  });
-});
+    		Gender: 'Argus',
+    		Role: 'write',
+    		CodingModel: 'GPT3.5',
+    		WritingModel: 'GPT3.5',
+    		TalkingModel: 'GPT3.5',
+    	...loadedSettings
+  		});
+
+	// Function to get OpenAI key
+	invoke('get_openai_key')
+		.then((key) => {
+		// Handle the received key
+		openAiKey = key;
+		})
+		.catch((error) => {
+		// Handle the error
+		console.error(`Error occurred: ${error}`);
+		});
+	
+	});
   
 function handleSettingChange(event, settingKey) {
   set[settingKey] = event.target.value;
@@ -57,11 +71,18 @@ function handleSettingChange(event, settingKey) {
 	  setSetting('TalkingModel', set.TalkingModel);
 	}
 
-	function handleOpenAiKeyChange(event) {
-  		set.openAiKey = event.target.value;
-  		// Call a Rust function to securely store the key using Keyring
-  		secureStoreKey(set.openAiKey);
-	}
+	//import { invoke } from '@tauri-apps/api/tauri';
+
+function handleOpenAiKeyChange(event) {
+  const openAiKey = event.target.value;
+  invoke('store_openai_key', { key: openAiKey })
+    .then(() => {
+      console.log("OpenAI key stored successfully.");
+    })
+    .catch((err) => {
+      console.error("Error storing OpenAI key:", err);
+    });
+}
 
 
 
@@ -139,7 +160,7 @@ function handleSettingChange(event, settingKey) {
 		  <li>
 			<div class="column1"><label for="openAiKey">OpenAi 🔑</label></div>
 			<div class="column2">
-			  <input type="password" placeholder="COPY then PASTE your key here" id="openAiKey" on:input={handleOpenAiKeyChange} />
+			  <input type="password" placeholder="COPY then PASTE your key here" id="openAiKey" bind:value={openAiKey} on:input={handleOpenAiKeyChange} />
 			</div>
 		  </li>
 
