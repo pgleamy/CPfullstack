@@ -97,7 +97,7 @@ function handleSettingChange(event, settingKey) {
 		  </li>
 
 		  <li>
-			  <div class="column1"><label for="codingmodel">Model - Coding:</label></div>
+			  <div class="column1"><label for="codingmodel">Coding:</label></div>
 			  <div class="column2">
 				<select bind:value={set.CodingModel} on:change={(e) => handleSettingChange(e, 'CodingModel')} id="codingmodel">
 					<option>GPT3.5</option>
@@ -107,7 +107,7 @@ function handleSettingChange(event, settingKey) {
 		  </li>
 
 		  <li>
-			  <div class="column1"><label for="writingmodel">Model - Writing:</label></div>
+			  <div class="column1"><label for="writingmodel">Writing:</label></div>
 			  <div class="column2">
 				<select bind:value={set.WritingModel} on:change={(e) => handleSettingChange(e, 'WritingModel')} id="writingmodel">
 					<option>GPT3.5</option>
@@ -117,7 +117,7 @@ function handleSettingChange(event, settingKey) {
 		  </li>
 
 		  <li>
-			<div class="column1"><label for="talkingmodel">Model - Talking:</label></div>
+			<div class="column1"><label for="talkingmodel">Talking:</label></div>
 			<div class="column2">
 				<select bind:value={set.TalkingModel} on:change={(e) => handleSettingChange(e, 'TalkingModel')} id="talkingmodel">
 					<option>GPT3.5</option>
@@ -145,7 +145,7 @@ function handleSettingChange(event, settingKey) {
   
 	  .settings-list li {
 		  display: grid; /* Use CSS Grid */
-		  grid-template-columns: 100px 130px; /* Define two columns with the specified widths */
+		  grid-template-columns: 55px 130px; /* Define two columns with the specified widths */
 		  align-items: center; /* Vertical alignment */
 		  margin-bottom: 8px;
 		  padding-left: 4px;
