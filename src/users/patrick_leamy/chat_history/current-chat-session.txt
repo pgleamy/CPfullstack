@@ -2830,3 +2830,7 @@ JARVIS: OK
 --> HUMAN: Hi Jarvis, Thanks so much for your response. I have been configuring the interface. This requires many restarts of the application for testing. Each restart causes you to respond to the last prompt I sent to you, despite having already replied to it many times before. I would like to prevent that from happening, but I am focused on the user interface and configuring Svelte stores. So until I tell you otherwise, it would be extremely helpful if you only reply with "OK" and absolutely nothing else, no commentary, nothing, until further notice. <--
 
 JARVIS: OK. I understand that you would like me to respond with "OK" and nothing else for now. I will respect your request and limit my responses to just "OK". If there's anything else you need assistance with, please let me know.
+
+--> HUMAN: Hi Jarvis, Thanks so much for your response. I have been configuring the interface. This requires many restarts of the application for testing. Each restart causes you to respond to the last prompt I sent to you, despite having already replied to it many times before. I would like to prevent that from happening, but I am focused on the user interface and configuring Svelte stores. So until I tell you otherwise, it would be extremely helpful if you only reply with "OK" and absolutely nothing else, no commentary, nothing, until further notice. <--
+
+JARVIS: OK.

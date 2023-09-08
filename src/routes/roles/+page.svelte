@@ -21,6 +21,7 @@
     CodingModel: 'GPT3.5',
     WritingModel: 'GPT3.5',
     TalkingModel: 'GPT3.5',
+	openAiKey: '',
     ...loadedSettings
   });
 });
@@ -57,6 +58,12 @@ function handleSettingChange(event, settingKey) {
 	}
 
 	$: backgroundImage = set.Gender === 'Argus' ? '../src/lib/images/ArgusSprint.jpg' : '../src/lib/images/IrisSprint.jpg';
+
+	function handleOpenAiKeyChange(event) {
+  		set.openAiKey = event.target.value;
+  		setSetting('openAiKey', set.openAiKey);
+	}
+
 
   </script>
   
@@ -126,6 +133,13 @@ function handleSettingChange(event, settingKey) {
 			</div>
 		  </li>
 
+		  <li>
+			<div class="column1"><label for="openAiKey">OpenAi 🔑</label></div>
+			<div class="column2">
+			  <input type="password" placeholder="COPY then PASTE your key here" id="openAiKey" bind:value={set.openAiKey} on:input={handleOpenAiKeyChange} />
+			</div>
+		  </li>
+
 	  </ul>
   </div>
   </div>
@@ -138,21 +152,21 @@ function handleSettingChange(event, settingKey) {
 		  position: absolute;
 		  left: 0;
 		  width: 100%;
-		  padding: 20px;
+		  padding: 10px;
 		  padding-top: 60px;
 		  font-family: system-ui, Arial, sans-serif;
 	  }
   
 	  .settings-list li {
 		  display: grid; /* Use CSS Grid */
-		  grid-template-columns: 55px 130px; /* Define two columns with the specified widths */
+		  grid-template-columns: 80px 150px; /* Define two columns with the specified widths */
 		  align-items: center; /* Vertical alignment */
 		  margin-bottom: 8px;
 		  padding-left: 4px;
 	  }
   
 	  .settings {
-		  font-size: 1.6em;
+		  font-size: 1.4em;
 		  font-weight: bold;
 		  text-align: left;
 		  padding-bottom: 0px;
@@ -168,7 +182,7 @@ function handleSettingChange(event, settingKey) {
 		  list-style: none;
 		  padding-left: 0;
 		  text-align: left;
-		  font-size: 0.8em;
+		  font-size: 0.9em;
 	  }
   
 	  label {
@@ -178,7 +192,7 @@ function handleSettingChange(event, settingKey) {
 	  }
   
 	  select {
-		  width: 60%;
+		  width: 45%;
 		  padding: 3px;
 		  border-radius: 5px;
 		  border: 1px solid #fe6a20;
@@ -214,6 +228,21 @@ function handleSettingChange(event, settingKey) {
     -0.8px 0.8px 0 #9e0000;
 }
 
+input[type="password"] {
+  width: 100%;
+  padding: 4px;
+  border-radius: 5px;
+  border: 1px solid #fe6a20;
+  background-color: #682525;
+  color: #ffffff;
+  outline: none;
+  font-size: 0.5em;
+  margin-left: 0px;
+}
+
+input[type="password"]::placeholder {
+  color: white;
+}
 
   </style>
   
