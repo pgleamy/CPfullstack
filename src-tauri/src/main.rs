@@ -9,6 +9,9 @@ use pyo3::types::{PyList};
 use std::thread;
 use std::env;
 
+use keyring::Keyring;
+
+
 fn main() -> PyResult<()> {
 
         let python_thread = thread::spawn(|| {

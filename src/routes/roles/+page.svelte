@@ -57,13 +57,15 @@ function handleSettingChange(event, settingKey) {
 	  setSetting('TalkingModel', set.TalkingModel);
 	}
 
-	$: backgroundImage = set.Gender === 'Argus' ? '../src/lib/images/ArgusSprint.jpg' : '../src/lib/images/IrisSprint.jpg';
-
 	function handleOpenAiKeyChange(event) {
   		set.openAiKey = event.target.value;
-  		setSetting('openAiKey', set.openAiKey);
+  		// Call a Rust function to securely store the key using Keyring
+  		secureStoreKey(set.openAiKey);
 	}
 
+
+
+	$: backgroundImage = set.Gender === 'Argus' ? '../src/lib/images/ArgusSprint.jpg' : '../src/lib/images/IrisSprint.jpg';
 
   </script>
   
@@ -75,8 +77,9 @@ function handleSettingChange(event, settingKey) {
   <span class="halo-text">
 
   <div transition:fade="{{ duration: 200, delay: 30 }}">
-  <div class="background-wrapper" style="background-image: url({backgroundImage});"> 
 
+  <div class="background-wrapper"> 
+	<div class="background" style="background-image: url({backgroundImage});"></div>
   <div class="settings-page">
 	  <h1 class="settings">Settings</h1>
   
@@ -136,7 +139,7 @@ function handleSettingChange(event, settingKey) {
 		  <li>
 			<div class="column1"><label for="openAiKey">OpenAi 🔑</label></div>
 			<div class="column2">
-			  <input type="password" placeholder="COPY then PASTE your key here" id="openAiKey" bind:value={set.openAiKey} on:input={handleOpenAiKeyChange} />
+			  <input type="password" placeholder="COPY then PASTE your key here" id="openAiKey" on:input={handleOpenAiKeyChange} />
 			</div>
 		  </li>
 
@@ -215,6 +218,18 @@ function handleSettingChange(event, settingKey) {
     background-position: center; /* Center the image */
 	transition: background-image 0.8s ease-in-out;
   }
+
+  .background {
+  position: fixed;  /* Fixed or absolute based on your need */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;  /* Ensures the background stays behind the content */
+  opacity: 0.73;  /* Set your desired opacity level */
+  background-size: cover;
+  background-position: center;
+}
 
   .halo-text {
   text-shadow: 

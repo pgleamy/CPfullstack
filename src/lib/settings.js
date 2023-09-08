@@ -26,7 +26,6 @@ const loadSettings = () => {
     CodingModel: getSetting('CodingModel'), // Default value
     WritingModel: getSetting('WritingModel'), // Default value
     TalkingModel: getSetting('TalkingModel'), // Default value
-    openAiKey: getSetting('openAiKey') // Default value
   };
 };
 
@@ -44,8 +43,7 @@ export const settings = writable({
 	  Role: 'write',
 	  CodingModel: 'GPT3.5',
 	  WritingModel: 'GPT3.5',
-	  TalkingModel: 'GPT3.5',
-    openAiKey: ''
+	  TalkingModel: 'GPT3.5'
 	},
 	...loadSettings()
   });
