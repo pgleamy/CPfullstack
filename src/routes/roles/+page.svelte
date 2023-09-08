@@ -228,7 +228,7 @@ function handleSettingChange(event, settingKey) {
   z-index: 0;  /* Ensures the background stays behind the content */
   opacity: 0.73;  /* Set your desired opacity level */
   background-size: cover;
-  background-position: center;
+  background-position: top;
 }
 
   .halo-text {
