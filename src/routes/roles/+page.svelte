@@ -55,6 +55,9 @@ function handleSettingChange(event, settingKey) {
 	  set.TalkingModel = event.target.value;
 	  setSetting('TalkingModel', set.TalkingModel);
 	}
+
+	$: backgroundImage = set.Gender === 'Argus' ? '../src/lib/images/ArgusSprint.jpg' : '../src/lib/images/IrisSprint.jpg';
+
   </script>
   
   <svelte:head>
@@ -62,7 +65,11 @@ function handleSettingChange(event, settingKey) {
 	  <meta name="description" content="Select LLMs, role and parameters" />
   </svelte:head>
   
+  <span class="halo-text">
+
   <div transition:fade="{{ duration: 200, delay: 30 }}">
+  <div class="background-wrapper" style="background-image: url({backgroundImage});"> 
+
   <div class="settings-page">
 	  <h1 class="settings">Settings</h1>
   
@@ -122,6 +129,9 @@ function handleSettingChange(event, settingKey) {
 	  </ul>
   </div>
   </div>
+  </div>
+
+  </span>
   
   <style>
 	  .settings-page {
@@ -129,48 +139,82 @@ function handleSettingChange(event, settingKey) {
 		  left: 0;
 		  width: 100%;
 		  padding: 20px;
-		  padding-top: 0px;
+		  padding-top: 60px;
 		  font-family: system-ui, Arial, sans-serif;
 	  }
   
 	  .settings-list li {
 		  display: grid; /* Use CSS Grid */
-		  grid-template-columns: 200px 120px; /* Define two columns with the specified widths */
+		  grid-template-columns: 100px 130px; /* Define two columns with the specified widths */
 		  align-items: center; /* Vertical alignment */
-		  margin-bottom: 20px;
-		  padding-left: 10px;
+		  margin-bottom: 8px;
+		  padding-left: 4px;
 	  }
   
 	  .settings {
-		  font-size: 1.3em;
+		  font-size: 1.6em;
 		  font-weight: bold;
 		  text-align: left;
-		  padding-bottom: 10px;
+		  padding-bottom: 0px;
 		  padding-top: 0px;
+		  padding-left: 0px;
 	  }
   
 	  h1 {
-		  color: #2066fe;
+		  color: hsl(13, 100%, 85%);
 	  }
   
 	  .settings-list {
 		  list-style: none;
 		  padding-left: 0;
 		  text-align: left;
+		  font-size: 0.8em;
 	  }
   
 	  label {
-		  font-weight: bold;
+		  font-weight: default;
 		  text-align: left;
+		  color: #ffffff;
 	  }
   
 	  select {
-		  width: 120%;
-		  padding: 4px;
+		  width: 60%;
+		  padding: 3px;
 		  border-radius: 5px;
-		  border: 3px solid #2066fe;
+		  border: 1px solid #fe6a20;
+		  background-color: #682525;
 		  text-align: left;
+		  font-size: 0.8em;
+		  color: #ffffff;
+		  outline: none;
 	  }
+
+	  .background-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1; /* Place it below other elements */
+    opacity: 1;
+    background-size: cover; /* Cover the entire div */
+    background-position: center; /* Center the image */
+	transition: background-image 0.8s ease-in-out;
+  }
+
+  .halo-text {
+  text-shadow: 
+    0.8px 0 0 #9e0000, 
+    -0.8px 0 0 #9e0000, 
+    0 0.8px 0 #9e0000, 
+    0 -0.8px 0 #9e0000,
+    0.8px 0.8px #9e0000,
+    -0.8px -0.8px 0 #9e0000,
+    0.8px -0.8px 0 #9e0000,
+    -0.8px 0.8px 0 #9e0000;
+}
+
+
   </style>
   
 

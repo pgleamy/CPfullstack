@@ -11,7 +11,7 @@
   		updateSettings(initialSettings);
 	});
 	
-	$: logo = $settings.Gender === 'Argus' ? 'src/lib/images/Argus_logo.jpg' : 'src/lib/images/Iris_logo.jpg';
+	$: logo = $settings.Gender === 'Argus' ? 'src/lib/images/Argus_logo_clear.png' : 'src/lib/images/Iris_logo_clear.png';
 	$: name = $settings.Gender === 'Argus' ? 'Argus' : 'Iris';
 	$: roleClass = $settings.Role === 'Write' ? 'write' : $settings.Role === 'Code' ? 'code' : 'talk';
 </script>
@@ -20,7 +20,7 @@
 	
 	<div class="corner">
 		<a>
-			<img src= {logo} alt="" /> <!-- Updated logo src -->
+			<img src = {logo} alt="" /> <!-- dynamic logo src -->
 		</a>
 	</div>
 	
@@ -87,7 +87,7 @@
 		display: flex;
 		justify-content: center;
         padding-left: 0px;
-		--background: rgb(0, 0, 0);
+		background: transparent;
 	}
 
 	ul {
