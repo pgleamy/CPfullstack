@@ -86,7 +86,7 @@ function handleSettingChange(event, settingKey) {
 	  <ul class="settings-list">
 		
 		  <li>
-			  <div class="column1"><label for="gender">Gender:</label></div>
+			  <div class="column1"><label for="gender">Gender ♂️♀️</label></div>
 			  <div class="column2">
 				<select bind:value={set.Gender} on:change={(e) => handleSettingChange(e, 'Gender')} id="gender">
 					<option value="Argus">Argus</option>
@@ -96,7 +96,7 @@ function handleSettingChange(event, settingKey) {
 		  </li>
 
 		  <li>
-			  <div class="column1"><label for="role">Role:</label></div>
+			  <div class="column1"><label for="role">Role 🛠️ </label></div>
 			  <div class="column2">
 				<select bind:value={set.Role} on:change={(e) => handleSettingChange(e, 'Role')} id="role">
 					<option>Code</option>
@@ -107,7 +107,7 @@ function handleSettingChange(event, settingKey) {
 		  </li>
 
 		  <li>
-			  <div class="column1"><label for="codingmodel">Coding:</label></div>
+			  <div class="column1"><label for="codingmodel">Coding 💻</label></div>
 			  <div class="column2">
 				<select bind:value={set.CodingModel} on:change={(e) => handleSettingChange(e, 'CodingModel')} id="codingmodel">
 					<option>GPT3.5</option>
@@ -117,7 +117,7 @@ function handleSettingChange(event, settingKey) {
 		  </li>
 
 		  <li>
-			  <div class="column1"><label for="writingmodel">Writing:</label></div>
+			  <div class="column1"><label for="writingmodel">Writing 🪶</label></div>
 			  <div class="column2">
 				<select bind:value={set.WritingModel} on:change={(e) => handleSettingChange(e, 'WritingModel')} id="writingmodel">
 					<option>GPT3.5</option>
@@ -127,7 +127,7 @@ function handleSettingChange(event, settingKey) {
 		  </li>
 
 		  <li>
-			<div class="column1"><label for="talkingmodel">Talking:</label></div>
+			<div class="column1"><label for="talkingmodel">Talking 😏</label></div>
 			<div class="column2">
 				<select bind:value={set.TalkingModel} on:change={(e) => handleSettingChange(e, 'TalkingModel')} id="talkingmodel">
 					<option>GPT3.5</option>
