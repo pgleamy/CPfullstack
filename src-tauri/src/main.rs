@@ -77,8 +77,8 @@ fn main() -> PyResult<()> {
         match keyring.get_password() {
             Ok(key) => Ok(key),
             Err(e) => Err(e.to_string()),
+        }
     }
-}
 
 
 
