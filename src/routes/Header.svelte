@@ -14,6 +14,8 @@
 	$: logo = $settings.Gender === 'Argus' ? 'src/lib/images/Argus_logo_clear.png' : 'src/lib/images/Iris_logo_clear.png';
 	$: name = $settings.Gender === 'Argus' ? 'Argus' : 'Iris';
 	$: roleClass = $settings.Role === 'Write' ? 'write' : $settings.Role === 'Code' ? 'code' : 'talk';
+
+	
 </script>
 
 <header > <!-- Add the transition directive here -->
@@ -81,6 +83,7 @@
 		object-fit: fill;
         padding-right: 54px;
         padding-top: 30px;	
+  		opacity: 1;
 	}
 
 	nav {

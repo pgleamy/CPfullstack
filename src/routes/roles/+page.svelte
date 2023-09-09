@@ -247,9 +247,10 @@ function handleOpenAiKeyChange(event) {
   width: 100%;
   height: 100%;
   z-index: 0;  /* Ensures the background stays behind the content */
-  opacity: 0.73;  /* Set your desired opacity level */
+  opacity: 0.35;  /* Set your desired opacity level */
   background-size: cover;
   background-position: top;
+  transition: background-image 0.8s ease-in-out;
 }
 
   .halo-text {
