@@ -1,9 +1,6 @@
 <script>
     //@ts-nocheck
     import { onMount, onDestroy } from "svelte";
-    import {writable} from 'svelte/store';
-    // reactive state management for scrollsearch component
-    import {scrollStore} from '$lib/scrollStore.js'; 
 
     let isDragging = false;
     let circleY  = 0; // Y-coordinate of the circle
@@ -131,7 +128,7 @@ function updateArrowColor() {
           <!-- Third line -->
           <rect x="10" y="{circleY + 8}" rx="3" ry="3" width="20" height="4" fill="{circleColor}" />
         </g>
-        <!-- New Group for arrow -->
+        <!-- New Group for bell and arrow -->
         <g id="new-message-indicator" role="presentation" on:click={handleArrowClick}> /* This sends a dispatch to parent to scroll to bottom of conversation */
           <!-- Down arrow path -->
           <path bind:this={arrowPath} id="arrow-path" d="M 7 0 L 23 0 L 15 12 Z" stroke="green" stroke-width="2" fill="none" stroke-linejoin="round" transform="translate(5, {circleY + 18})" />

@@ -3,7 +3,7 @@
     import { onMount, onDestroy } from "svelte";
     import {writable} from 'svelte/store';
     // reactive state management for scrollsearch component
-    import {scrollStore} from '$lib/scrollStore.js'; 
+    import {scrollStore} from './scrollStore.js'; 
 
     let isDragging = false;
     let circleY  = 0; // Y-coordinate of the circle

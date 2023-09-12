@@ -3,11 +3,8 @@
 
     export let userName; // This will be populated from the user's profile
     export let messageText; // This will be populated from the array   
-    export let timestampStart; // will hold the start timestamp
     export let timestampEnd; // will hold the end timestamp
-    export let llmName; 
-    export let role; 
-  
+   
     function resizeTextarea(event) {
       event.target.style.height = 'auto'; // Reset height
       event.target.style.height = event.target.scrollHeight + 'px'; // Set height based on content
@@ -22,7 +19,7 @@
     <div id="message-input">
       <div id="title" contenteditable="false">
         <span>{userName}</span>
-        <span id="timestamp"> ({timestampStart} - {timestampEnd}) </span>
+        <span id="timestamp"> {timestampEnd} </span>
       </div>
       <textarea readonly>{messageText}</textarea>  <!-- Make it read-only -->
     </div>

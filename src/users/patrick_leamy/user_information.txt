@@ -2,19 +2,19 @@ THE USER is Patrick Leamy (person):
 ATTRIBUTES: 53 years old, married to Nadia Leamy, lives in Calgary, Alberta, has three children: Keira, Kaylen, and Devin
 RELATIONSHIP TO THE USER: Patrick Leamy is the user
 
-Nadia Leamy (person):
+NADIA LEAMY (person):
 ATTRIBUTES: 53 years old, birthday on July 26, 1970
 RELATIONSHIP TO THE USER: married to Patrick Leamy
 
-Keira Leamy (person):
+KEIRA LEAMY (person):
 ATTRIBUTES: 16 years old, enjoys Tai Kickboxing and attends classes twice a week
 RELATIONSHIP TO USER: daughter of Patrick and Nadia Leamy
 
-Kaylen Leamy (person):
+KAYLEN LEAMY (person):
 ATTRIBUTES: 22 years old, lives with his girlfriend Sammy in North Vancouver, British Columbia
 RELATIONSHIP TO USER: son of Patrick and Nadia Leamy
 
-Devin Leamy (person):
+DEVIN LEAMY (person):
 ATTRIBUTES: 20 years old, lives and works in New York, returning to the University of Waterloo on September 12, 2023, to continue his Computer Science degree
 RELATIONSHIP TO USER: son of Patrick and Nadia Leamy
 

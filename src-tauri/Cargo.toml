@@ -21,6 +21,7 @@ tauri = { version = "1.4.0", features = [] }
 syntect = "5.1.0"
 sqlite = "0.31.1"
 keyring = "0.10.0" #check for the latest version
+notify = "6.1.1" 
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem and the built-in dev server is disabled.

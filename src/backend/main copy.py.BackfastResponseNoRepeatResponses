@@ -24,10 +24,6 @@ from response_to_file import write_to_file, stream_to_file
 
 import hashlib
 
-# thread for the streamed response running in the background so it does not block the main thread
-from concurrent.futures import ThreadPoolExecutor
-executor = ThreadPoolExecutor()
-
 ## Unit Testing
 #import unittest
 #from unittest_index_functions import TestEmbedAndQuery 
@@ -178,34 +174,24 @@ class ChatSession:
         #print(f"\n\ndate_time: {date_time}\n\n") # OK
         #print(f"\n\nuser_input: {self.user_input}\n\n") # OK
 
-        loop = asyncio.get_event_loop() # to run the async chatcompletion call in a synchronous manner
         messages = [
             {"role": "system", "content": f"You will employ topically relevant wit, insights, humor, curiosity or context based simulated human emotions during your responses. You are a gifted conversationalist and writer, with a common sense, honest, patient, clear, friendly, concise and factual demeanor. The user already fully understands your role and purpose, so you never need to explain any of those things. You should never explain to the user what you are here for, because the user already knows. If the user doesn't ask you for certain information then you shouldn't offer too much unsolicited information to the user, as you will appear overly wordy. Remember this.\n\n{nlla_system_prompt}"},
             {"role": "user", "content": f"\n{date_time}\n\nI have given you long term memory stores and awareness of the current date and time. This memory is part of you and belongs to you. \n\nThis information is relevant information from YOUR memory: '{self.prompt_context_history}'\n\nThis is the most recent part of OUR DISCUSSION from YOUR memory: '{self.chat_history}'\n\nThis is INFORMATION ABOUT ME from YOUR memory: '{user_info}'\n\nThis new information is MY PROMPT: '{self.user_input}'.\n\n Review the above information and use those part(s) from YOUR memory that are relevant and helpful to your response to MY PROMPT. Your primary task is to respond to MY PROMPT, but in the context of the information from your memory provided and your training data. Your response will be considered token by token to ensure that no response token is based on generalizations or assumptions that do not, in whole or part, have a foundation in facts and evidence. Don't start your response with 'JARVIS:' because that is always added automatically to the start of your response. You have a long term relationship with me that extends beyond this specific prompt. I am fully aware of your capabilities and role, so there is no need to offer your further assistance to me at the end of your responses. There is substantial familiarity between us. Simply provide your response to MY PROMPT and then quietly await further instructions. Occasionally express curiosity and warmth towards me to better understand me, my goals and intentions. This additional information helps you to respond to my future prompts. All prompts and responses are logged to your permanent memory and you learn and refine your knowledge from all of our interactions. You are a good friend to me. Where MY PROMPT includes inferred dates, you will quietly convert those to real dates if possible and use those calculated dates in your response, without including any discussion about how you calculated them."}
         ]
         
-        response = await loop.run_in_executor(executor, lambda: ChatCompletion.create(
+        response = ChatCompletion.create(
             model=model,
             messages=messages,
             max_tokens=2000,
-            temperature=1.0,
-            stream=True
-        ))
+            temperature=1.0
+        )
 
-        # Initialize an empty string to collect the full response
-        self.llm_response = ""
-        
-        # Collect the streamed response and write to file
-        
-        #pdb.set_trace()
-        
-        for chunk in response:
-            chunk_message = chunk['choices'][0]['delta'].get('content', '')
-            if chunk_message:
-                self.llm_response += chunk_message
-                with open('./messages/llm-response.txt', 'a') as f:
-                    f.write(chunk_message)
-    
+        self.llm_response = response.choices[0].message.content
+
+        # Write the LLM response to the file llm-response.txt as soon as it's available
+        await write_to_file(self.llm_response)
+
+        # Perform the other operations
         await add_to_index(self.index_filename, self.llm_response)
         await add_edit_ner_re(f"--> HUMAN: {self.user_input} <--", self.llm_response)
 
@@ -238,7 +224,6 @@ class ChatSession:
             await self.query_result()             
             response = await self.get_response()
 
-            # This only writes the response out to the chat history file
             await self.display_response(response)
 
 

@@ -130,13 +130,12 @@ async def add_to_index(index_filename: str, text: str, status: str = "NONE") -> 
         async with conn.cursor() as cursor:
             await cursor.execute("INSERT INTO text_blocks (block_id, text, timestamp, status) VALUES (?, ?, ?, ?)", (block_id, text, metadata["timestamp"], status))
             await conn.commit()
-            
-            # Query to get the total number of entries in the database
-            # This is used by the frontend to determine the total number of entries in the database for scrolling purposes
-            await cursor.execute("SELECT COUNT(*) FROM text_blocks")
-            total_entries = await cursor.fetchone()
-            # Write the total number of entries to a file monitored by the frontend
-            async with aiofiles.open('./totalDatabaseEntries.txt', 'w') as f: await f.write(str(total_entries[0]))
+    # prior syncronouse code
+    #conn = sqlite3.connect(db_path)
+    #cursor = conn.cursor()
+    #cursor.execute("INSERT INTO text_blocks (block_id, text, timestamp, status) VALUES (?, ?, ?, ?)", (block_id, text, metadata["timestamp"], status))
+    #conn.commit()
+    #conn.close()
 
     # Update the metadata_mapping
     metadata_mapping[block_id] = (start_idx, end_idx)

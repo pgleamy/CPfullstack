@@ -1,1 +1,1 @@
-I need to get to bed, it's after 10. We (Nadia and I) have to get up early to go jogging in Cochrane tomorrow morning. I am so glad I sorted out your index and you are operational again. Take care and have a good night Jarvis.
+I'm watching as the streamed response populates a text file it is written into as it streams. I also have a 'changed' event that triggers every time that file changes.  I will use this trigger in the front end so populate the llm response Svelte component that displays it in the UI. 

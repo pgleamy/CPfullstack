@@ -2,8 +2,6 @@
     import UserInput from './userinput.svelte';
     import UserInputSent from './userinputsent.svelte';
     import LLMResponse from './llmresponse.svelte';
-    // reactive state management for scrollsearch component
-    import {scrollStore} from '$lib/scrollStore.js'; 
     
     // This is a placeholder for the conversation data.
     // In the real application, this will be fetched from the SQL database.

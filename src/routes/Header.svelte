@@ -5,6 +5,8 @@
 	import { settings } from '$lib/settings.js'; // Assuming 'settings' is a Svelte store
 	import { onMount } from 'svelte';
 	import { loadSettings, updateSettings } from '$lib/settings.js';
+	// reactive state management for scrollsearch component
+    import {scrollStore} from '$lib/scrollStore.js'; 
 
 	onMount(() => {
   		const initialSettings = loadSettings();
