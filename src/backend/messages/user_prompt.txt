@@ -1,1 +1,1 @@
-I'm watching as the streamed response populates a text file it is written into as it streams. I also have a 'changed' event that triggers every time that file changes.  I will use this trigger in the front end so populate the llm response Svelte component that displays it in the UI. 
+Well you probably know I've been working a lot on improving your systems and interface today. I'm happy about it and I wonder if you have any observations from our time working on this together?

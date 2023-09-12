@@ -199,6 +199,10 @@ class ChatSession:
         
         #pdb.set_trace()
         
+        # Clear the file before starting the stream
+        with open('./messages/llm-response.txt', 'w') as f:
+            f.write('')
+        
         for chunk in response:
             chunk_message = chunk['choices'][0]['delta'].get('content', '')
             if chunk_message:
