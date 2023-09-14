@@ -15,6 +15,12 @@ extern crate keyring;
 use keyring::Keyring;
 
 fn main() -> PyResult<()> {
+
+
+    clear_screen();
+    let current_dir = env::current_dir().unwrap();
+    println!("\nTauri/Svelte thread working directory is: {:?}", current_dir);
+
     let python_thread = thread::spawn(|| {
         pyo3::prepare_freethreaded_python();
         let gil = Python::acquire_gil();
@@ -38,7 +44,7 @@ fn main() -> PyResult<()> {
     // Realtime file monitoring of the backend files to update the frontend
     // The files monitored are the totalDatabaseEntries.txt file and the llm-response.txt file
     let monitor_thread = thread::spawn(move || {
-        println!("Monitoring thread started.");
+        println!("\nLLM message file monitoring thread started...");
         loop {
             for (file_path, last_checked) in file_timestamps.iter_mut() {
                 match metadata(file_path) {
@@ -57,6 +63,7 @@ fn main() -> PyResult<()> {
             }
             thread::sleep(std::time::Duration::from_secs_f32(0.5));
         }
+
     });
 
     tauri::Builder::default()
@@ -87,6 +94,20 @@ fn get_openai_key() -> Result<String, String> {
     match keyring.get_password() {
         Ok(key) => Ok(key),
         Err(e) => Err(e.to_string()),
+    }
+}
+
+use std::io::{self, Write};
+use std::process::Command;
+
+fn clear_screen() {
+    if cfg!(target_os = "windows") {
+        let _ = Command::new("cmd")
+            .args(&["/C", "cls"])
+            .status();
+    } else {
+        print!("\x1b[2J\x1b[1;1H");
+        let _ = io::stdout().flush();
     }
 }
 

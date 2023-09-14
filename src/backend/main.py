@@ -248,9 +248,9 @@ class ChatSession:
 
 async def main():
     
-    print("\n\nChat Engine running. Waiting for prompt...\n")
+    print("\nChat Engine thread running. Waiting for prompt...")
     current_working_directory = os.getcwd()
-    print(f"Python thread working directory is: {current_working_directory}\n\n")
+    print(f"\nChat engine thread working directory is: {current_working_directory}")
     
     ### need to add capacity for different users, which is already supported under the data directory. It currently
     ### defaults to users/patrick_leamy user location.
