@@ -47,55 +47,37 @@
 
     const unsubscribe = scrollStore.subscribe(value => {
 
-      console.log("store changed");  // This line will log the message when the store changes
-  // Logging gripPosition
-  console.log("Updated gripPosition:", value.gripPosition);
-  gripPosition = value.gripPosition;
+      gripPosition = value.gripPosition;
 
-  // Logging downArrow properties
-  console.log("Updated downArrow.isVisible:", value.downArrow.isVisible);
-  console.log("Updated downArrow.isThrobbing:", value.downArrow.isThrobbing);
-  downArrow = {
-    isVisible: value.downArrow.isVisible,
-    isThrobbing: value.downArrow.isThrobbing
-  };
+      downArrow = {
+        isVisible: value.downArrow.isVisible,
+        isThrobbing: value.downArrow.isThrobbing
+      };
 
-  // Logging upArrow properties
-  console.log("Updated upArrow.isVisible:", value.upArrow.isVisible);
-  console.log("Updated upArrow.isThrobbing:", value.upArrow.isThrobbing);
-  upArrow = {
-    isVisible: value.upArrow.isVisible,
-    isThrobbing: value.upArrow.isThrobbing
-  };
+      upArrow = {
+        isVisible: value.upArrow.isVisible,
+        isThrobbing: value.upArrow.isThrobbing
+      };
 
-  // Logging searchModal properties
-  console.log("Updated searchModal.isOpen:", value.searchModal.isOpen);
-  console.log("Updated searchModal.query:", value.searchModal.query);
-  searchModal = {
-    isOpen: value.searchModal.isOpen,
-    query: value.searchModal.query
-  };
+      searchModal = {
+        isOpen: value.searchModal.isOpen,
+        query: value.searchModal.query
+      };
 
-  // Logging markingSystem properties
-  console.log("Updated markingSystem.hits:", value.markingSystem.hits);
-  console.log("Updated markingSystem.consolidatedHits:", value.markingSystem.consolidatedHits);
-  markingSystem = {
-    hits: value.markingSystem.hits,
-    consolidatedHits: value.markingSystem.consolidatedHits
-  };
+      markingSystem = {
+        hits: value.markingSystem.hits,
+        consolidatedHits: value.markingSystem.consolidatedHits
+      };
 
-  // Logging totalMessages
-  console.log("Updated totalMessages:", value.totalMessages);
-  totalMessages = value.totalMessages;
-});
+    totalMessages = value.totalMessages;
+    });
 
-
-  // Cleanup function
-  return () => {
-    clearInterval(updateDownArrowColorInterval);
-    window.removeEventListener('resize', setInitialGripPosition);
-    unsubscribe();  // Unsubscribe from the store
-  };
+    // Cleanup function
+    return () => {
+      clearInterval(updateDownArrowColorInterval);
+      window.removeEventListener('resize', setInitialGripPosition);
+      unsubscribe();  // Unsubscribe from the store
+    };
 
 });
 
@@ -127,7 +109,7 @@
       const upperBound = container.clientHeight - radius - bottomPadding;
       gripY = Math.min(Math.max(lowerBound, offsetY), upperBound);
       // Update downArrowIsVisible
-      downArrowIsVisible = gripY !== upperBound;  // Renamed from isDownArrowVisible
+      downArrowIsVisible = gripY !== upperBound;  
     }
   }
 

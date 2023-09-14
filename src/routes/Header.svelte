@@ -23,9 +23,9 @@
 <header > <!-- Add the transition directive here -->
 	
 	<div class="corner">
-		<a>
+		<div>
 			<img src = {logo} alt="" /> <!-- dynamic logo src -->
-		</a>
+		</div>
 	</div>
 	
 	<nav>
@@ -64,27 +64,21 @@
     }
 
 	.corner {
-		width: 3em;
-		height: 3em;
-		padding-left: 0;
-		padding-top: 0;
-	}
-
-	.corner a {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		width: 100%;
-		height: 100%;
-		overflow: visible;
+		width: 3.5em;
+		height: 3.6em;
+		padding-left: 0;
+		padding-top: 0;		
 	}
 
 	.corner img {
-		width: 5em;
+		width: 4.3em;
 		height: 5em;
 		object-fit: fill;
-        padding-right: 54px;
-        padding-top: 30px;	
+        padding-right: 56px;
+        padding-top: 26px;	
   		opacity: 1;
 	}
 
