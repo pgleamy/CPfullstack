@@ -7,7 +7,7 @@ ATTRIBUTES: 53 years old, birthday on July 26, 1970
 RELATIONSHIP TO THE USER: married to Patrick Leamy
 
 KEIRA LEAMY (person):
-ATTRIBUTES: 16 years old, enjoys Tai Kickboxing and attends classes twice a week
+ATTRIBUTES: 15 years old, enjoys Tai Kickboxing and attends classes twice a week
 RELATIONSHIP TO USER: daughter of Patrick and Nadia Leamy
 
 KAYLEN LEAMY (person):

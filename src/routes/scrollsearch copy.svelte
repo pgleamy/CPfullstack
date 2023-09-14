@@ -27,22 +27,22 @@
     });
   
     function startDrag(e) {
-  isDragging = true;
-  circleColor = "#00FF00"; // Brighter when dragging
-  document.body.style.userSelect = "none"; // Disable text selection
-  document.body.style.cursor = "none"; // Hide the cursor
-  window.addEventListener('mousemove', drag);
-  window.addEventListener('mouseup', stopDrag);
-}
+      isDragging = true;
+      circleColor = "#00FF00"; // Brighter when dragging
+      document.body.style.userSelect = "none"; // Disable text selection
+      document.body.style.cursor = "none"; // Hide the cursor
+      window.addEventListener('mousemove', drag);
+      window.addEventListener('mouseup', stopDrag);
+    }
 
-function stopDrag(e) {
-  isDragging = false;
-  circleColor = "#008000"; // Reset color
-  document.body.style.userSelect = "auto"; // Re-enable text selection
-  document.body.style.cursor = "auto"; // Show the cursor
-  window.removeEventListener('mousemove', drag);
-  window.removeEventListener('mouseup', stopDrag);
-}
+    function stopDrag(e) {
+      isDragging = false;
+      circleColor = "#008000"; // Reset color
+      document.body.style.userSelect = "auto"; // Re-enable text selection
+      document.body.style.cursor = "auto"; // Show the cursor
+      window.removeEventListener('mousemove', drag);
+      window.removeEventListener('mouseup', stopDrag);
+    }
 
 
   

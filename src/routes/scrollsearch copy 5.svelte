@@ -3,7 +3,7 @@
   import { onMount, onDestroy } from "svelte";
   import { writable } from 'svelte/store';
   import { scrollStore } from '$lib/scrollStore.js';
-  import { setInLocalStorage, get, load } from '$lib/scrollStore.js';
+  import { set, get, load } from '$lib/scrollStore.js';
   import { createEventDispatcher } from 'svelte';
 
   let isDragging = false;
@@ -20,12 +20,6 @@
 
   let upArrowIsVisible = false;  // Renamed from isUpArrowVisible
   let downArrowIsVisible = false;  // Renamed from isDownArrowVisible
-  let gripPosition;
-  let downArrow = { isVisible: false, isThrobbing: false };
-  let upArrow = { isVisible: false, isThrobbing: false };
-  let searchModal = { isOpen: false, query: "" };
-  let markingSystem = { hits: [], consolidatedHits: [] };
-  let totalMessages = 0;
 
   onDestroy(() => {
     clearInterval(updateDownArrowColorInterval);
@@ -40,46 +34,10 @@
   window.addEventListener('resize', setInitialGripPosition);
 
   onMount(() => {
-
     setInitialGripPosition();
     window.addEventListener('resize', setInitialGripPosition);
     updateDownArrowColorInterval = setInterval(updateArrowColor, stepInterval);
-
-    const unsubscribe = scrollStore.subscribe(value => {
-      gripPosition = value.gripPosition;
-      
-      downArrow = {
-        isVisible: value.downArrow.isVisible,
-        isThrobbing: value.downArrow.isThrobbing
-      };
-      
-      upArrow = {
-        isVisible: value.upArrow.isVisible,
-        isThrobbing: value.upArrow.isThrobbing
-      };
-      
-      searchModal = {
-        isOpen: value.searchModal.isOpen,
-        query: value.searchModal.query
-      };
-      
-      markingSystem = {
-        hits: value.markingSystem.hits,
-        consolidatedHits: value.markingSystem.consolidatedHits
-      };
-      
-      totalMessages = value.totalMessages;
-
-    });
-
-  // Cleanup function
-  return () => {
-    clearInterval(updateDownArrowColorInterval);
-    window.removeEventListener('resize', setInitialGripPosition);
-    unsubscribe();  // Unsubscribe from the store
-  };
-
-});
+  });
 
   function startDrag(e) {
     isDragging = true;
@@ -115,6 +73,7 @@
 
   function handleDownArrowClick() {
     console.log("Down arrow clicked");
+    dispatch('scrollToLatest');
   }
 
   let isArrowVisible = true;

@@ -1,42 +1,80 @@
-//@ts-nocheck
+// $lib/scrollStore.js
+// @ts-nocheck
 
 import { writable } from 'svelte/store';
 
-function persistentStore(key, value) {
-  const storedValue = localStorage.getItem(key);
-  const initial = storedValue ? JSON.parse(storedValue) : value;
-  const store = writable(initial);
+// Function to set a setting in Local Storage
+const setInLocalStorage = (key, value) => {
+  localStorage.setItem(key, value);
+};
 
-  store.subscribe(($value) => {
-    localStorage.setItem(key, JSON.stringify($value));
-  });
+// Function to get a setting from Local Storage
+const get = (key) => {
+  return localStorage.getItem(key) || null;
+};
 
-  return store;
+// Function to remove a setting from Local Storage
+const remove = (key) => {
+  localStorage.removeItem(key);
+};
+
+// Function to load all settings into an object
+const load = () => {
+  return {
+    gripPosition: parseFloat(get('gripPosition')) || 0,
+    downArrow: {
+      isVisible: JSON.parse(get('downArrow_isVisible')) || false,
+      isThrobbing: JSON.parse(get('downArrow_isThrobbing')) || false,
+    },
+    upArrow: {
+      isVisible: JSON.parse(get('upArrow_isVisible')) || true,
+      isThrobbing: JSON.parse(get('upArrow_isThrobbing')) || false,
+    },
+    searchModal: {
+      isOpen: JSON.parse(get('searchModal_isOpen')) || false,
+      query: get('searchModal_query') || "",
+    },
+    markingSystem: {
+      hits: JSON.parse(get('markingSystem_hits')) || [],
+      consolidatedHits: JSON.parse(get('markingSystem_consolidatedHits')) || [],
+    },
+    totalMessages: parseInt(get('totalMessages')) || 0,
+  };
+};
+
+// Function to save all settings from an object
+const save = (settings) => {
+  for (const [key, value] of Object.entries(settings)) {
+    if (typeof value === 'object') {
+      for (const [subKey, subValue] of Object.entries(value)) {
+        setInLocalStorage(`${key}_${subKey}`, JSON.stringify(subValue));
+      }
+    } else {
+      setInLocalStorage(key, value);
+    }
+  }
+};
+
+// Initialize the settings store with either saved settings or default values
+export const scrollStore = writable({
+  ...load()
+});
+
+// Subscribe to the settings store to save changes to Local Storage
+const unsubscribe = scrollStore.subscribe(currentSettings => {
+  save(currentSettings);
+});
+
+// Function to update settings
+export function updateScrollSettings(newSettings) {
+  scrollStore.set(newSettings);
 }
 
-export const scrollStore = persistentStore('scrollStore', {
-  gripButton: {
-    position: 0, // Relative position, starts at the bottom at position 0
-    color: '#008000', // Default color of dark green
-    isDragging: false, // True when the grip button is being dragged
-  },
-  downArrow: {
-    isVisible: true,  // This is always visible except when the grip button is at the bottom at position 0
-    color: '#008000', // Default color of dark green
-    isThrobbing: false, // only throbs if unviewed search results below grip button in "Search" mode, and if new off screen unseen llm message below grip button in "Conversation" mode
-  },
-  upArrow: {
-    isVisible: false, // Only visible in "Search" mode
-    color: '#b30000', // only visible in "Search" mode as red up arrow
-    isThrobbing: false, // only throbs if unviewed search results above grip button
-  },
-  searchModal: {
-    isOpen: false,
-    query: '', // Store the search query
-  },
-  markingSystem: {
-    hits: [], // Array of hit positions
-    consolidatedHits: [], // Array of consolidated hit positions and counts
-  },
-  totalMessages: 0, // Total number of messages in SQLite database
-});
+// Export the utility functions for external use
+export {
+  setInLocalStorage,
+  get,
+  remove,
+  load,
+  save
+};

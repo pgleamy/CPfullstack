@@ -3,7 +3,7 @@
   import { onMount, onDestroy } from "svelte";
   import { writable } from 'svelte/store';
   import { scrollStore } from '$lib/scrollStore.js';
-  import { setInLocalStorage, get, load } from '$lib/scrollStore.js';
+  import { set, get, load } from '$lib/scrollStore.js';
   import { createEventDispatcher } from 'svelte';
 
   let isDragging = false;
@@ -20,7 +20,7 @@
 
   let upArrowIsVisible = false;  // Renamed from isUpArrowVisible
   let downArrowIsVisible = false;  // Renamed from isDownArrowVisible
-  let gripPosition;
+  let gripPosition = 0;
   let downArrow = { isVisible: false, isThrobbing: false };
   let upArrow = { isVisible: false, isThrobbing: false };
   let searchModal = { isOpen: false, query: "" };
@@ -40,7 +40,6 @@
   window.addEventListener('resize', setInitialGripPosition);
 
   onMount(() => {
-
     setInitialGripPosition();
     window.addEventListener('resize', setInitialGripPosition);
     updateDownArrowColorInterval = setInterval(updateArrowColor, stepInterval);
@@ -69,16 +68,13 @@
       };
       
       totalMessages = value.totalMessages;
-
     });
 
-  // Cleanup function
-  return () => {
-    clearInterval(updateDownArrowColorInterval);
-    window.removeEventListener('resize', setInitialGripPosition);
-    unsubscribe();  // Unsubscribe from the store
-  };
-
+    onDestroy(() => {
+      unsubscribe();
+      clearInterval(updateDownArrowColorInterval);
+      window.removeEventListener('resize', setInitialGripPosition);
+    });
 });
 
   function startDrag(e) {
@@ -115,6 +111,7 @@
 
   function handleDownArrowClick() {
     console.log("Down arrow clicked");
+    dispatch('scrollToLatest');
   }
 
   let isArrowVisible = true;
