@@ -10,7 +10,7 @@ const setInLocalStorage = (key, value) => {
 
 // Function to get a setting from Local Storage
 const get = (key) => {
-  return localStorage.getItem(key) || null;
+  return localStorage.getItem(key);
 };
 
 // Function to remove a setting from Local Storage
@@ -23,20 +23,20 @@ const load = () => {
   return {
     gripPosition: parseFloat(get('gripPosition')) || 0,
     downArrow: {
-      isVisible: JSON.parse(get('downArrow_isVisible')) || false,
-      isThrobbing: JSON.parse(get('downArrow_isThrobbing')) || false,
+      isVisible: get('downArrow_isVisible') !== null ? JSON.parse(get('downArrow_isVisible')) : false,
+      isThrobbing: get('downArrow_isThrobbing') !== null ? JSON.parse(get('downArrow_isThrobbing')) : false,
     },
     upArrow: {
-      isVisible: JSON.parse(get('upArrow_isVisible')) || true,
-      isThrobbing: JSON.parse(get('upArrow_isThrobbing')) || false,
+      isVisible: get('upArrow_isVisible') !== null ? JSON.parse(get('upArrow_isVisible')) : false,
+      isThrobbing: get('upArrow_isThrobbing') !== null ? JSON.parse(get('upArrow_isThrobbing')) : false,
     },
     searchModal: {
-      isOpen: JSON.parse(get('searchModal_isOpen')) || false,
+      isOpen: get('searchModal_isOpen') !== null ? JSON.parse(get('searchModal_isOpen')) : false,
       query: get('searchModal_query') || "",
     },
     markingSystem: {
-      hits: JSON.parse(get('markingSystem_hits')) || [],
-      consolidatedHits: JSON.parse(get('markingSystem_consolidatedHits')) || [],
+      hits: get('markingSystem_hits') !== null ? JSON.parse(get('markingSystem_hits')) : [],
+      consolidatedHits: get('markingSystem_consolidatedHits') !== null ? JSON.parse(get('markingSystem_consolidatedHits')) : [],
     },
     totalMessages: parseInt(get('totalMessages')) || 0,
   };
@@ -47,7 +47,12 @@ const save = (settings) => {
   for (const [key, value] of Object.entries(settings)) {
     if (typeof value === 'object') {
       for (const [subKey, subValue] of Object.entries(value)) {
-        setInLocalStorage(`${key}_${subKey}`, JSON.stringify(subValue));
+        // Check if subValue is a string and handle it differently
+        if (typeof subValue === 'string') {
+          setInLocalStorage(`${key}_${subKey}`, subValue);  // Store string as-is
+        } else {
+          setInLocalStorage(`${key}_${subKey}`, JSON.stringify(subValue));  // Stringify non-string types
+        }
       }
     } else {
       setInLocalStorage(key, value);
@@ -55,7 +60,9 @@ const save = (settings) => {
   }
 };
 
+
 // Initialize the settings store with either saved settings or default values
+//console.log("Initial state of scrollStore:", { ...load() });
 export const scrollStore = writable({
   ...load()
 });

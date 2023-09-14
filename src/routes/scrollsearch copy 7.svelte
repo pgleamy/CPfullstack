@@ -20,7 +20,7 @@
 
   let upArrowIsVisible = false;  // Renamed from isUpArrowVisible
   let downArrowIsVisible = false;  // Renamed from isDownArrowVisible
-  let gripPosition = 0;
+  let gripPosition;
   let downArrow = { isVisible: false, isThrobbing: false };
   let upArrow = { isVisible: false, isThrobbing: false };
   let searchModal = { isOpen: false, query: "" };
@@ -46,49 +46,31 @@
     updateDownArrowColorInterval = setInterval(updateArrowColor, stepInterval);
 
     const unsubscribe = scrollStore.subscribe(value => {
+      gripPosition = value.gripPosition;
+      
+      downArrow = {
+        isVisible: value.downArrow.isVisible,
+        isThrobbing: value.downArrow.isThrobbing
+      };
+      
+      upArrow = {
+        isVisible: value.upArrow.isVisible,
+        isThrobbing: value.upArrow.isThrobbing
+      };
+      
+      searchModal = {
+        isOpen: value.searchModal.isOpen,
+        query: value.searchModal.query
+      };
+      
+      markingSystem = {
+        hits: value.markingSystem.hits,
+        consolidatedHits: value.markingSystem.consolidatedHits
+      };
+      
+      totalMessages = value.totalMessages;
 
-      console.log("store changed");  // This line will log the message when the store changes
-  // Logging gripPosition
-  console.log("Updated gripPosition:", value.gripPosition);
-  gripPosition = value.gripPosition;
-
-  // Logging downArrow properties
-  console.log("Updated downArrow.isVisible:", value.downArrow.isVisible);
-  console.log("Updated downArrow.isThrobbing:", value.downArrow.isThrobbing);
-  downArrow = {
-    isVisible: value.downArrow.isVisible,
-    isThrobbing: value.downArrow.isThrobbing
-  };
-
-  // Logging upArrow properties
-  console.log("Updated upArrow.isVisible:", value.upArrow.isVisible);
-  console.log("Updated upArrow.isThrobbing:", value.upArrow.isThrobbing);
-  upArrow = {
-    isVisible: value.upArrow.isVisible,
-    isThrobbing: value.upArrow.isThrobbing
-  };
-
-  // Logging searchModal properties
-  console.log("Updated searchModal.isOpen:", value.searchModal.isOpen);
-  console.log("Updated searchModal.query:", value.searchModal.query);
-  searchModal = {
-    isOpen: value.searchModal.isOpen,
-    query: value.searchModal.query
-  };
-
-  // Logging markingSystem properties
-  console.log("Updated markingSystem.hits:", value.markingSystem.hits);
-  console.log("Updated markingSystem.consolidatedHits:", value.markingSystem.consolidatedHits);
-  markingSystem = {
-    hits: value.markingSystem.hits,
-    consolidatedHits: value.markingSystem.consolidatedHits
-  };
-
-  // Logging totalMessages
-  console.log("Updated totalMessages:", value.totalMessages);
-  totalMessages = value.totalMessages;
-});
-
+    });
 
   // Cleanup function
   return () => {
@@ -207,7 +189,6 @@
         <path bind:this={arrowPath} id="down-arrow-path" d="M 7 0 L 23 0 L 15 12 Z" stroke="green" stroke-width="2" fill="none" stroke-linejoin="round" transform="translate(5, {gripY + 20})" />
       </g>
     </svg>
-
   </div>
 </div>
 
