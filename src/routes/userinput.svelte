@@ -34,35 +34,47 @@
         }, 1000);
     }
     
-import { invoke } from '@tauri-apps/api/tauri';
+    import { invoke } from '@tauri-apps/api/tauri';
 
-function sendMessage() {
-  // Call the Rust backend command with the message text
-  invoke('send_prompt', { messageText })
-    .then(() => {
-      console.log('Message sent successfully:', messageText);
-    })
-    .catch(error => {
-      console.error('Failed to send message:', error);
-    });
+    function sendMessage() {
+    // Call the Rust backend command with the message text
+        invoke('send_prompt', { messageText })
+            .then(() => {
+            console.log('Message sent successfully:', messageText);
+            })
+            .catch(error => {
+            console.error('Failed to send message:', error);
+            });
 
-  // Clear the message text
-  messageText = '';
+        // Clear the message text
+        messageText = '';
+        // Stop the timer
+        clearInterval(interval);
+    }
 
-  // Stop the timer
-  clearInterval(interval);
-}
+    function handleTabKeyPress(event) {
+        if (event.key === 'Tab') {
+            event.preventDefault();  // Prevent focus switch
+            const start = event.target.selectionStart;
+            const end = event.target.selectionEnd;
 
+            // Insert the tab character at the cursor position
+            messageText = messageText.substring(0, start) + '   ' + messageText.substring(end);
+
+            // Move the cursor to the right of the inserted tab character
+            event.target.selectionStart = event.target.selectionEnd = start + 1;
+        }
+    }
 
 
     import { onMount } from 'svelte';
-
     onMount(() => {
-    resizeTextarea({ target: document.querySelector('#message-input textarea') });
+        resizeTextarea({ target: document.querySelector('#message-input textarea') });
     });
 
     // Start the timer when the script loads
     startTimer();
+
 </script>
 
 <div id="wrapper">
@@ -75,7 +87,7 @@ function sendMessage() {
             | {elapsedTime}
         </span>
     </div>
-    <textarea bind:value={messageText} placeholder="..." rows="1" on:input={resizeTextarea}></textarea>
+    <textarea bind:value={messageText} placeholder="..." rows="1" on:input={resizeTextarea} on:keydown={handleTabKeyPress}></textarea>
     <div id="button-container">
         <button on:click={sendMessage} {disabled}></button>
     </div>
@@ -120,8 +132,8 @@ function sendMessage() {
     border-radius: 5px;
     background-color: #080808;
     font-size: 12.4px;
-    line-height: 13px;
-    color: #bbbbbb;
+    line-height: 14.8px;
+    color: #cccccc;
     resize: none;
     overflow: hidden;
     white-space: pre-wrap;

@@ -56,14 +56,14 @@
     }
 
     #message-input textarea {
-    padding: 10px;
+    padding: 8px;
     padding-bottom: 0px;
     border: rgb(144, 119, 101) 0px solid;
     border-radius: 5px;
     background-color: transparent;
     font-size: 12.4px;
-    line-height: 13px;
-    color: #bbbbbb;
+    line-height: 14.8px;
+    color: #cccccc;
     resize: none;
     overflow: hidden;
     white-space: pre-wrap;
@@ -87,7 +87,7 @@
         font-size: 0.75em;
         justify-content: left;
         align-items: baseline;
-        color: rgb(185, 89, 38);
+        color: rgb(213, 93, 28);
         padding-left: 3px;
         padding-bottom: 2px;
     }

@@ -49,18 +49,19 @@
 		padding-left: 33px;
 		padding-top: 0px;
 		z-index: 2;
+		user-select: none;
 	}
 
     .write {
-        color: rgb(52, 112, 150);
+        color: rgb(60, 131, 175);
     }
 
     .code {
-        color: rgb(157, 54, 3);
+        color: rgb(185, 65, 4);
     }
 
     .talk {
-        color: rgb(63, 118, 23);
+        color: rgb(83, 156, 30);
     }
 
 	.corner {
@@ -79,7 +80,7 @@
 		object-fit: fill;
         padding-right: 56px;
         padding-top: 26px;	
-  		opacity: 0.7;
+  		opacity: 0.85;
 	}
 
 	nav {
@@ -124,7 +125,7 @@
 		height: 100%;
 		align-items: center;
 		padding: 0 0.15rem;
-		color: #bcbcbc;
+		color: #cbcbcb;
 		font-weight: 900;
 		font-size: 1rem;
 		text-transform: none;

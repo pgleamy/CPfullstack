@@ -11,15 +11,15 @@
         { 
             type: 'user', 
             userName: 'Patrick Leamy', 
-            messageText: 'Hello, Jarvis!', 
+            messageText: 'Hello, Argus!', 
             timestampStart: 'Sep 1, 2023, 12:00 PM',
             timestampEnd: 'Sep 1, 2023, 12:00:30 PM',
-            llmName: 'Jarvis',
+            llmName: 'Argus',
             role: 'Talker'
         },
         { 
             type: 'llm', 
-            llmName: 'Jarvis', 
+            llmName: 'Argus', 
             messageText: 'Hello, Patrick! How can I assist you today?', 
             responseTime: 'Sep 1, 2023, 12:01 PM',
             role: 'Talker'
@@ -27,15 +27,15 @@
         { 
             type: 'user', 
             userName: 'Patrick Leamy', 
-            messageText: 'Hello, Jarvis!', 
+            messageText: 'Hello, Iris!', 
             timestampStart: 'Sep 1, 2023, 12:00 PM',
             timestampEnd: 'Sep 1, 2023, 12:00:30 PM',
-            llmName: 'Jarvis',
+            llmName: 'Iris',
             role: 'Talker'
         },
         { 
             type: 'llm', 
-            llmName: 'Jarvis', 
+            llmName: 'Iris', 
             messageText: 'Hello, Patrick! How can I assist you today?', 
             responseTime: 'Sep 1, 2023, 12:01 PM',
             role: 'Talker'
@@ -43,10 +43,10 @@
         { 
             type: 'user', 
             userName: 'Patrick Leamy', 
-            messageText: 'Hello, Jarvis!', 
+            messageText: 'Hello again, Argus!', 
             timestampStart: 'Sep 1, 2023, 12:00 PM',
             timestampEnd: 'Sep 1, 2023, 12:00:30 PM',
-            llmName: 'Jarvis',
+            llmName: 'Argus',
             role: 'Talker'
         },
     ];
@@ -77,23 +77,24 @@
    
   <style>
     #conversation-container {
-      transition: all 0.4s ease-in-out;
+      transition: all 0.5s ease-in-out;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
       width: 100%;
       position: relative;
       bottom: 0;
-      left: 6px !important;
-      padding-bottom: 10px;
+      left: 5px !important;
+      padding-bottom: 0px;
       padding-right: 0px;
       overflow: hidden;
+      user-select: none;
     }
 
     #clip-container {
     position: fixed;
     top: 79px;
-    bottom: 10px;
+    bottom: 5px;
     left: 0;
     right: 0;
     clip-path: inset(0);

@@ -60,6 +60,15 @@ function setInitialGripPosition() {
   onMount(() => {
 
     setInitialGripPosition();
+    // Explicitly set the value in local storage and the reactive variable
+    setInLocalStorage('downArrow_isVisible', false);
+    downArrowIsVisible = false;
+    // If gripPosition > 0 then show the down arrow
+    let gripAtBottom = get('gripPosition');
+    if (gripAtBottom > 0) {
+      setInLocalStorage('downArrow_isVisible', true);
+      downArrowIsVisible = true;
+    }
 
     window.addEventListener('resize', setInitialGripPosition);
  
@@ -189,6 +198,7 @@ function handleDownArrowClick() {
       setInLocalStorage('gripPosition', gripPosition);
 
       downArrowIsVisible = false;
+      setInLocalStorage('downArrow_isVisible', false);
     }
   };
 
