@@ -20,7 +20,7 @@
     <div id="message-input">
         <div id="title" contenteditable="false">
             <span>{llmName}</span>
-            <span id="timestamp"> ({responseTime}) </span>
+            <span id="timestamp"> -{responseTime} </span>
         </div>
         <textarea readonly>{messageText}</textarea>  <!-- Make it read-only -->
     </div>  
@@ -56,14 +56,14 @@
     }
 
     #message-input textarea {
-    padding: 8px;
-    padding-bottom: 8px;
-    border: rgb(144, 119, 101) 2px solid;
+    padding: 10px;
+    padding-bottom: 0px;
+    border: rgb(144, 119, 101) 0px solid;
     border-radius: 5px;
-    background-color: #1b1b1b;
-    font-size: 12px;
+    background-color: transparent;
+    font-size: 12.4px;
     line-height: 13px;
-    color: #e3e3e3;
+    color: #bbbbbb;
     resize: none;
     overflow: hidden;
     white-space: pre-wrap;
@@ -78,24 +78,25 @@
 
     #message-input textarea:focus {
         outline: none;
-        box-shadow: 0 0 0 0.5px #ffbc5f;
+        box-shadow: 0 0 0 0.5px #492f0a;
         transition: box-shadow 0.25s ease-in-out;
     }
 
     #title {
         display: flex;
-        font-size: 0.5em;
-        justify-content: space-between;
+        font-size: 0.75em;
+        justify-content: left;
         align-items: baseline;
-        color: rgb(193, 138, 66);
+        color: rgb(185, 89, 38);
         padding-left: 3px;
         padding-bottom: 2px;
     }
 
     #timestamp {
-        font-size: 0.6em;
-        color: darkgoldenrod;
-        padding-right: 60px;
+        font-size: 0.75em;
+        color: rgb(93, 93, 93);
+        padding-left: 2px;
+        padding-bottom: 0px;
     }
 
 

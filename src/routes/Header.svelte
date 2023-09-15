@@ -52,15 +52,15 @@
 	}
 
     .write {
-        color: rgb(83, 189, 255);
+        color: rgb(52, 112, 150);
     }
 
     .code {
-        color: rgb(255, 85, 0);
+        color: rgb(157, 54, 3);
     }
 
     .talk {
-        color: rgb(108, 203, 40);
+        color: rgb(63, 118, 23);
     }
 
 	.corner {
@@ -79,7 +79,7 @@
 		object-fit: fill;
         padding-right: 56px;
         padding-top: 26px;	
-  		opacity: 1;
+  		opacity: 0.7;
 	}
 
 	nav {
@@ -124,7 +124,7 @@
 		height: 100%;
 		align-items: center;
 		padding: 0 0.15rem;
-		color: var(--color-text);
+		color: #bcbcbc;
 		font-weight: 900;
 		font-size: 1rem;
 		text-transform: none;

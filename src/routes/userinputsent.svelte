@@ -19,7 +19,7 @@
     <div id="message-input">
       <div id="title" contenteditable="false">
         <span>{userName}</span>
-        <span id="timestamp"> {timestampEnd} </span>
+        <span id="timestamp"> - {timestampEnd} </span>
       </div>
       <textarea readonly>{messageText}</textarea>  <!-- Make it read-only -->
     </div>
@@ -50,19 +50,19 @@
     }
 
     #message-input textarea {
-    padding: 6px;
+    padding: 10px;
     padding-bottom: 0px;
-    border: rgb(82, 112, 143) 2px solid;
+    border: rgb(82, 112, 143) 0px solid;
     border-radius: 5px;
-    background-color: #1b1b1b;
-    font-size: 12px;
+    background-color: transparent;
+    font-size: 12.4px;
     line-height: 13px;
-    color: #e3e3e3;
+    color: #bbbbbb;
     resize: none;
     overflow: hidden;
     white-space: pre-wrap;
     word-wrap: break-word;
-    min-height: 24px;
+    min-height: 22px;
     margin-right: 50px;
     }
 
@@ -72,24 +72,25 @@
 
     #message-input textarea:focus {
         outline: none;
-        box-shadow: 0 0 0 0.5px #a7c3ff;
+        box-shadow: 0 0 0 0.5px #073c50;
         transition: box-shadow 0.25s ease-in-out;
     }
 
     #title {
         display: flex;
-        font-size: 0.5em;
-        justify-content: space-between;
+        font-size: 0.75em;
+        justify-content: left;
         align-items: baseline;
-        color: rgb(49, 150, 186);
+        color: rgb(75, 131, 151);
         padding-left: 3px;
-        padding-bottom: 2px;
+        padding-bottom: 0px;
     }
 
     #timestamp {
-        font-size: 0.6em;
-        color: darkgoldenrod;
-        padding-right: 60px;
+        font-size: 0.75em;
+        color: rgb(93, 93, 93);
+        padding-left: 2px;
+        padding-bottom: 0px;
     }
 </style> 
   

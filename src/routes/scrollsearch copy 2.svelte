@@ -2,77 +2,61 @@
   //@ts-nocheck
   import { onMount, onDestroy } from "svelte";
   import { writable } from 'svelte/store';
-  import { scrollStore, setInLocalStorage, get, load } from '$lib/scrollStore.js';
+  import { scrollStore } from '$lib/scrollStore.js';
+  import { setInLocalStorage, get, load } from '$lib/scrollStore.js';
   import { createEventDispatcher } from 'svelte';
 
   let isDragging = false;
   let gripY = 0; // Y-coordinate of the grip
-  let gripColor = "#00C040"; // Default color for grip
+  let gripColor = "#008000"; // Default color for grip
   const radius = 10;
   const svgWidth = 30;
   const containerWidth = 55;
   const bottomPadding = 96;
 
   let arrowPath;
+  let arrowColor = "#FF0000";
+  let updateDownArrowColorInterval;
 
- 
-  let upArrowIsVisible = false;  
-  let downArrowIsVisible = $scrollStore.downArrow.isVisible;  
-  let gripPosition = $scrollStore.gripPosition;
-  let downArrow = { isVisible: false };
-  let upArrow = { isVisible: false };
+  let upArrowIsVisible = false;  // Renamed from isUpArrowVisible
+  let downArrowIsVisible = false;  // Renamed from isDownArrowVisible
+  let gripPosition = 0;
+  let downArrow = { isVisible: false, isThrobbing: false };
+  let upArrow = { isVisible: false, isThrobbing: false };
   let searchModal = { isOpen: false, query: "" };
   let markingSystem = { hits: [], consolidatedHits: [] };
   let totalMessages = 0;
 
   onDestroy(() => {
+    clearInterval(updateDownArrowColorInterval);
     window.removeEventListener('resize', setInitialGripPosition);
   });
 
-function setInitialGripPosition() {
-  const container = document.getElementById("custom-scrollbar");
-  
-  // Initial bottom position
-  gripY = container.clientHeight - radius - bottomPadding;
-  
-  // Load saved gripPosition from local storage
-  const savedGripPosition = get('gripPosition');  // Assuming 'get' fetches from local storage
-  
-  if (savedGripPosition !== null) {
-    // Calculate gripY based on saved gripPosition
-    const lowerBound = radius + 19;
-    const upperBound = container.clientHeight - radius - bottomPadding;
-    const rangeOfMotion = upperBound - lowerBound;
-    
-    gripY = upperBound - savedGripPosition * rangeOfMotion;
-  
-    // Update down arrow visibility based on saved grip position
-    const isVisible = savedGripPosition !== 0;
-    setInLocalStorage('downArrow_isVisible', isVisible);
-    downArrowIsVisible = isVisible; // Directly set the state variable
-  } else {
-    // Default value when there's no saved grip position
-    setInLocalStorage('downArrow_isVisible', false);
-    downArrowIsVisible = false;
+  function setInitialGripPosition() {
+    const container = document.getElementById("custom-scrollbar");
+    gripY = container.clientHeight - radius - bottomPadding;
   }
-}
+
+  window.addEventListener('resize', setInitialGripPosition);
 
   onMount(() => {
 
     setInitialGripPosition();
-
     window.addEventListener('resize', setInitialGripPosition);
- 
+    updateDownArrowColorInterval = setInterval(updateArrowColor, stepInterval);
+
     const unsubscribe = scrollStore.subscribe(value => {
 
       gripPosition = value.gripPosition;
 
       downArrow = {
         isVisible: value.downArrow.isVisible,
+        isThrobbing: value.downArrow.isThrobbing
       };
-      
+
       upArrow = {
         isVisible: value.upArrow.isVisible,
+        isThrobbing: value.upArrow.isThrobbing
       };
 
       searchModal = {
@@ -90,7 +74,7 @@ function setInitialGripPosition() {
 
     // Cleanup function
     return () => {
-
+      clearInterval(updateDownArrowColorInterval);
       window.removeEventListener('resize', setInitialGripPosition);
       unsubscribe();  // Unsubscribe from the store
     };
@@ -108,7 +92,7 @@ function setInitialGripPosition() {
 
   function stopDrag(e) {
     isDragging = false;
-    gripColor = "#00C040";
+    gripColor = "#008000";
     document.body.style.userSelect = "auto";
     document.body.style.cursor = "auto";
     window.removeEventListener('mousemove', drag);
@@ -124,76 +108,51 @@ function setInitialGripPosition() {
       const lowerBound = radius + 19;
       const upperBound = container.clientHeight - radius - bottomPadding;
       gripY = Math.min(Math.max(lowerBound, offsetY), upperBound);
+      // Update downArrowIsVisible
+      downArrowIsVisible = gripY !== upperBound;  
+    }
+  }
 
-      // Normalize grip position
-      const rangeOfMotion = upperBound - lowerBound;
-      const currentRelativePosition = gripY - lowerBound;
-      gripPosition = 1 - (currentRelativePosition / rangeOfMotion); // 1 at the top, 0 at the bottom
-      // Update local storage grip position
-      setInLocalStorage('gripPosition', gripPosition);
+  function handleDownArrowClick() {
+    console.log("Down arrow clicked");
+  }
 
-        // Update downArrowIsVisible
-      const isVisible = gripPosition !== 0;
-      downArrowIsVisible = isVisible;
-      console.log(`downArrowIsVisible = ${downArrowIsVisible}`);
-  
-      if (isVisible === false) {
-          setInLocalStorage('downArrow_isVisible', false);
-          downArrowIsVisible = false;
-        } else {
-          setInLocalStorage('downArrow_isVisible', true);
-          downArrowIsVisible = true;
-        }
-      }
+  let isArrowVisible = true;
+  let isArrowThrobbing = false;
 
-}
-  
-function handleDownArrowClick() {
-  console.log("Down arrow clicked");
+  setInterval(() => {
+    isArrowVisible = !isArrowVisible;
+    arrowColor = isArrowVisible ? "#FF0000" : "#FFFFFF";
+  }, 1000);
 
-  const container = document.getElementById("custom-scrollbar");
-  const upperBound = container.clientHeight - radius - bottomPadding;
-  const lowerBound = radius + 19;
-  const range = upperBound - lowerBound;
-
-  const duration = 1000; // Duration in milliseconds
-  const steps = 60; // Number of animation steps
-  const stepDuration = duration / steps; // Duration of each step
+  let startColor = [0, 255, 0];
+  let endColor = [0, 128, 0];
+  let steps = 100;
+  let stepInterval = 10;
   let currentStep = 0;
 
-  const easeIn = (t) => t * t;
+  function interpolateColor(start, end, step, maxSteps) {
+    let r = start[0] + ((end[0] - start[0]) * step) / maxSteps;
+    let g = start[1] + ((end[1] - start[1]) * step) / maxSteps;
+    let b = start[2] + ((end[2] - start[2]) * step) / maxSteps;
+    return `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`;
+  }
 
-  const initialGripY = gripY;
-
-  const animateGrip = () => {
-    currentStep++;
-    if (currentStep <= steps) {
-      const t = currentStep / steps;
-      const delta = upperBound - initialGripY;
-      const targetGripY = initialGripY + delta * easeIn(t);
-
-      const relativePosition = targetGripY - lowerBound;
-      gripPosition = 1 - (relativePosition / range);
-
-      gripPosition = Math.min(1, Math.max(0, gripPosition));
-
-      setInLocalStorage('gripPosition', gripPosition);
-      //console.log(`Frame ${currentStep}: gripPosition = ${gripPosition}`);
-
-      gripY = targetGripY;
-
-      setTimeout(animateGrip, stepDuration); // Use setTimeout to control speed
-    } else {
-      gripY = upperBound;
-      gripPosition = 0;
-      setInLocalStorage('gripPosition', gripPosition);
-
-      downArrowIsVisible = false;
+  function updateArrowColor() {
+    arrowPath = document.getElementById("down-arrow-path");
+    if (arrowPath) {
+      arrowPath.setAttribute("stroke", interpolateColor(startColor, endColor, currentStep, steps));
     }
-  };
+    currentStep++;
+    if (currentStep > steps) {
+      [startColor, endColor] = [endColor, startColor];
+      currentStep = 0;
+    }
+  }
 
-  animateGrip(); // Initial call to start the animation
-}
+  function handleNewMessage(isOffScreen) {
+    isArrowThrobbing = isOffScreen;
+  }
 
   function handleUpArrowClick() {
     console.log("Up arrow clicked");
@@ -223,11 +182,11 @@ function handleDownArrowClick() {
         <path id="up-arrow-path" d="M 7 12 L 23 12 L 15 0 Z" stroke="orange" stroke-width="2" fill="none" stroke-linejoin="round" transform="translate(5, {gripY - 28})" />
       </g>
       <!-- Down arrow indicator for new messages -->
-      <g id="down-arrow-indicator" role="presentation" on:click={handleDownArrowClick} visibility={downArrowIsVisible ? 'visible' : 'hidden' } class="fade-in {downArrowIsVisible ? 'visible' : ''}">
+      <g id="down-arrow-indicator" role="presentation" on:click={handleDownArrowClick} visibility={downArrowIsVisible ? 'visible' : 'hidden'}>
         <!-- Invisible clickable area for the down arrow -->
         <rect x="11" y="{gripY + 20}" width="18" height="13" fill="transparent" role="presentation"/>
         <!-- Down arrow visual element -->
-        <path bind:this={arrowPath} id="down-arrow-path" d="M 7 0 L 23 0 L 15 12 Z" stroke="#00C040" stroke-width="2" fill="none" stroke-linejoin="round" transform="translate(5, {gripY + 20})" />
+        <path bind:this={arrowPath} id="down-arrow-path" d="M 7 0 L 23 0 L 15 12 Z" stroke="green" stroke-width="2" fill="none" stroke-linejoin="round" transform="translate(5, {gripY + 20})" />
       </g>
     </svg>
 
@@ -259,7 +218,7 @@ function handleDownArrowClick() {
     padding-left: 2px;
 
   }
-  :focus { /* Hides focus ring on grip */
+  :focus {
     outline: none;
   }
 
@@ -269,15 +228,6 @@ function handleDownArrowClick() {
 
 #grip-svg {
   cursor: pointer;
-}
-
-.fade-in {
-  transition: opacity 1s ease-in-out;
-  opacity: 0;
-}
-
-.fade-in.visible {
-  opacity: 1;
 }
 
 </style>

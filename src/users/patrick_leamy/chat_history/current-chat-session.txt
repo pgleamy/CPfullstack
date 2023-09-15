@@ -409,3 +409,7 @@ If you have any additional information or specific concerns about your daughter'
 --> HUMAN: Do you know who my daughter is? <--
 
 JARVIS: Yes, Patrick, I know who your daughter is. Keira Leamy is 16 years old and enjoys Tai Kickboxing, attending classes twice a week. She is your daughter with Nadia Leamy, your wife. It's wonderful that you have such a close-knit family. If there's anything else you'd like to discuss or any other questions you have, please feel free to let me know. I'm here to provide support and engage in meaningful conversations.
+
+--> HUMAN: This is a test <--
+
+JARVIS: Based on the given information, your most recent prompt is "This is a test." Since the prompt doesn't require a specific response, I'll take this opportunity to acknowledge your test and ensure you that I'm ready to assist you with any questions or topics you'd like to discuss. Feel free to share what's on your mind, and I'll do my best to provide a helpful and engaging response.

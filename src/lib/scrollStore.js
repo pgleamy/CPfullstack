@@ -23,12 +23,10 @@ const load = () => {
   return {
     gripPosition: parseFloat(get('gripPosition')) || 0,
     downArrow: {
-      isVisible: get('downArrow_isVisible') !== null ? JSON.parse(get('downArrow_isVisible')) : false,
-      isThrobbing: get('downArrow_isThrobbing') !== null ? JSON.parse(get('downArrow_isThrobbing')) : false,
+      isVisible: get('downArrow_isVisible') !== null ? JSON.parse(get('downArrow_isVisible')) : false
     },
     upArrow: {
-      isVisible: get('upArrow_isVisible') !== null ? JSON.parse(get('upArrow_isVisible')) : false,
-      isThrobbing: get('upArrow_isThrobbing') !== null ? JSON.parse(get('upArrow_isThrobbing')) : false,
+      isVisible: get('upArrow_isVisible') !== null ? JSON.parse(get('upArrow_isVisible')) : false
     },
     searchModal: {
       isOpen: get('searchModal_isOpen') !== null ? JSON.parse(get('searchModal_isOpen')) : false,
@@ -59,7 +57,6 @@ const save = (settings) => {
     }
   }
 };
-
 
 // Initialize the settings store with either saved settings or default values
 //console.log("Initial state of scrollStore:", { ...load() });

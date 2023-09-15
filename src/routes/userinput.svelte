@@ -1,6 +1,6 @@
 <script>
     let messageText = '';
-    let username = 'Patrick Leamy';
+    let username = 'Patrick';
     let startTime = new Date();
     let endTime = new Date();
     /**
@@ -70,9 +70,9 @@ function sendMessage() {
     <div id="title" contenteditable="false">
         <span>{username}</span>
         <span id="timestamp">
-            {startTime.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true })} to 
-            {endTime.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true })} 
-            ({elapsedTime})
+            -
+            {endTime.toLocaleString('en-US', { month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true })} 
+            | {elapsedTime}
         </span>
     </div>
     <textarea bind:value={messageText} placeholder="..." rows="1" on:input={resizeTextarea}></textarea>
@@ -92,7 +92,7 @@ function sendMessage() {
         position: relative;
         Left: 0;
         right: 0;
-        padding-top: 5px;
+        padding-top: 0px;
     }
 
     #message-input {
@@ -115,13 +115,13 @@ function sendMessage() {
     padding: 8px;
     padding-bottom: 1px;
     margin-right: 50px;
-    border: rgb(196, 181, 19) 1.5px solid;
-    box-shadow: 0 0 0 0.6px #ffffff;
+    border: rgba(249, 245, 10, 0.298) 2px solid;
+    box-shadow: 0 0 0 0.3px #323232;
     border-radius: 5px;
-    background-color: #1b1b1b;
-    font-size: 12px;
-    line-height: 15px;
-    color: #e3e3e3;
+    background-color: #080808;
+    font-size: 12.4px;
+    line-height: 13px;
+    color: #bbbbbb;
     resize: none;
     overflow: hidden;
     white-space: pre-wrap;
@@ -130,13 +130,13 @@ function sendMessage() {
     }
 
     #message-input textarea::placeholder {
-        color: #767676;
+        color: #bbbbbb;
     }
 
     #message-input textarea:focus {
         outline: none;
-        border: rgb(141, 158, 255) 1.5px solid;
-        box-shadow: 0 0 0 0.4px #ffffff;
+        border: rgb(22, 64, 20) 2px solid;
+        box-shadow: 0 0 0 0.3px #323232;
         transition: box-shadow 0.15s ease-in-out;
     }
 
@@ -154,7 +154,7 @@ function sendMessage() {
         height: 14px;
         border: 0px solid;
         border-radius: 4px;
-        background-color: #3b79ff;
+        background-color: rgb(22, 64, 20);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -175,12 +175,12 @@ function sendMessage() {
     }
 
     #message-input button:not(:disabled):hover {
-        background-color: #3888ff;
+        background-color: #1d437b;
         border: none;
     }
 
     #message-input button:not(:disabled):active {
-        background-color: #64a2ff;
+        background-color: #4673b7;
         border: none;
     }
 
@@ -192,18 +192,19 @@ function sendMessage() {
 
     #title {
         display: flex;
-        font-size: 0.7em;
-        justify-content: space-between;
+        font-size: 0.75em;
+        justify-content: left;
         align-items: baseline;
-        color: rgb(158, 241, 170);
-        padding-left: 12px;
-        padding-bottom: 2px;
+        color: rgb(70, 145, 81);
+        padding-left: 3px;
+        padding-bottom: 0px;
     }
 
     #timestamp {
-        font-size: 0.6em;
-        color: darkgoldenrod;
-        padding-right: 60px;
+        font-size: 0.75em;
+        color: rgb(93, 93, 93);
+        padding-left: 2px;
+        padding-bottom: 0px;
     }
 
     
