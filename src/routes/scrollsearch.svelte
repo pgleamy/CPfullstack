@@ -166,12 +166,12 @@ function handleDownArrowClick() {
   const range = upperBound - lowerBound;
 
   const duration = 1000; // Duration in milliseconds
-  const steps = 60; // Number of animation steps
+  const steps = 50; // Number of animation steps
   const stepDuration = duration / steps; // Duration of each step
   let currentStep = 0;
 
   const easeIn = (t) => t * t;
-
+  
   const initialGripY = gripY;
 
   const animateGrip = () => {
