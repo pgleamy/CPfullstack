@@ -1,27 +1,34 @@
 <script>
     import { onMount } from 'svelte';
 
-    export let userName; // This will be populated from the user's profile
-    export let messageText; // This will be populated from the array   
-    export let timestampEnd; // will hold the end timestamp
+    export let user_name; // will hold the user name
+    export let text = ''; // text from the message 
+    let textArea;  
+    export let timestamp; // will hold the timestamp
+    export let source; // will hold the source of the message
+    export let llm_name; // will hold the llm name
+    export let llm_role; // will hold the llm role
+    export let status; // will hold the status of the message
+    export let block_id; // will hold the block id
+
    
-    function resizeTextarea(event) {
-      event.target.style.height = 'auto'; // Reset height
-      event.target.style.height = event.target.scrollHeight + 'px'; // Set height based on content
+    function resizeTextarea() {
+        textArea.style.height = 'auto';
+        textArea.style.height = (textArea.scrollHeight) + 'px';
     }
   
     onMount(() => {
-      resizeTextarea({ target: document.querySelector('#message-input textarea') });
+      resizeTextarea();
     });
   </script>
   
   <div id="wrapper">
     <div id="message-input">
       <div id="title" contenteditable="false">
-        <span>{userName}</span>
-        <span id="timestamp"> - {timestampEnd} </span>
+        <span>{user_name}</span>
+        <span id="timestamp"> - {timestamp} </span>
       </div>
-      <textarea readonly>{messageText}</textarea>  <!-- Make it read-only -->
+      <textarea bind:this={textArea} readonly>{text}</textarea>  <!-- Make it read-only -->
     </div>
   </div>
   

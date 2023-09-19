@@ -1,9 +1,8 @@
 <script>
-    //@ts-nocheck
     import { onMount } from 'svelte';
 
     export let user_name; // will hold the user name
-    export let text = ''; // text from the message   
+    export let text; // text from the message   
     export let timestamp; // will hold the timestamp
     export let source; // will hold the source of the message
     export let llm_name; // will hold the llm name
@@ -11,28 +10,28 @@
     export let status; // will hold the status of the message
     export let block_id; // will hold the block id
 
-    function resizeTextarea() {
-        const textArea = document.querySelector('#llm-response-textarea');
-        textArea.style.height = 'auto'; // Reset height
-        textArea.style.height = (textArea.scrollHeight) + 'px'; // Set height based on content
+   
+    function resizeTextarea(event) {
+      event.target.style.height = 'auto'; // Reset height
+      event.target.style.height = event.target.scrollHeight + 'px'; // Set height based on content
     }
-
+  
     onMount(() => {
-        resizeTextarea();
+      resizeTextarea({ target: document.querySelector('#message-input textarea') });
     });
-
-</script>
-
-<div id="wrapper">
+  </script>
+  
+  <div id="wrapper">
     <div id="message-input">
-        <div id="title" contenteditable="false">
-            <span>{llm_name} ({llm_role})</span>
-            <span id="timestamp"> -{timestamp} </span>
-        </div>
-        <textarea id="llm-response-textarea" readonly on:input={resizeTextarea}>{text}</textarea>  
-    </div>  
-</div>
-
+      <div id="title" contenteditable="false">
+        <span>{user_name}</span>
+        <span id="timestamp"> - {timestamp} </span>
+      </div>
+      <textarea readonly>{text}</textarea>  <!-- Make it read-only -->
+    </div>
+  </div>
+  
+ 
 <style>
 
     #wrapper {
@@ -43,13 +42,7 @@
         position: relative;
         Left: 0;
         right: 0;
-        padding-top: 5px;
-    }
-
-    #message-input {
-        width: 98%;
-        display: flex;
-        flex-direction: column;
+        padding-top: 5px; 
     }
 
     #message-input {
@@ -65,7 +58,7 @@
     #message-input textarea {
     padding: 8px;
     padding-bottom: 0px;
-    border: rgb(144, 119, 101) 0px solid;
+    border: rgb(82, 112, 143) 0px solid;
     border-radius: 5px;
     background-color: transparent;
     font-size: 12.4px;
@@ -75,7 +68,7 @@
     overflow: hidden;
     white-space: pre-wrap;
     word-wrap: break-word;
-    min-height: 24px;
+    min-height: 22px;
     margin-right: 50px;
     }
 
@@ -85,7 +78,7 @@
 
     #message-input textarea:focus {
         outline: none;
-        box-shadow: 0 0 0 0.5px #492f0a;
+        box-shadow: 0 0 0 0.5px #073c50;
         transition: box-shadow 0.25s ease-in-out;
     }
 
@@ -94,9 +87,9 @@
         font-size: 0.75em;
         justify-content: left;
         align-items: baseline;
-        color: rgb(213, 93, 28);
+        color: rgb(86, 152, 176);
         padding-left: 3px;
-        padding-bottom: 2px;
+        padding-bottom: 0px;
     }
 
     #timestamp {
@@ -105,6 +98,5 @@
         padding-left: 2px;
         padding-bottom: 0px;
     }
-
-
 </style> 
+  

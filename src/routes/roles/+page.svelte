@@ -161,7 +161,7 @@ function handleOpenAiKeyChange(event) {
 			<div class="column1"><label for="openAiKey">OpenAi 🔑</label></div>
 			<div class="column2">
 			  <form>
-			  <input type="password" autocomplete="off" placeholder="COPY then PASTE your key here" id="openAiKey" bind:value={openAiKey} on:input={handleOpenAiKeyChange} />
+			  <input type="password" autocomplete="off" placeholder="COPY then PASTE your key here" id="openAiKey" name="credentialForm" bind:value={openAiKey} on:input={handleOpenAiKeyChange} />
 			  </form>
 			</div>
 		  </li>

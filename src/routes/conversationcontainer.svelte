@@ -3,70 +3,28 @@
     import UserInputSent from './userinputsent.svelte';
     import LLMResponse from './llmresponse.svelte';
     // reactive state management for scrollsearch component
-    import {scrollStore} from '$lib/scrollStore.js'; 
-    
-    // This is a placeholder for the conversation data.
-    // In the real application, this will be fetched from the SQL database.
-    let conversation = [
-        { 
-            type: 'user', 
-            userName: 'Patrick Leamy', 
-            messageText: 'Hello, Argus!', 
-            timestampStart: 'Sep 1, 2023, 12:00 PM',
-            timestampEnd: 'Sep 1, 2023, 12:00:30 PM',
-            llmName: 'Argus',
-            role: 'Talker'
-        },
-        { 
-            type: 'llm', 
-            llmName: 'Argus', 
-            messageText: 'Hello, Patrick! How can I assist you today?', 
-            responseTime: 'Sep 1, 2023, 12:01 PM',
-            role: 'Talker'
-        },
-        { 
-            type: 'user', 
-            userName: 'Patrick Leamy', 
-            messageText: 'Hello, Iris!', 
-            timestampStart: 'Sep 1, 2023, 12:00 PM',
-            timestampEnd: 'Sep 1, 2023, 12:00:30 PM',
-            llmName: 'Iris',
-            role: 'Talker'
-        },
-        { 
-            type: 'llm', 
-            llmName: 'Iris', 
-            messageText: 'Hello, Patrick! How can I assist you today?', 
-            responseTime: 'Sep 1, 2023, 12:01 PM',
-            role: 'Talker'
-        },
-        { 
-            type: 'user', 
-            userName: 'Patrick Leamy', 
-            messageText: 'Hello again, Argus!', 
-            timestampStart: 'Sep 1, 2023, 12:00 PM',
-            timestampEnd: 'Sep 1, 2023, 12:00:30 PM',
-            llmName: 'Argus',
-            role: 'Talker'
-        },
-    ];
-     
-  
-  // Function to scroll to the bottom
-  function scrollToBottom() {
-    console.log('Scrolling to bottom');
-    const conversationContainer = document.getElementById('conversation-container');
-    conversationContainer.scrollTop = conversationContainer.scrollHeight;
-  }
+    import {scrollStore} from '$lib/scrollStore.js';
+    import { onMount, onDestroy } from 'svelte';
+    import { invoke } from "@tauri-apps/api/tauri";
+
+    let conversation = [];
+
+    onMount(async () => {
+      const { message } = await invoke("fetch_conversation_history", {
+      params: { start: 0, end: 2 }
+      });
+      conversation = message;
+    });
 
   </script>
 
+
 <div id="clip-container">
-  <div id="conversation-container" on:scrollToLatest={scrollToBottom}> 
+  <div id="conversation-container"> 
     {#each conversation as entry}
-      {#if entry.type === 'user'}
+      {#if entry.source === 'user'}
         <UserInputSent {...entry} />
-      {:else if entry.type === 'llm'}
+      {:else if entry.source === 'llm'}
         <LLMResponse {...entry} />
       {/if}
     {/each}

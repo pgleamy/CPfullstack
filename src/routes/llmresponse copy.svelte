@@ -3,7 +3,7 @@
     import { onMount } from 'svelte';
 
     export let user_name; // will hold the user name
-    export let text = ''; // text from the message   
+    export let text; // text from the message   
     export let timestamp; // will hold the timestamp
     export let source; // will hold the source of the message
     export let llm_name; // will hold the llm name
@@ -11,16 +11,14 @@
     export let status; // will hold the status of the message
     export let block_id; // will hold the block id
 
-    function resizeTextarea() {
-        const textArea = document.querySelector('#llm-response-textarea');
-        textArea.style.height = 'auto'; // Reset height
-        textArea.style.height = (textArea.scrollHeight) + 'px'; // Set height based on content
+    function resizeTextarea(event) {
+        event.target.style.height = 'auto'; // Reset height
+        event.target.style.height = event.target.scrollHeight + 'px'; // Set height based on content
     }
 
     onMount(() => {
-        resizeTextarea();
+        resizeTextarea({ target: document.querySelector('#message-input textarea') });
     });
-
 </script>
 
 <div id="wrapper">
@@ -29,7 +27,7 @@
             <span>{llm_name} ({llm_role})</span>
             <span id="timestamp"> -{timestamp} </span>
         </div>
-        <textarea id="llm-response-textarea" readonly on:input={resizeTextarea}>{text}</textarea>  
+        <textarea readonly>{text}</textarea>  <!-- Make it read-only -->
     </div>  
 </div>
 

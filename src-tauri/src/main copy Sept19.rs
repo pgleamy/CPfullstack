@@ -17,19 +17,14 @@ use std::fs::{metadata, remove_file};
 extern crate keyring;
 use keyring::Keyring;
 
-// global mutable variable 'CONVERSATION_HISTORY' to hold all chat messages in the database
+// global mutable variable 'conversation_history' to hold all chat messages in the database
 #[macro_use]
 extern crate lazy_static;
 use std::sync::Mutex;
-lazy_static! {
-    static ref CONVERSATION_HISTORY: Mutex<Vec<HashMap<String, String>>> = Mutex::new(Vec::new());
-}
-
-/*old version that returns a string
+//use tauri::State;
 lazy_static! {
     static ref CONVERSATION_HISTORY: Mutex<String> = Mutex::new(String::new());
 }
-*/
 
 
 fn main() -> PyResult<()> {
@@ -136,7 +131,7 @@ fn main() -> PyResult<()> {
 
     tauri::Builder::default()
 
-        .invoke_handler(tauri::generate_handler![store_openai_key, get_openai_key, send_prompt, fetch_conversation_history])
+        .invoke_handler(tauri::generate_handler![store_openai_key, get_openai_key, send_prompt])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 
@@ -165,58 +160,7 @@ fn get_openai_key() -> Result<String, String> {
     }
 }
 
-// Tauri Command to fetch a slice of CONVERSATION_HISTORY to the frontend
-use serde::{Deserialize, Serialize};
-use serde_json::Value;
 
-#[derive(Deserialize)]
-struct FetchParams {
-  start: usize,
-  end: usize,
-}
-
-#[derive(Serialize)]
-struct Reply {
-  message: Vec<HashMap<String, String>>,
-}
-
-#[tauri::command]
-fn fetch_conversation_history(params: FetchParams) -> tauri::Result<Reply> {
-  let data = CONVERSATION_HISTORY.lock().unwrap();
-  
-  // No need for parsing, directly use the data
-  let slice = &data[params.start..params.end];
-
-  Ok(Reply {
-    message: slice.to_vec(),
-  })
-}
-
-
-/* old version that returns a string
-use serde::{Deserialize, Serialize};
-use serde_json::Value;
-#[derive(Deserialize)]
-struct FetchParams {
-  start: usize,
-  end: usize,
-}
-#[derive(Serialize)]
-struct Reply {
-  message: Vec<Value>,
-}
-#[tauri::command]
-fn fetch_conversation_history(params: FetchParams) -> tauri::Result<Reply> {
-  let data = CONVERSATION_HISTORY.lock().unwrap();
-  let parsed_data: Vec<Value> = serde_json::from_str(&data).unwrap();
-  
-  let slice = &parsed_data[params.start..params.end];
-
-  Ok(Reply {
-    message: slice.to_vec(),
-  })
-}
-*/
 
 // Just clears the terminal screen :)
 use std::io::{self, Write};
