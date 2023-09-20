@@ -6,6 +6,7 @@ use rusqlite::{params, Connection, Result};
 use std::collections::HashMap;
 use std::error::Error;
 
+
 pub fn fetch_chat_history() -> Result<Vec<HashMap<String, String>>, Box<dyn Error>> {
     // Open the database file
     let conn = Connection::open("F:\\WindowsDesktop\\Users\\Leamy\\Desktop\\ChatPerfect\\src\\users\\patrick_leamy\\database\\big.db")?;
@@ -47,6 +48,8 @@ pub fn fetch_chat_history() -> Result<Vec<HashMap<String, String>>, Box<dyn Erro
     // Return results
     Ok(results)
 }
+
+
 
 
 

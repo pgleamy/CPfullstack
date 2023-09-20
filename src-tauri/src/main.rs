@@ -24,6 +24,9 @@ use std::sync::Mutex;
 lazy_static! {
     static ref CONVERSATION_HISTORY: Mutex<Vec<HashMap<String, String>>> = Mutex::new(Vec::new());
 }
+lazy_static! {
+    static ref NUM_MESSAGES: Mutex<usize> = Mutex::new(0);
+}
 
 /*old version that returns a string
 lazy_static! {
@@ -40,10 +43,14 @@ fn main() -> PyResult<()> {
     {
         let mut data = CONVERSATION_HISTORY.lock().unwrap();
         match fetch_chat_history() {
-            Ok(fetched_data) => *data = fetched_data,
+            Ok(fetched_data) => {
+                *data = fetched_data;
+                println!("Messages in conversation at startup: {}", data.len());  // Added line
+            },
             Err(e) => println!("An error occurred while fetching chat history: {}", e),
         }
     }
+    
     // Print the first part of the conversation history to the terminal for testing
     /*
     {
@@ -136,7 +143,7 @@ fn main() -> PyResult<()> {
 
     tauri::Builder::default()
 
-        .invoke_handler(tauri::generate_handler![store_openai_key, get_openai_key, send_prompt, fetch_conversation_history])
+        .invoke_handler(tauri::generate_handler![store_openai_key, get_openai_key, send_prompt, fetch_conversation_history, get_num_messages])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 
@@ -145,6 +152,24 @@ fn main() -> PyResult<()> {
 
     Ok(())
 }
+
+
+use rusqlite::{Connection, Result};
+#[tauri::command]
+fn get_num_messages() -> Result<usize, String> {
+    let conn = Connection::open("F:\\WindowsDesktop\\Users\\Leamy\\Desktop\\ChatPerfect\\src\\users\\patrick_leamy\\database\\big.db").map_err(|e| e.to_string())?;
+    
+    let mut stmt = conn.prepare("SELECT COUNT(*) FROM text_blocks").map_err(|e| e.to_string())?;
+    let num_messages: usize = stmt.query_row([], |row| row.get(0)).map_err(|e| e.to_string())?;
+
+    let mut num = NUM_MESSAGES.lock().unwrap();
+    *num = num_messages;
+
+    Ok(num_messages)  // Return the number of messages
+}
+
+
+
 
 #[tauri::command]
 fn store_openai_key(key: String) -> Result<(), String> {
@@ -191,6 +216,7 @@ fn fetch_conversation_history(params: FetchParams) -> tauri::Result<Reply> {
     message: slice.to_vec(),
   })
 }
+
 
 
 /* old version that returns a string
