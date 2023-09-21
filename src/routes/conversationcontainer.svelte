@@ -3,15 +3,17 @@
     import UserInputSent from './userinputsent.svelte';
     import LLMResponse from './llmresponse.svelte';
     // reactive state management for scrollsearch component
-    import {scrollStore} from '$lib/scrollStore.js';
+    import {scrollStore, get} from '$lib/scrollStore.js';
     import { onMount, onDestroy } from 'svelte';
     import { invoke } from "@tauri-apps/api/tauri";
 
     let conversation = []; // conversation history slice as requested from the backend
     let num_messages = 0; // total number of messages in the conversation
-    let gripLocation = 0; // 0 = bottom, 1 = top
-    $: gripLocation = $scrollStore.gripPosition; // sets gripLocation to the current gripPosition in scrollStore
+    //let gripLocation = 0; // 0 = bottom, 1 = top
+    //$: gripLocation = $scrollStore.gripPosition; // sets gripLocation to the current gripPosition in scrollStore
 
+    let gripLocation = get('gripPosition'); 
+      
     onMount(async () => {
       // get the conversation history slice from the backend
       num_messages = await invoke('get_num_messages');
@@ -24,16 +26,9 @@
       const endTime = Date.now();
       const elapsed = endTime - startTime;
       console.log(`Elapsed time: ${elapsed} milliseconds`);
-      //const { message } = await invoke("fetch_conversation_history", {
-      //params: { start: 0, end: 2 }
-      //});
-      //conversation = message;
-
     });
 
-
-
-    async function fetchConversationSlice(gripLocation, num_messages) {
+async function fetchConversationSlice(gripLocation, num_messages) {
   const buffer = 10;
   const totalMessagesToFetch = 20;
   
@@ -91,12 +86,7 @@
   }
 }
 
-
-
-
-
-
-  </script>
+</script>
 
 
 <div id="clip-container">

@@ -3,10 +3,27 @@
 
 import { writable } from 'svelte/store';
 
+// Define custom event
+const localStorageChangeEvent = new Event('localStorageChange');
+
+let isEventBeingProcessed = false;
+
 // Function to set a setting in Local Storage
 const setInLocalStorage = (key, value) => {
   localStorage.setItem(key, value);
+  if (!isEventBeingProcessed) {
+    window.dispatchEvent(localStorageChangeEvent);
+  }
 };
+
+// Listen for custom event and reload scrollStore when detected
+window.addEventListener('localStorageChange', () => {
+  if (!isEventBeingProcessed) {
+    isEventBeingProcessed = true;
+    reloadScrollStore();
+    isEventBeingProcessed = false;
+  }
+});
 
 // Function to get a setting from Local Storage
 const get = (key) => {
@@ -18,7 +35,7 @@ const remove = (key) => {
   localStorage.removeItem(key);
 };
 
-// Function to load all settings into an object
+// Function to load all settings from Local Storage into an object
 const load = () => {
   return {
     gripPosition: parseFloat(get('gripPosition')) || 0,
@@ -40,7 +57,7 @@ const load = () => {
   };
 };
 
-// Function to save all settings from an object
+// Function to save all settings to Local Storage from an object
 const save = (settings) => {
   for (const [key, value] of Object.entries(settings)) {
     if (typeof value === 'object') {
@@ -58,24 +75,30 @@ const save = (settings) => {
   }
 };
 
-// Initialize the settings store with either saved settings or default values
-//console.log("Initial state of scrollStore:", { ...load() });
+// Initialize the Svelte store (scrollStore) with settings from Local Storage or default values
 export const scrollStore = writable({
   ...load()
 });
 
-// Subscribe to the settings store to save changes to Local Storage
+// Subscribe to the Svelte store (scrollStore) to save any changes to Local Storage
 const unsubscribe = scrollStore.subscribe(currentSettings => {
   save(currentSettings);
 });
 
 // Function to update settings
-export function updateScrollSettings(newSettings) {
+function updateScrollSettings(newSettings) {
   scrollStore.set(newSettings);
+}
+
+// Function to manually reload the Svelte store (scrollStore) from Local Storage
+function reloadScrollStore() {
+  scrollStore.set(load());
 }
 
 // Export the utility functions for external use
 export {
+  reloadScrollStore,
+  updateScrollSettings,
   setInLocalStorage,
   get,
   remove,

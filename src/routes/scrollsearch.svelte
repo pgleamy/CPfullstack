@@ -2,7 +2,7 @@
   //@ts-nocheck
   import { onMount, onDestroy } from "svelte";
   import { writable } from 'svelte/store';
-  import { scrollStore, setInLocalStorage, get, load } from '$lib/scrollStore.js';
+  import { scrollStore, setInLocalStorage, get, load, reloadScrollStore } from '$lib/scrollStore.js';
   import { createEventDispatcher } from 'svelte';
 
   let isDragging = false;
@@ -14,97 +14,60 @@
   const bottomPadding = 96;
 
   let arrowPath;
-
  
   let upArrowIsVisible = false;  
   let downArrowIsVisible = $scrollStore.downArrow.isVisible;  
   let gripPosition = $scrollStore.gripPosition;
+
   let downArrow = { isVisible: false };
   let upArrow = { isVisible: false };
   let searchModal = { isOpen: false, query: "" };
   let markingSystem = { hits: [], consolidatedHits: [] };
   let totalMessages = 0;
 
+
   onDestroy(() => {
     window.removeEventListener('resize', setInitialGripPosition);
+    unsubscribe();  // Unsubscribe from the store
   });
 
-function setInitialGripPosition() {
-  const container = document.getElementById("custom-scrollbar");
-  
-  // Initial bottom position
-  gripY = container.clientHeight - radius - bottomPadding;
-  
-  // Load saved gripPosition from local storage
-  const savedGripPosition = get('gripPosition');  // Assuming 'get' fetches from local storage
-  
-  if (savedGripPosition !== null) {
-    // Calculate gripY based on saved gripPosition
-    const lowerBound = radius + 19;
-    const upperBound = container.clientHeight - radius - bottomPadding;
-    const rangeOfMotion = upperBound - lowerBound;
+
+  function setInitialGripPosition() {
+    const container = document.getElementById("custom-scrollbar");
     
-    gripY = upperBound - savedGripPosition * rangeOfMotion;
-  
-    // Update down arrow visibility based on saved grip position
-    const isVisible = savedGripPosition !== 0;
-    setInLocalStorage('downArrow_isVisible', isVisible);
-    downArrowIsVisible = isVisible; // Directly set the state variable
-  } else {
-    // Default value when there's no saved grip position
-    setInLocalStorage('downArrow_isVisible', false);
-    downArrowIsVisible = false;
+    // Initial bottom position
+    gripY = container.clientHeight - radius - bottomPadding;
+    
+    // Load saved gripPosition from local storage
+    const savedGripPosition = get('gripPosition');
+    
+    if (savedGripPosition !== null) {
+      // Calculate gripY based on saved gripPosition
+      const lowerBound = radius + 19;
+      const upperBound = container.clientHeight - radius - bottomPadding;
+      const rangeOfMotion = upperBound - lowerBound;
+      
+      gripY = upperBound - savedGripPosition * rangeOfMotion;
+    
+      // Update down arrow visibility based on saved grip position
+      setInLocalStorage('downArrow_isVisible', savedGripPosition > 0);
+    } else {
+      setInLocalStorage('downArrow_isVisible', false);
+    }
   }
-}
 
   onMount(() => {
 
     setInitialGripPosition();
-    // Explicitly set the value in local storage and the reactive variable
-    setInLocalStorage('downArrow_isVisible', false);
-    downArrowIsVisible = false;
-    // If gripPosition > 0 then show the down arrow
+
     let gripAtBottom = get('gripPosition');
     if (gripAtBottom > 0) {
       setInLocalStorage('downArrow_isVisible', true);
-      downArrowIsVisible = true;
     }
 
     window.addEventListener('resize', setInitialGripPosition);
- 
-    const unsubscribe = scrollStore.subscribe(value => {
-
-      gripPosition = value.gripPosition;
-
-      downArrow = {
-        isVisible: value.downArrow.isVisible,
-      };
-      
-      upArrow = {
-        isVisible: value.upArrow.isVisible,
-      };
-
-      searchModal = {
-        isOpen: value.searchModal.isOpen,
-        query: value.searchModal.query
-      };
-
-      markingSystem = {
-        hits: value.markingSystem.hits,
-        consolidatedHits: value.markingSystem.consolidatedHits
-      };
-
-    totalMessages = value.totalMessages;
-    });
-
-    // Cleanup function
-    return () => {
-
-      window.removeEventListener('resize', setInitialGripPosition);
-      unsubscribe();  // Unsubscribe from the store
-    };
-
-});
+    
+  });
 
   function startDrag(e) {
     isDragging = true;
@@ -125,6 +88,7 @@ function setInitialGripPosition() {
   }
 
   function drag(e) {
+    
     if (isDragging) {
       e.preventDefault();
       const container = document.getElementById("custom-scrollbar");
@@ -140,25 +104,29 @@ function setInitialGripPosition() {
       gripPosition = 1 - (currentRelativePosition / rangeOfMotion); // 1 at the top, 0 at the bottom
       // Update local storage grip position
       setInLocalStorage('gripPosition', gripPosition);
+      //reloadScrollStore(); // Reload the scrollStore
 
         // Update downArrowIsVisible
       const isVisible = gripPosition !== 0;
       downArrowIsVisible = isVisible;
-      console.log(`downArrowIsVisible = ${downArrowIsVisible}`);
+      //console.log(`downArrowIsVisible = ${downArrowIsVisible}`);
+      //reloadScrollStore(); // Reload the scrollStore
   
       if (isVisible === false) {
           setInLocalStorage('downArrow_isVisible', false);
           downArrowIsVisible = false;
+          //reloadScrollStore(); // Reload the scrollStore
         } else {
           setInLocalStorage('downArrow_isVisible', true);
           downArrowIsVisible = true;
+          //reloadScrollStore(); // Reload the scrollStore
         }
       }
 
 }
   
 function handleDownArrowClick() {
-  console.log("Down arrow clicked");
+  //console.log("Down arrow clicked");
 
   const container = document.getElementById("custom-scrollbar");
   const upperBound = container.clientHeight - radius - bottomPadding;
@@ -187,6 +155,7 @@ function handleDownArrowClick() {
       gripPosition = Math.min(1, Math.max(0, gripPosition));
 
       setInLocalStorage('gripPosition', gripPosition);
+      //reloadScrollStore(); // Reload the scrollStore
       //console.log(`Frame ${currentStep}: gripPosition = ${gripPosition}`);
 
       gripY = targetGripY;
@@ -199,17 +168,75 @@ function handleDownArrowClick() {
 
       downArrowIsVisible = false;
       setInLocalStorage('downArrow_isVisible', false);
+      //reloadScrollStore(); // Reload the scrollStore
     }
   };
 
   animateGrip(); // Initial call to start the animation
 }
 
-  function handleUpArrowClick() {
-    console.log("Up arrow clicked");
-  }
+function handleUpArrowClick() {
+  console.log("Up arrow clicked");
+}
 
   let cursorStyle = "grab"; // Default cursor style
+
+
+
+let prevState = null;
+const unsubscribe = scrollStore.subscribe(currentState => {
+  if (prevState) {
+    for (const key in currentState) {
+      if (!deepEqual(currentState[key], prevState[key])) {
+        console.log(`Key ${key} changed`, {
+          from: prevState[key],
+          to: currentState[key]
+        });
+      }
+    }
+  }
+  prevState = JSON.parse(JSON.stringify(currentState));  // Deep clone
+});
+
+// Deep equality check
+function deepEqual(a, b) {
+  if (a === b) return true;
+
+  if (a && b && typeof a == 'object' && typeof b == 'object') {
+    if (Array.isArray(a)) {
+      if (a.length != b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (!deepEqual(a[i], b[i])) return false;
+      }
+      return true;
+    }
+    
+    const keys = Object.keys(a);
+    if (keys.length !== Object.keys(b).length) return false;
+
+    for (let key of keys) {
+      if (!b.hasOwnProperty(key)) return false;
+      if (!deepEqual(a[key], b[key])) return false;
+    }
+
+    return true;
+  }
+
+  return false;
+}
+
+function debounce(func, wait) {
+  let timeout;
+  return function() {
+    const context = this, args = arguments;
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      func.apply(context, args);
+    }, wait);
+  };
+}
+
+
 </script>
 
 <div class="flex-container">
