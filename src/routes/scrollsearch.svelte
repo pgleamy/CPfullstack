@@ -225,6 +225,8 @@ function deepEqual(a, b) {
   return false;
 }
 
+// To avoid calling a function too often, wrap it in this non async debounce function with a wait time between calls
+// USAGE: const ReturnedValue = debounce(YourFunction, 200);
 function debounce(func, wait) {
   let timeout;
   return function() {

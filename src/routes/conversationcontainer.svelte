@@ -11,7 +11,14 @@
     let num_messages = 0; // total number of messages in the conversation
 
     $: gripLocation = $scrollStore.gripPosition; // sets gripLocation to the current gripPosition in scrollStore
-    $: { fetchConversationSlice(gripLocation, num_messages);}
+    //$: { fetchConversationSlice(gripLocation, num_messages);}
+    //$: { debouncedFetchConversationSlice(gripLocation, num_messages);}
+    //$: { throttledFetch(gripLocation, num_messages); }
+    $: {
+    throttledFetch(gripLocation, num_messages);
+    debouncedFetch(gripLocation, num_messages);
+    }
+
      
     onMount(async () => {
       // get the conversation history slice from the backend
@@ -87,7 +94,33 @@ async function fetchConversationSlice(gripLocation, num_messages) {
   }
 }
 
-// adding scrolling functionality to the conversation container
+// debounce function to prevent excessive calls to fetchConversationSlice
+function debounce(func, wait) {
+  let timeout;
+  return function(...args) {
+    const context = this;
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      func.apply(context, args);
+    }, wait);
+  };
+}
+const debouncedFetch = debounce(fetchConversationSlice, 90);
+
+// throttle function to prevent excessive calls to fetchConversationSlice
+function throttle(func, limit) {
+    let inThrottle;
+    return function() {
+        const args = arguments;
+        const context = this;
+        if (!inThrottle) {
+            func.apply(context, args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+        }
+    }
+}
+const throttledFetch = throttle(fetchConversationSlice, 90);
 
 
 </script>
