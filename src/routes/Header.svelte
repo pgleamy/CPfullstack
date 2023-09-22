@@ -50,6 +50,7 @@
 		padding-top: 0px;
 		z-index: 2;
 		user-select: none;
+		background: transparent;
 	}
 
     .write {

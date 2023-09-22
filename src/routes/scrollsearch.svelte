@@ -11,7 +11,7 @@
   const radius = 10;
   const svgWidth = 30;
   const containerWidth = 55;
-  const bottomPadding = 96;
+  const bottomPadding = 90;
 
   let arrowPath;
  
@@ -242,47 +242,47 @@ function debounce(func, wait) {
 <div class="flex-container">
   <div id="custom-scrollbar" on:mousemove={drag} on:mouseup={stopDrag} role="presentation" style="--container-width: {containerWidth}px;">
     <svg id="grip-svg" width="{svgWidth}" height="calc(100% + 20px)">
-      <!-- Elastic Grip elements -->
-      <g role="slider" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0" tabindex="0">
-        <!-- Invisible clickable area for the elastic grip -->
-        <rect x="14" y="{gripY - 44}" width="12" height="30" fill="transparent" role="presentation"/>
-        <!-- Elastic Grip visual element (capsule shape) -->
-        <rect x="12" y="{gripY - 46}" width="16" height="30" rx="10" ry="5" stroke="{gripColor}" stroke-width="3" fill="none" />
-        <!-- First dot -->
-        <circle cx="20" cy="{gripY - 23}" r="1.5" fill="{gripColor}" />
-        <!-- Second dot (middle) -->
-        <circle cx="20" cy="{gripY - 30}" r="1.5" fill="{gripColor}" />
-        <!-- Third dot -->
-        <circle cx="20" cy="{gripY - 37}" r="1.5" fill="{gripColor}" />
-
-    </g>
+        <!-- Elastic Grip elements -->
+        <g role="slider" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0" tabindex="0">
+          <!-- Invisible clickable area for the elastic grip -->
+          <rect x="14" y="{gripY - 26}" width="12" height="30" fill="transparent" role="presentation"/>
+          <!-- Elastic Grip visual element (capsule shape) -->
+          <rect x="12" y="{gripY - 27}" width="16" height="30" rx="10" ry="5" stroke="{gripColor}" stroke-width="3" fill="none" />
+          <!-- First dot -->
+          <circle cx="20" cy="{gripY - 4}" r="1.5" fill="{gripColor}" />
+          <!-- Second dot (middle) -->
+          <circle cx="20" cy="{gripY - 11}" r="1.5" fill="{gripColor}" />
+          <!-- Third dot -->
+          <circle cx="20" cy="{gripY - 18}" r="1.5" fill="{gripColor}" />
+      </g>
       <!-- Grip element with drag functionality and ARIA attributes -->
       <g role="slider" aria-valuemin="0" aria-valuemax="1" aria-valuenow="{gripY}" tabindex="0"
          on:mousedown={startDrag} on:mouseup={stopDrag}>
         <!-- Invisible clickable area for the grip -->
-        <rect x="10" y="{gripY - 8}" width="30" height="21" fill="transparent" role="presentation"/>
+        <rect x="11" y="{gripY + 11}" width="30" height="21" fill="transparent" role="presentation"/>
         <!-- Grip visual elements -->
-        <rect x="10" y="{gripY - 8}" rx="3" ry="3" width="20" height="4"         fill="{gripColor}" />
-        <rect x="10" y="{gripY}" rx="3" ry="3" width="20" height="4" fill="{gripColor}" />
-        <rect x="10" y="{gripY + 8}" rx="3" ry="3" width="20" height="4" fill="{gripColor}" />
+        <rect x="10" y="{gripY + 11}" rx="3" ry="3" width="20" height="4" fill="{gripColor}" />
+        <rect x="10" y="{gripY + 19}" rx="3" ry="3" width="20" height="4" fill="{gripColor}" />
+        <rect x="10" y="{gripY + 27}" rx="3" ry="3" width="20" height="4" fill="{gripColor}" />
       </g>
       <!-- Up arrow indicator for new messages -->
       <g id="up-arrow-indicator" role="presentation" on:click={handleUpArrowClick} visibility={upArrowIsVisible ? 'visible' : 'hidden'}>
         <!-- Invisible clickable area for the up arrow -->
-        <rect x="11" y="{gripY - 28}" width="18" height="14" fill="transparent" role="presentation"/>
+        <rect x="11" y="{gripY - 9}" width="18" height="14" fill="transparent" role="presentation"/>
         <!-- Up arrow visual element -->
-        <path id="up-arrow-path" d="M 7 12 L 23 12 L 15 0 Z" stroke="orange" stroke-width="2" fill="none" stroke-linejoin="round" transform="translate(5, {gripY - 28})" />
+        <path id="up-arrow-path" d="M 7 12 L 23 12 L 15 0 Z" stroke="orange" stroke-width="2" fill="none" stroke-linejoin="round" transform="translate(5, {gripY - 13})" />
       </g>
       <!-- Down arrow indicator for new messages -->
       <g id="down-arrow-indicator" role="presentation" on:click={handleDownArrowClick} visibility={downArrowIsVisible ? 'visible' : 'hidden' } class="fade-in {downArrowIsVisible ? 'visible' : ''}">
         <!-- Invisible clickable area for the down arrow -->
-        <rect x="11" y="{gripY + 20}" width="18" height="13" fill="transparent" role="presentation"/>
+        <rect x="12" y="{gripY + 36}" width="16" height="10" fill="transparent" role="presentation"/>
         <!-- Down arrow visual element -->
-        <path bind:this={arrowPath} id="down-arrow-path" d="M 7 0 L 23 0 L 15 12 Z" stroke="#00C040" stroke-width="2" fill="none" stroke-linejoin="round" transform="translate(5, {gripY + 20})" />
+        <path bind:this={arrowPath} id="down-arrow-path" d="M 7 0 L 23 0 L 15 12 Z" stroke="#00C040" stroke-width="2" fill="none" stroke-linejoin="round" transform="translate(5, {gripY + 38})" />
       </g>
     </svg>
   </div>
 </div>
+
 
 
 <style>
@@ -292,6 +292,7 @@ function debounce(func, wait) {
     height: 100vh;
     padding-left: 0px;
     width: var(--container-width);
+    background: transparent;
   }
 
   #custom-scrollbar {
@@ -307,7 +308,6 @@ function debounce(func, wait) {
     bottom: 0;
     height: 100vh;
     padding-left: 2px;
-
   }
   :focus { /* Hides focus ring on grip */
     outline: none;
