@@ -105,7 +105,7 @@ function debounce(func, wait) {
     }, wait);
   };
 }
-const debouncedFetch = debounce(fetchConversationSlice, 90);
+const debouncedFetch = debounce(fetchAndDisplayConversationSlice, 90);
 
 // throttle function to prevent excessive calls to fetchConversationSlice
 function throttle(func, limit) {
@@ -120,7 +120,22 @@ function throttle(func, limit) {
         }
     }
 }
-const throttledFetch = throttle(fetchConversationSlice, 90);
+const throttledFetch = throttle(fetchAndDisplayConversationSlice, 90);
+
+
+async function fetchAndDisplayConversationSlice(gripLocation, num_messages) {
+    const container = document.getElementById('conversation-container');
+
+    // Fade out
+    container.style.opacity = '0';
+
+    await fetchConversationSlice(gripLocation, num_messages);
+
+    // After a slight delay to ensure content is replaced, fade in
+    setTimeout(() => {
+        container.style.opacity = '1';
+    }, 25);
+}
 
 
 </script>
@@ -154,6 +169,8 @@ const throttledFetch = throttle(fetchConversationSlice, 90);
       padding-bottom: 0px;
       padding-right: 0px;
       user-select: none;
+      opacity: 1;
+      transition: opacity 500ms ease-in-out;
 
       overflow-y: auto; /* enables vertical scrolling */
       overflow-x: hidden; /* hides horizontal scrolling */
