@@ -87,25 +87,21 @@ async function fetchConversationSlice(gripLocation, num_messages) {
   }
 }
 
-// adding scrolling functionality to the conversation container
-
-
 </script>
 
 
-
-  <div id="clip-container">
-    <div id="conversation-container"> 
-      {#each conversation as entry}
-        {#if entry.source === 'user'}
-          <UserInputSent {...entry} />
-        {:else if entry.source === 'llm'}
-          <LLMResponse {...entry} />
-        {/if}
-      {/each}
-      <UserInput />
-    </div>
+<div id="clip-container">
+  <div id="conversation-container"> 
+    {#each conversation as entry}
+      {#if entry.source === 'user'}
+        <UserInputSent {...entry} />
+      {:else if entry.source === 'llm'}
+        <LLMResponse {...entry} />
+      {/if}
+    {/each}
+    <UserInput />
   </div>
+</div>
 
    
   <style>
@@ -120,10 +116,8 @@ async function fetchConversationSlice(gripLocation, num_messages) {
       left: 5px !important;
       padding-bottom: 0px;
       padding-right: 0px;
+      overflow: hidden;
       user-select: none;
-
-      overflow-y: auto; /* enables vertical scrolling */
-      overflow-x: hidden; /* hides horizontal scrolling */
     }
 
     #clip-container {

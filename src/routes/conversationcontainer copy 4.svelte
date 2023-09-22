@@ -9,10 +9,11 @@
 
     let conversation = []; // conversation history slice as requested from the backend
     let num_messages = 0; // total number of messages in the conversation
+    //let gripLocation = 0; // 0 = bottom, 1 = top
+    //$: gripLocation = $scrollStore.gripPosition; // sets gripLocation to the current gripPosition in scrollStore
 
-    $: gripLocation = $scrollStore.gripPosition; // sets gripLocation to the current gripPosition in scrollStore
-    $: { fetchConversationSlice(gripLocation, num_messages);}
-     
+    let gripLocation = get('gripPosition'); 
+      
     onMount(async () => {
       // get the conversation history slice from the backend
       num_messages = await invoke('get_num_messages');
@@ -26,8 +27,8 @@
       const elapsed = endTime - startTime;
       console.log(`Elapsed time: ${elapsed} milliseconds`);
 
-    }); // end of onMount
 
+    }); // end of onMount
 
 async function fetchConversationSlice(gripLocation, num_messages) {
   const buffer = 10;
@@ -87,25 +88,21 @@ async function fetchConversationSlice(gripLocation, num_messages) {
   }
 }
 
-// adding scrolling functionality to the conversation container
-
-
 </script>
 
 
-
-  <div id="clip-container">
-    <div id="conversation-container"> 
-      {#each conversation as entry}
-        {#if entry.source === 'user'}
-          <UserInputSent {...entry} />
-        {:else if entry.source === 'llm'}
-          <LLMResponse {...entry} />
-        {/if}
-      {/each}
-      <UserInput />
-    </div>
+<div id="clip-container">
+  <div id="conversation-container"> 
+    {#each conversation as entry}
+      {#if entry.source === 'user'}
+        <UserInputSent {...entry} />
+      {:else if entry.source === 'llm'}
+        <LLMResponse {...entry} />
+      {/if}
+    {/each}
+    <UserInput />
   </div>
+</div>
 
    
   <style>
@@ -120,10 +117,8 @@ async function fetchConversationSlice(gripLocation, num_messages) {
       left: 5px !important;
       padding-bottom: 0px;
       padding-right: 0px;
+      overflow: hidden;
       user-select: none;
-
-      overflow-y: auto; /* enables vertical scrolling */
-      overflow-x: hidden; /* hides horizontal scrolling */
     }
 
     #clip-container {

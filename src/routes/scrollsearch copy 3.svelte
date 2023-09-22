@@ -242,20 +242,6 @@ function debounce(func, wait) {
 <div class="flex-container">
   <div id="custom-scrollbar" on:mousemove={drag} on:mouseup={stopDrag} role="presentation" style="--container-width: {containerWidth}px;">
     <svg id="grip-svg" width="{svgWidth}" height="calc(100% + 20px)">
-      <!-- Elastic Grip elements -->
-      <g role="slider" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0" tabindex="0">
-        <!-- Invisible clickable area for the elastic grip -->
-        <rect x="14" y="{gripY - 44}" width="12" height="30" fill="transparent" role="presentation"/>
-        <!-- Elastic Grip visual element (capsule shape) -->
-        <rect x="12" y="{gripY - 46}" width="16" height="30" rx="10" ry="5" stroke="{gripColor}" stroke-width="3" fill="none" />
-        <!-- First dot -->
-        <circle cx="20" cy="{gripY - 23}" r="1.5" fill="{gripColor}" />
-        <!-- Second dot (middle) -->
-        <circle cx="20" cy="{gripY - 30}" r="1.5" fill="{gripColor}" />
-        <!-- Third dot -->
-        <circle cx="20" cy="{gripY - 37}" r="1.5" fill="{gripColor}" />
-
-    </g>
       <!-- Grip element with drag functionality and ARIA attributes -->
       <g role="slider" aria-valuemin="0" aria-valuemax="1" aria-valuenow="{gripY}" tabindex="0"
          on:mousedown={startDrag} on:mouseup={stopDrag}>
@@ -281,6 +267,7 @@ function debounce(func, wait) {
         <path bind:this={arrowPath} id="down-arrow-path" d="M 7 0 L 23 0 L 15 12 Z" stroke="#00C040" stroke-width="2" fill="none" stroke-linejoin="round" transform="translate(5, {gripY + 20})" />
       </g>
     </svg>
+
   </div>
 </div>
 
