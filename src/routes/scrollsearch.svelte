@@ -68,6 +68,7 @@
   });
 
   function startDrag(e) {
+    if (isElasticDragging) return; // If elastic drag is active, exit
     isDragging = true;
     gripColor = "#00FF00";
     document.body.style.userSelect = "none";
@@ -86,7 +87,7 @@
   }
 
   function drag(e) {
-    
+    //if (isElasticDragging) return; // If elastic drag is active, exit
     if (isDragging) {
       e.preventDefault();
       const container = document.getElementById("custom-scrollbar");
@@ -225,9 +226,9 @@ function deepEqual(a, b) {
 
 // Elastic grip control logic
 let isDraggingElasticGrip = false;
-const MAX_DRAG_DISTANCE = 200; // 2 inches in pixels (this may need adjustment based on your screen DPI)
-const MIN_SPEED = 0.5; // Minimum speed multiplier
-const MAX_SPEED = 4.0; // Maximum speed multiplier
+const MAX_DRAG_DISTANCE = 120; // 2 inches in pixels (this may need adjustment based on your screen DPI)
+const MIN_SPEED = 0; // The starting speed multiplier
+const MAX_SPEED = 4.0; // Maximum speed multiplier, this can be adjusted to control the rate of scrolling
 let dragDirection = null; // 'up' or 'down'
 let dragIntensity = 1;   // Ranges from 1 to 4
 let dragSpeed = 0;       // Calculated based on drag distance
@@ -236,76 +237,111 @@ let elasticGripColor = "#00C040"; // Default color for elastic grip
 let topDotColor = "#00C040"; // Default color for top dot
 let middleDotColor = "#00C040"; // Default color for middle dot
 let bottomDotColor = "#00C040"; // Default color for bottom dot
+let startY = null; // This will store the initial Y position of the mouse
+let deltaY = null; // This will store the delta Y position of the mouse
+let initialDragY;  // Y-coordinate of where the drag started
 
 function startElasticDrag(event) {
+    //if (isDragging) return; // If normal drag is active, exit
     isElasticDragging = true;
+    startY = event.clientY;  // Store the initial Y position of the mouse
+    window.addEventListener('mousemove', elasticDrag); // Listen to mousemove on the window
+    window.addEventListener('mouseup', stopElasticDrag);  // Listen to mouseup on the window
     event.stopPropagation();
 }
 
+
 function stopElasticDrag(event) {
     isElasticDragging = false;
+    startY = null;  // Reset the initial Y position
+    window.removeEventListener('mousemove', elasticDrag); // Remove the mousemove listener from the window
+    window.removeEventListener('mouseup', stopElasticDrag);  // Remove the mouseup listener from the window
+    console.log("Stopped dragging");  // This will now only log when the grip is released
+    // Reset the dot colors
+    elasticGripColor = "#00C040";
+    topDotColor = "#00C040";
+    middleDotColor = "#00C040";
+    bottomDotColor = "#00C040";
+
     event.stopPropagation();
 }
 
 function elasticDrag(e) {
+    //if (isDragging) return; // If normal drag is active, exit
     e.stopPropagation();
 
-    const deltaY = e.clientY - e.target.getBoundingClientRect().top;
+    // Only proceed if the elastic grip is being dragged
+    if (!isElasticDragging) return;
+
+    if (startY === null) return; // Ensure startY is set
+
+    const deltaY = e.clientY - startY; // Use the initial Y position for delta calculation
+
+    // Determine the direction based on deltaY
+    if (deltaY > 0) {
+        dragDirection = 'down';
+    } else if (deltaY < 0) {
+        dragDirection = 'up';
+    } // If deltaY is 0, dragDirection remains unchanged
 
     // Calculate speed based on drag distance
     const normalizedDistance = Math.min(Math.abs(deltaY), MAX_DRAG_DISTANCE) / MAX_DRAG_DISTANCE;
-    dragSpeed = MIN_SPEED + (MAX_SPEED - MIN_SPEED) * normalizedDistance * normalizedDistance; // exponential increase
+    dragSpeed = MIN_SPEED + (MAX_SPEED - MIN_SPEED) * normalizedDistance; // cubed for more exponential feel
 
     // Calculate drag intensity
     dragIntensity = Math.ceil(dragSpeed);
+
+    console.log("Dragging", dragDirection);  // This will now only log when the grip is being dragged
 
     // Update visual feedback
     updateDotsBrightness();
 }
 
+
 function updateDotsBrightness() {
-    // Here, adjust the brightness of your dots based on dragDirection and dragIntensity
-    // You can use CSS classes or inline styles to achieve the desired visual effect
-    
     const mellowRed = "#FFCCCC";
     const middleRed = "#FF0000";
     const brightRed = "#FF4040";
     
-    if (dragDirection === 'down') {
+    if (dragDirection === 'up') {
         elasticGripColor = "#00FF00";  // Green color for the elastic grip
         
-        topDotColor = mellowRed;
+        bottomDotColor = "#00C040";  // keep the bottom dot green
         middleDotColor = mellowRed;
 
-        // Adjust bottom dot color based on dragIntensity
+        // Adjust top dot color based on dragIntensity
         if (dragIntensity === 1) {
-            bottomDotColor = mellowRed;
+            middleDotColor = mellowRed;
         } else if (dragIntensity === 2) {
-            bottomDotColor = middleRed;
+            topDotColor = mellowRed;
         } else if (dragIntensity === 3) {
-            bottomDotColor = brightRed;
+            middleDotColor = brightRed;
         } else if (dragIntensity === 4) {
-            bottomDotColor = "#00C040"; // Green for maximum intensity
+            topDotColor = brightRed;
+            middleDotColor = brightRed;
         }
         
     } else {  // This means it's 'up'
         elasticGripColor = "#00FF00";  // Green color for the elastic grip
         
-        bottomDotColor = mellowRed;
+        topDotColor = "#00C040";  // keep the top dot green
         middleDotColor = mellowRed;
 
-        // Adjust top dot color based on dragIntensity
+        // Adjust bottom dot color based on dragIntensity
         if (dragIntensity === 1) {
-            topDotColor = mellowRed;
+            middleDotColor = mellowRed;
         } else if (dragIntensity === 2) {
-            topDotColor = middleRed;
+            bottomDotColor = mellowRed;
         } else if (dragIntensity === 3) {
-            topDotColor = brightRed;
+            middleDotColor = brightRed;
         } else if (dragIntensity === 4) {
-            topDotColor = "#00C040"; // Green for maximum intensity
+            bottomDotColor = brightRed;
+            middleDotColor = brightRed;
         }
     }
 }
+
+
 
 
 
@@ -321,17 +357,17 @@ function updateDotsBrightness() {
     <svg id="grip-svg" width="{svgWidth}" height="calc(100% + 20px)">
         <!-- Elastic Grip elements -->
         <g id="elastic-grip" role="slider" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0" tabindex="0" 
-            on:mousedown={startElasticDrag} on:mouseup={stopElasticDrag} on:mousemove={elasticDrag}>
+            on:mousedown={startElasticDrag} on:mouseup={stopElasticDrag} on:mousemove={elasticDrag}> 
           <!-- Invisible clickable area for the elastic grip -->
           <rect x="14" y="{gripY - 26}" width="12" height="30" fill="transparent" role="presentation" />
           <!-- Elastic Grip visual element (capsule shape) -->
           <rect x="12" y="{gripY - 27}" width="16" height="30" rx="10" ry="5" stroke="{elasticGripColor}" stroke-width="3" fill="none" />
           <!-- First dot -->
-          <circle cx="20" cy="{gripY - 4}" r="1.5" fill="{topDotColor}" />
+          <circle cx="20" cy="{gripY - 4}" r="1.5" fill="{bottomDotColor}" />
           <!-- Second dot (middle) -->
           <circle cx="20" cy="{gripY - 11}" r="1.5" fill="{middleDotColor}" />
           <!-- Third dot -->
-          <circle cx="20" cy="{gripY - 18}" r="1.5" fill="{bottomDotColor}" />
+          <circle cx="20" cy="{gripY - 18}" r="1.5" fill="{topDotColor}" />
       </g>
       <!-- Grip element with drag functionality and ARIA attributes -->
       <g role="slider" aria-valuemin="0" aria-valuemax="1" aria-valuenow="{gripY}" tabindex="0"
