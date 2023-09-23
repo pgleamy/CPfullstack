@@ -10,17 +10,16 @@
     let conversation = []; // conversation history slice as requested from the backend
     let num_messages = 0; // total number of messages in the conversation
 
-    // Scrubbing grip control logic
-    // gripLocation is a number between 0 and 1 that represents the position of the grip relative to the whole conversation
     $: gripLocation = $scrollStore.gripPosition; // sets gripLocation to the current gripPosition in scrollStore
+    //$: { fetchConversationSlice(gripLocation, num_messages);}
+    //$: { debouncedFetchConversationSlice(gripLocation, num_messages);}
+    //$: { throttledFetch(gripLocation, num_messages); }
     $: {
     throttledFetch(gripLocation, num_messages);
     debouncedFetch(gripLocation, num_messages);
-    } // controls the fetching of the conversation slice based on gripLocation for smooth interaction
+    }
 
-
-    
-
+     
     onMount(async () => {
       // get the conversation history slice from the backend
       num_messages = await invoke('get_num_messages');
