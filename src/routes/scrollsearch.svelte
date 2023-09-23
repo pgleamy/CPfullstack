@@ -346,12 +346,12 @@ function updateDotsBrightness() {
 
 <div class="flex-container">
   <div id="custom-scrollbar" on:mousemove={drag} on:mouseup={stopDrag} role="presentation" style="--container-width: {containerWidth}px;">
-    <svg id="grip-svg" width="{svgWidth} + 4" height="calc(100% + 20px)">
+    <svg id="grip-svg" width="{svgWidth + 24}" height="calc(100% + 20px)">
         <!-- Elastic Grip elements -->
         <g id="elastic-grip" role="slider" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0" tabindex="0" 
             on:mousedown={startElasticDrag} on:mouseup={stopElasticDrag} on:mousemove={elasticDrag}> 
           <!-- Invisible clickable area for the elastic grip -->
-          <rect x="0" y="{gripY - 28}" width="60" height="33" fill="transparent" role="presentation" />
+          <rect x="0" y="{gripY - 28}" width="60" height="33" fill="red" role="presentation" />
           <!-- Elastic Grip visual element (capsule shape) -->
           <rect x="12" y="{gripY - 27}" width="16" height="30" rx="10" ry="5" stroke="{elasticGripColor}" stroke-width="3" fill="none" />
           <!-- First dot -->
