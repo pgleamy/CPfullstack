@@ -177,7 +177,7 @@ function handleUpArrowClick() {
   console.log("Up arrow clicked");
 }
 
-let cursorStyle = "grab"; // Default cursor style
+//let cursorStyle = "grab"; // Default cursor style
 
 
 
@@ -297,7 +297,6 @@ function elasticDrag(e) {
     updateDotsBrightness();
 }
 
-
 function updateDotsBrightness() {
     const mellowRed = "#FFCCCC";
     const middleRed = "#FF0000";
@@ -343,23 +342,16 @@ function updateDotsBrightness() {
 
 
 
-
-
-
-
-
-
-
 </script>
 
 <div class="flex-container">
   <div id="custom-scrollbar" on:mousemove={drag} on:mouseup={stopDrag} role="presentation" style="--container-width: {containerWidth}px;">
-    <svg id="grip-svg" width="{svgWidth}" height="calc(100% + 20px)">
+    <svg id="grip-svg" width="{svgWidth} + 4" height="calc(100% + 20px)">
         <!-- Elastic Grip elements -->
         <g id="elastic-grip" role="slider" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0" tabindex="0" 
             on:mousedown={startElasticDrag} on:mouseup={stopElasticDrag} on:mousemove={elasticDrag}> 
           <!-- Invisible clickable area for the elastic grip -->
-          <rect x="14" y="{gripY - 26}" width="12" height="30" fill="transparent" role="presentation" />
+          <rect x="0" y="{gripY - 28}" width="60" height="33" fill="transparent" role="presentation" />
           <!-- Elastic Grip visual element (capsule shape) -->
           <rect x="12" y="{gripY - 27}" width="16" height="30" rx="10" ry="5" stroke="{elasticGripColor}" stroke-width="3" fill="none" />
           <!-- First dot -->
@@ -373,7 +365,7 @@ function updateDotsBrightness() {
       <g role="slider" aria-valuemin="0" aria-valuemax="1" aria-valuenow="{gripY}" tabindex="0"
          on:mousedown={startDrag} on:mouseup={stopDrag}>
         <!-- Invisible clickable area for the grip -->
-        <rect x="11" y="{gripY + 11}" width="30" height="21" fill="transparent" role="presentation"/>
+        <rect x="0" y="{gripY + 11}" width="60" height="21" fill="transparent" role="presentation"/>
         <!-- Grip visual elements -->
         <rect x="10" y="{gripY + 11}" rx="3" ry="3" width="20" height="4" fill="{gripColor}" />
         <rect x="10" y="{gripY + 19}" rx="3" ry="3" width="20" height="4" fill="{gripColor}" />
@@ -389,7 +381,7 @@ function updateDotsBrightness() {
       <!-- Down arrow indicator for new messages -->
       <g id="down-arrow-indicator" role="presentation" on:click={handleDownArrowClick} visibility={downArrowIsVisible ? 'visible' : 'hidden' } class="fade-in {downArrowIsVisible ? 'visible' : ''}">
         <!-- Invisible clickable area for the down arrow -->
-        <rect x="12" y="{gripY + 36}" width="16" height="10" fill="transparent" role="presentation"/>
+        <rect x="0" y="{gripY + 38}" width="60" height="14" fill="transparent" role="presentation"/>
         <!-- Down arrow visual element -->
         <path bind:this={arrowPath} id="down-arrow-path" d="M 7 0 L 23 0 L 15 12 Z" stroke="#00C040" stroke-width="2" fill="none" stroke-linejoin="round" transform="translate(5, {gripY + 38})" />
       </g>
@@ -405,6 +397,7 @@ function updateDotsBrightness() {
     flex-direction: column;
     height: 100vh;
     padding-left: 0px;
+    padding-right: 4px;
     width: var(--container-width);
     background: transparent;
   }
@@ -415,6 +408,7 @@ function updateDotsBrightness() {
     background: transparent;
     width: var(--container-width);
     padding-left: 0px;
+    padding-right: 0px;
   }
 
   #grip-svg {
@@ -443,6 +437,17 @@ function updateDotsBrightness() {
 .fade-in.visible {
   opacity: 1;
 }
+
+
+#custom-scrollbar, #grip-svg {
+  cursor: default;
+}
+
+/* Add pointer cursor for the clickable areas */
+#grip-svg rect, #up-arrow-indicator rect, #down-arrow-indicator rect {
+  cursor: pointer;
+}
+
 
 </style>
 
