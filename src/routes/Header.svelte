@@ -31,10 +31,10 @@
 	<nav>
 		<ul>
 			<li aria-current={$page.url.pathname === '/' ? 'page' : undefined}>
-				<a href="/">{name}</a> <!-- Updated name -->
+				<a href="/" draggable="false">{name}</a> <!-- Updated name -->
 			</li>
 			<li aria-current={$page.url.pathname === '/roles' ? 'page' : undefined}>
-				<a href="/roles">(<span class={roleClass}>{$settings.Role}</span>)</a>
+				<a href="/roles" draggable="false">(<span class={roleClass}>{$settings.Role}</span>)</a>
 			</li>
 		</ul>
 	</nav>
