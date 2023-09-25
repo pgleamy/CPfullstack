@@ -226,7 +226,7 @@ function deepEqual(a, b) {
 
 // Elastic grip control logic
 let isDraggingElasticGrip = false;
-const MAX_DRAG_DISTANCE = 120; // 2 inches in pixels (this may need adjustment based on your screen DPI)
+const MAX_DRAG_DISTANCE = 170; // 2 inches in pixels (this may need adjustment based on your screen DPI)
 const MIN_SPEED = 0; // The starting speed multiplier
 const MAX_SPEED = 4.0; // Maximum speed multiplier, this can be adjusted to control the rate of scrolling
 let dragDirection = null; // 'up' or 'down'
@@ -234,9 +234,9 @@ let dragIntensity = 1;   // Ranges from 1 to 4
 let dragSpeed = 0;       // Calculated based on drag distance
 let isElasticDragging = false; // True when the elastic grip is being dragged
 let elasticGripColor = "#00C040"; // Default color for elastic grip
-let topDotColor = "#00C040"; // Default color for top dot
-let middleDotColor = "#00C040"; // Default color for middle dot
-let bottomDotColor = "#00C040"; // Default color for bottom dot
+let topDotColor = "#006600"; // Default color for top dot
+let middleDotColor = "#006600"; // Default color for middle dot
+let bottomDotColor = "#006600"; // Default color for bottom dot
 let startY = null; // This will store the initial Y position of the mouse
 let deltaY = null; // This will store the delta Y position of the mouse
 let initialDragY;  // Y-coordinate of where the drag started
@@ -259,9 +259,9 @@ function stopElasticDrag(event) {
     console.log("Stopped dragging");  // This will now only log when the grip is released
     // Reset the dot colors
     elasticGripColor = "#00C040";
-    topDotColor = "#00C040";
-    middleDotColor = "#00C040";
-    bottomDotColor = "#00C040";
+    topDotColor = "#003300";
+    middleDotColor = "#003300";
+    bottomDotColor = "#003300";
 
     event.stopPropagation();
 }
@@ -298,14 +298,14 @@ function elasticDrag(e) {
 }
 
 function updateDotsBrightness() {
-    const mellowRed = "#FFCCCC";
+    const mellowRed = "#009900";
     const middleRed = "#FF0000";
-    const brightRed = "#FF4040";
+    const brightRed = "#33FF00";
     
     if (dragDirection === 'up') {
         elasticGripColor = "#00FF00";  // Green color for the elastic grip
         
-        bottomDotColor = "#00C040";  // keep the bottom dot green
+        bottomDotColor = "#003300";  // keep the bottom dot green
         middleDotColor = mellowRed;
 
         // Adjust top dot color based on dragIntensity
@@ -323,7 +323,7 @@ function updateDotsBrightness() {
     } else {  // This means it's 'up'
         elasticGripColor = "#00FF00";  // Green color for the elastic grip
         
-        topDotColor = "#00C040";  // keep the top dot green
+        topDotColor = "#003300";  // keep the top dot green
         middleDotColor = mellowRed;
 
         // Adjust bottom dot color based on dragIntensity
@@ -351,15 +351,15 @@ function updateDotsBrightness() {
         <g id="elastic-grip" role="slider" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0" tabindex="0" 
             on:mousedown={startElasticDrag} on:mouseup={stopElasticDrag} on:mousemove={elasticDrag}> 
           <!-- Invisible clickable area for the elastic grip -->
-          <rect x="0" y="{gripY - 28}" width="60" height="33" fill="red" role="presentation" />
+          <rect x="0" y="{gripY - 28}" width="60" height="33" fill="transparent" role="presentation" />
           <!-- Elastic Grip visual element (capsule shape) -->
           <rect x="12" y="{gripY - 27}" width="16" height="30" rx="10" ry="5" stroke="{elasticGripColor}" stroke-width="3" fill="none" />
           <!-- First dot -->
-          <circle cx="20" cy="{gripY - 4}" r="1.5" fill="{bottomDotColor}" />
+          <circle cx="20" cy="{gripY - 4}" r="2.2" fill="{bottomDotColor}" />
           <!-- Second dot (middle) -->
-          <circle cx="20" cy="{gripY - 11}" r="1.5" fill="{middleDotColor}" />
+          <circle cx="20" cy="{gripY - 11}" r="2.7" fill="{middleDotColor}" />
           <!-- Third dot -->
-          <circle cx="20" cy="{gripY - 18}" r="1.5" fill="{topDotColor}" />
+          <circle cx="20" cy="{gripY - 18}" r="2.3" fill="{topDotColor}" />
       </g>
       <!-- Grip element with drag functionality and ARIA attributes -->
       <g role="slider" aria-valuemin="0" aria-valuemax="1" aria-valuenow="{gripY}" tabindex="0"
