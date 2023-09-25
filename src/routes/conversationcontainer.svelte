@@ -173,8 +173,8 @@ async function fetchAndDisplayConversationSlice(gripLocation, num_messages) {
       opacity: 1;
       transition: opacity 500ms ease-in-out;
 
-      overflow-y: auto; /* enables vertical scrolling */
-      overflow-x: hidden; /* hides horizontal scrolling */
+      overflow-y: hidden; /* hides default vertical scrolling bar */
+      overflow-x: hidden; /* hides default horizontal scrolling bar */
     }
 
     #clip-container {

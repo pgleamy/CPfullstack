@@ -58,7 +58,8 @@
         "title": "ChatPerfect",
         "width": 1024,
         "minHeight": 600,
-        "minWidth": 800
+        "minWidth": 800, 
+        "decorations": true
       }
     ]
   }

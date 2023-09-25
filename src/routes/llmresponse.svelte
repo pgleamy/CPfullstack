@@ -1,9 +1,10 @@
 <script>
     //@ts-nocheck
-    import { onMount } from 'svelte';
+    import { onMount, onDestroy } from 'svelte';
 
     export let user_name; // will hold the user name
-    export let text = ''; // text from the message   
+    export let text = ''; // text from the message 
+    let textArea; // will hold the textarea element  
     export let timestamp; // will hold the timestamp
     export let source; // will hold the source of the message
     export let llm_name; // will hold the llm name
@@ -12,13 +13,18 @@
     export let block_id; // will hold the block id
 
     function resizeTextarea() {
-        const textArea = document.querySelector('#llm-response-textarea');
+        //const textArea = document.querySelector('#llm-response-textarea');
         textArea.style.height = 'auto'; // Reset height
         textArea.style.height = (textArea.scrollHeight) + 'px'; // Set height based on content
     }
 
     onMount(() => {
         resizeTextarea();
+        window.addEventListener('resize', resizeTextarea);
+    });
+
+    onDestroy(() => {
+        window.removeEventListener('resize', resizeTextarea);
     });
 
 </script>
@@ -29,7 +35,7 @@
             <span>{llm_name} ({llm_role})</span>
             <span id="timestamp"> -{timestamp} </span>
         </div>
-        <textarea id="llm-response-textarea" readonly on:input={resizeTextarea}>{text}</textarea>  
+        <textarea bind:this={textArea} readonly on:input={resizeTextarea}>{text}</textarea>  
     </div>  
 </div>
 

@@ -1,5 +1,5 @@
 <script>
-    import { onMount, onDestroy } from 'svelte';
+    import { onMount } from 'svelte';
 
     export let user_name; // will hold the user name
     export let text = ''; // text from the message 
@@ -19,15 +19,7 @@
   
     onMount(() => {
       resizeTextarea();
-      window.addEventListener('resize', resizeTextarea);
     });
-
-    onDestroy(() => {
-    console.log('onDestroy is being called');
-    window.removeEventListener('resize', resizeTextarea);
-    });
-    
-
   </script>
   
   <div id="wrapper">
