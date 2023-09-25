@@ -54,8 +54,6 @@ const load = () => {
       consolidatedHits: get('markingSystem_consolidatedHits') !== null ? JSON.parse(get('markingSystem_consolidatedHits')) : [],
     },
     totalMessages: parseInt(get('totalMessages')) || 0,
-
-    dragSpeedUpDown: parseFloat(get('dragSpeedUpDown')) || 0, // Elastic grip scroll speed. Defaults to 0 to signify 0 drag velocity, otherwise is a positive number for up and a negative number for down
   };
 };
 

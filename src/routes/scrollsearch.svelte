@@ -177,10 +177,6 @@ function handleUpArrowClick() {
   console.log("Up arrow clicked");
 }
 
-//let cursorStyle = "grab"; // Default cursor style
-
-
-
 let prevState = null;
 const unsubscribe = scrollStore.subscribe(currentState => {
   if (prevState) {
@@ -229,9 +225,10 @@ let isDraggingElasticGrip = false;
 const MAX_DRAG_DISTANCE = 170; // 2 inches in pixels (this may need adjustment based on your screen DPI)
 const MIN_SPEED = 0; // The starting speed multiplier
 const MAX_SPEED = 4.0; // Maximum speed multiplier, this can be adjusted to control the rate of scrolling
-let dragDirection = null; // 'up' or 'down'
+let dragDirection = null; // 'up' or 'down' or 'null'
 let dragIntensity = 1;   // Ranges from 1 to 4
-let dragSpeed = 0;       // Calculated based on drag distance
+let dragSpeed = 0; // Calculated based on drag distance
+let dragSpeedUpDown = 0;  // Calculated based on drag distance
 let isElasticDragging = false; // True when the elastic grip is being dragged
 let elasticGripColor = "#00C040"; // Default color for elastic grip
 let topDotColor = "#006600"; // Default color for top dot
@@ -250,18 +247,22 @@ function startElasticDrag(event) {
     event.stopPropagation();
 }
 
-
 function stopElasticDrag(event) {
     isElasticDragging = false;
     startY = null;  // Reset the initial Y position
     window.removeEventListener('mousemove', elasticDrag); // Remove the mousemove listener from the window
     window.removeEventListener('mouseup', stopElasticDrag);  // Remove the mouseup listener from the window
-    console.log("Stopped dragging");  // This will now only log when the grip is released
+    //console.log("Stopped dragging");  // This will now only log when the grip is released
+    
     // Reset the dot colors
     elasticGripColor = "#00C040";
     topDotColor = "#003300";
     middleDotColor = "#003300";
     bottomDotColor = "#003300";
+
+    // Reset elastic grip dragSpeed to 0
+    setInLocalStorage('dragSpeedUpDown', 0);
+    dragSpeed = 0;
 
     event.stopPropagation();
 }
@@ -286,12 +287,16 @@ function elasticDrag(e) {
 
     // Calculate speed based on drag distance
     const normalizedDistance = Math.min(Math.abs(deltaY), MAX_DRAG_DISTANCE) / MAX_DRAG_DISTANCE;
-    dragSpeed = MIN_SPEED + (MAX_SPEED - MIN_SPEED) * normalizedDistance; // cubed for more exponential feel
+    dragSpeed = MIN_SPEED + (MAX_SPEED - MIN_SPEED) * normalizedDistance; 
+
+    // Make dragSpeedUpDown negative if the direction is 'down', otherwise it stays as dragSpeed
+    dragSpeedUpDown = (dragDirection === 'down') ? -dragSpeed : dragSpeed;
+    // Update local storage with the calculated dragSpeedUpDown
+    setInLocalStorage('dragSpeedUpDown', dragSpeedUpDown);
 
     // Calculate drag intensity
     dragIntensity = Math.ceil(dragSpeed);
-
-    console.log("Dragging", dragDirection);  // This will now only log when the grip is being dragged
+    //console.log("Dragging", dragDirection);  // This will now only log when the grip is being dragged
 
     // Update visual feedback
     updateDotsBrightness();
@@ -339,8 +344,6 @@ function updateDotsBrightness() {
         }
     }
 }
-
-
 
 </script>
 
