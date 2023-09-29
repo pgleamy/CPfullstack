@@ -363,11 +363,13 @@ const throttledFetch = throttle(fetchConversationSlice, 90);
     position: relative;
     overflow-y: auto; /* Makes it scrollable */
     height: 100vh; /* Or some height that fits your layout */
+    width: 100%;
   }
 
   .user-input {
     position: absolute;
     bottom: 0;
+    width: 100%;
   }
  
   </style>

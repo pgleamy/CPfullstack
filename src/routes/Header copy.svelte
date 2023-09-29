@@ -8,38 +8,19 @@
 	// reactive state management for scrollsearch component
     import {scrollStore} from '$lib/scrollStore.js'; 
 
-	let hideHeader = false;
-
 	onMount(() => {
   		const initialSettings = loadSettings();
   		updateSettings(initialSettings);
-		setTimeout(() => {
-      		hideHeader = true;
-    	}, 1000);
-
-		const checkMousePosition = (e) => {
-		if (e.clientY < 70) {
-			hideHeader = false;
-		} else {
-			hideHeader = true;
-		}
-    };
-
-    window.addEventListener('mousemove', checkMousePosition);
-
-    return () => { // Cleanup
-      window.removeEventListener('mousemove', checkMousePosition);
-    };
-
 	});
 	
 	$: logo = $settings.Gender === 'Argus' ? 'src/lib/images/Argus_logo_clear.png' : 'src/lib/images/Iris_logo_clear.png';
 	$: name = $settings.Gender === 'Argus' ? 'Argus' : 'Iris';
 	$: roleClass = $settings.Role === 'Write' ? 'write' : $settings.Role === 'Code' ? 'code' : 'talk';
+
 	
 </script>
 
-<header class:hide={hideHeader}> <!-- Add the transition directive here -->
+<header > <!-- Add the transition directive here -->
 	
 	<div class="corner">
 		<div>
@@ -156,13 +137,5 @@
 	a:hover {
 		color: var(--color-theme-1);
 	}
-
-	header {
-    transition: transform 0.35s ease;
-  }
-
-  .hide {
-    transform: translateY(-120%);
-  }
 
 </style>
