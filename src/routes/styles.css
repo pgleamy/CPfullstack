@@ -106,3 +106,15 @@ button:focus:not(:focus-visible) {
 	width: 1px;
 	white-space: nowrap;
 }
+
+.parent-container {
+	position: relative;
+	overflow-y: auto; /* Makes it scrollable */
+	height: 100vh; /* Or some height that fits your layout */
+  }
+  
+  .user-input {
+	position: absolute;
+	bottom: 0;
+  }
+  

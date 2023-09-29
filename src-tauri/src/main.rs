@@ -51,15 +51,6 @@ fn main() -> PyResult<()> {
         }
     }
     
-    // Print the first part of the conversation history to the terminal for testing
-    /*
-    {
-        let data = CONVERSATION_HISTORY.lock().unwrap();
-        let output: String = data.chars().take(5000).collect();
-        println!("First 5000 characters: {}", output);
-    }
-   */
-    
     
     let current_dir = env::current_dir().unwrap();
     println!("\nTauri/Svelte thread working directory is: {:?}", current_dir);
@@ -143,7 +134,7 @@ fn main() -> PyResult<()> {
 
     tauri::Builder::default()
 
-        .invoke_handler(tauri::generate_handler![store_openai_key, get_openai_key, send_prompt, fetch_conversation_history, get_num_messages])
+        .invoke_handler(tauri::generate_handler![store_openai_key, get_openai_key, send_prompt, fetch_conversation_history, get_num_messages, get_total_llm_user_messages])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 
@@ -153,21 +144,34 @@ fn main() -> PyResult<()> {
     Ok(())
 }
 
-
+// Counts ALL messages, including from user, llm and bright_memory
 use rusqlite::{Connection, Result};
 #[tauri::command]
 fn get_num_messages() -> Result<usize, String> {
     let conn = Connection::open("F:\\WindowsDesktop\\Users\\Leamy\\Desktop\\ChatPerfect\\src\\users\\patrick_leamy\\database\\big.db").map_err(|e| e.to_string())?;
     
+    //let mut stmt = conn.prepare("SELECT COUNT(*) FROM text_blocks").map_err(|e| e.to_string())?;
     let mut stmt = conn.prepare("SELECT COUNT(*) FROM text_blocks").map_err(|e| e.to_string())?;
     let num_messages: usize = stmt.query_row([], |row| row.get(0)).map_err(|e| e.to_string())?;
 
     let mut num = NUM_MESSAGES.lock().unwrap();
     *num = num_messages;
 
-    Ok(num_messages)  // Return the number of messages
+    Ok(num_messages)  // Return the number of llm, user and bright_memory messages
 }
 
+// Counts ONLY messages from user and llm
+#[tauri::command]
+fn get_total_llm_user_messages() -> Result<usize, String> {
+    let conn = Connection::open("F:\\WindowsDesktop\\Users\\Leamy\\Desktop\\ChatPerfect\\src\\users\\patrick_leamy\\database\\big.db").map_err(|e| e.to_string())?;
+
+    // Table name is 'text_blocks' and the relevant column is 'source'
+    let mut stmt = conn.prepare("SELECT COUNT(*) FROM text_blocks WHERE source IN ('user', 'llm')").map_err(|e| e.to_string())?;
+    
+    let count: usize = stmt.query_row([], |row| row.get(0)).map_err(|e| e.to_string())?;
+    
+    Ok(count) // return the number of llm and user messages
+}
 
 
 
@@ -192,7 +196,7 @@ fn get_openai_key() -> Result<String, String> {
 
 // Tauri Command to fetch a slice of CONVERSATION_HISTORY to the frontend
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
+//use serde_json::Value;
 
 #[derive(Deserialize)]
 struct FetchParams {
@@ -210,39 +214,12 @@ fn fetch_conversation_history(params: FetchParams) -> tauri::Result<Reply> {
   let data = CONVERSATION_HISTORY.lock().unwrap();
   
   // No need for parsing, directly use the data
-  let slice = &data[params.start..params.end];
+ let slice = &data[params.start..params.end];
 
   Ok(Reply {
     message: slice.to_vec(),
   })
 }
-
-
-
-/* old version that returns a string
-use serde::{Deserialize, Serialize};
-use serde_json::Value;
-#[derive(Deserialize)]
-struct FetchParams {
-  start: usize,
-  end: usize,
-}
-#[derive(Serialize)]
-struct Reply {
-  message: Vec<Value>,
-}
-#[tauri::command]
-fn fetch_conversation_history(params: FetchParams) -> tauri::Result<Reply> {
-  let data = CONVERSATION_HISTORY.lock().unwrap();
-  let parsed_data: Vec<Value> = serde_json::from_str(&data).unwrap();
-  
-  let slice = &parsed_data[params.start..params.end];
-
-  Ok(Reply {
-    message: slice.to_vec(),
-  })
-}
-*/
 
 // Just clears the terminal screen :)
 use std::io::{self, Write};
@@ -257,4 +234,3 @@ fn clear_screen() {
         let _ = io::stdout().flush();
     }
 }
-

@@ -77,7 +77,7 @@
 
 </script>
 
-<div id="wrapper">
+<div id="wrapper" class="sticky-input">
 <div id="message-input">
     <div id="title" contenteditable="false">
         <span>{username}</span>
@@ -96,15 +96,23 @@
 
 <style>
 
+    .sticky-input {
+        position: sticky;
+        bottom: 0;
+        z-index: 999; 
+        background: white;
+    }
+
     #wrapper {
         width: 100%;
-        display: flex;
+        display: contents;
         flex-direction: column;
         justify-content: flex-end;
         position: relative;
         Left: 0;
         right: 0;
         padding-top: 0px;
+        padding-bottom: 0px;
     }
 
     #message-input {
@@ -121,6 +129,7 @@
         background-color: transparent;
         border-radius: 0px;
         left: 0px;
+        padding-bottom: 85px;
     }
 
     #message-input textarea {

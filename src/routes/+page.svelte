@@ -37,6 +37,7 @@
     <div class="scrollSearchWrapper" transition:fade="{{ duration: 100, delay: 10 }}">
         <ScrollSearch />
     </div>
+
 </div>
 
 <style>
@@ -59,5 +60,6 @@
     #flex{
         display: flex;
     }
+
 </style>
 

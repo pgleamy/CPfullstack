@@ -33,37 +33,46 @@
         }
       }
 
-      
 
-    let endScrollTrigger = false;
-    let startScrollTrigger = false;
+let endScrollTrigger = false;
+let startScrollTrigger = false;
 
-    import { tick } from 'svelte';
+import { tick } from 'svelte';
 
-    $: {
-      if (isEndOfConversation && !endScrollTrigger) {
-        if (container) {
-          container.scrollTop = container.scrollHeight;
-        }
-        tick().then(() => {
-          if (userInputComponent) {
-            container.scrollTop = container.scrollHeight;
-          }
-        });
-        endScrollTrigger = true;  // Prevent further downward scrolling until flag is reset
-        startScrollTrigger = false; // Reset the other flag
-      } else if (isStartOfConversation && !startScrollTrigger) {
-        if (container) {
-          container.scrollTop = 0;
-        }
-        startScrollTrigger = true; // Prevent further upward scrolling until flag is reset
-        endScrollTrigger = false; // Reset the other flag
-      } else if (!isEndOfConversation && !isStartOfConversation) {
-        // Reset both flags if neither condition is met
-        endScrollTrigger = false;
-        startScrollTrigger = false;
-      }
+$: {
+  if (isEndOfConversation && !endScrollTrigger) {
+    if (container) {
+      container.scrollTop = container.scrollHeight;
     }
+    tick().then(() => {
+      if (userInputComponent) {
+        userInputComponent.scrollIntoView({ behavior: "smooth" });
+      }
+    });
+    endScrollTrigger = true;  // Prevent further downward scrolling until flag is reset
+    startScrollTrigger = false; // Reset the other flag
+  } else if (isStartOfConversation && !startScrollTrigger) {
+    if (container) {
+      container.scrollTop = 0;
+    }
+    startScrollTrigger = true; // Prevent further upward scrolling until flag is reset
+    endScrollTrigger = false; // Reset the other flag
+  } else if (!isEndOfConversation && !isStartOfConversation) {
+    // Reset both flags if neither condition is met
+    endScrollTrigger = false;
+    startScrollTrigger = false;
+  }
+}
+
+
+
+
+
+
+
+
+
+
 
 
     // Scrubbing grip control logic
@@ -87,15 +96,14 @@
     };
 
 
-  onMount(async () => {
-
+    onMount(async () => {
       // get the conversation history slice from the backend
       num_messages = await invoke('get_num_messages');
       num_user_llm_messages = await invoke('get_total_llm_user_messages');
       console.log("Current number of all user, llm and bright_memory messages: " + num_messages);
       console.log("Current number of user and llm messages: " + num_user_llm_messages);
       console.log("Current gripLocation: " + gripLocation);
-
+     
       // start a simple debugging timer
       const startTime = Date.now();
       fetchConversationSlice(gripLocation, num_messages);
@@ -106,7 +114,7 @@
 
       const observerOptions = {
         root: null,
-        rootMargin: '0px', // how early to start fetching the next part of the conversation
+        rootMargin: '0px',
         threshold: 0.1
       };
 
@@ -139,7 +147,7 @@
 
       requestAnimationFrame(animateScroll);
 
-  }); // end of onMount
+    }); // end of onMount
 
 
 
@@ -182,19 +190,11 @@ async function fetchConversationSlice(gripLocation, num_messages) {
     end = num_messages;
   }
   
-  // Step 5: Fetch the conversation slice & handle top and bottom properly
+  // Step 5: Fetch the conversation slice
   try {
     const fetchedData = await invoke('fetch_conversation_history', { params: {start, end} });
     console.log("Fetched conversation slice:", fetchedData);  // Debug line
-
-    // Additional logic to handle initial scroll position if grip at top or bottom
-    if (gripLocation === 0 && container) {
-      container.scrollTop = container.scrollHeight;
-    } else if (gripLocation === 1 && container) {
-      container.scrollTop = 0;
-    }
-
-
+    
     if (fetchedData && Array.isArray(fetchedData.message)) {
       conversation = fetchedData.message;
     } else {
@@ -288,7 +288,7 @@ const throttledFetch = throttle(fetchConversationSlice, 90);
 </script>
 
 
-<div id="clip-container" bind:this={container} class="parent-container">
+<div id="clip-container" bind:this={container}>
   <div id="conversation-container"> 
 
     <div bind:this={topObserverElement} id="top-observer"></div>
@@ -306,9 +306,7 @@ const throttledFetch = throttle(fetchConversationSlice, 90);
     <div bind:this={bottomObserverElement} id="bottom-observer"></div>
 
     {#if isEndOfConversation}
-      <div class="user-input">
-        <UserInput bind:this={userInputComponent} />
-      </div>
+      <UserInput bind:this={userInputComponent} />
     {/if}
   </div>
 </div>
@@ -344,9 +342,6 @@ const throttledFetch = throttle(fetchConversationSlice, 90);
     clip-path: inset(0);
     overflow: auto;
     scrollbar-width: none; /* hides scrollbar in Firefox */
-    min-height: 100vh;
-    width: 100%;
-    overflow-y: auto;
   }
 
   #clip-container::-webkit-scrollbar {
@@ -357,17 +352,6 @@ const throttledFetch = throttle(fetchConversationSlice, 90);
   #top-observer, #bottom-observer {
     width: 100%;
     height: 1px;
-  }
-
-  .parent-container {
-    position: relative;
-    overflow-y: auto; /* Makes it scrollable */
-    height: 100vh; /* Or some height that fits your layout */
-  }
-
-  .user-input {
-    position: absolute;
-    bottom: 0;
   }
  
   </style>

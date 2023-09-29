@@ -23,7 +23,7 @@
     });
 
     onDestroy(() => {
-    console.log('onDestroy is being called');
+   //console.log('onDestroy is being called');
     window.removeEventListener('resize', resizeTextarea);
     });
     
