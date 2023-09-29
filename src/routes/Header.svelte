@@ -18,7 +18,7 @@
     	}, 1000);
 
 		const checkMousePosition = (e) => {
-		if (e.clientY < 70) {
+		if (e.clientY < 130) {
 			hideHeader = false;
 		} else {
 			hideHeader = true;
@@ -69,7 +69,7 @@
 		padding-top: 0px;
 		z-index: 2;
 		user-select: none;
-		background: transparent;
+		background: black;
 	}
 
     .write {
@@ -162,7 +162,7 @@
   }
 
   .hide {
-    transform: translateY(-120%);
+    transform: translateY(-117%);
   }
 
 </style>
