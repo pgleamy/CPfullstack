@@ -173,7 +173,7 @@
   }
   .bg-transparent {
     background-color: transparent;
-	backdrop-filter: blur(3px) brightness(200%);  /* blurs the content behind the header */
+	backdrop-filter: blur(3px) brightness(70%);  /* blurs the content behind the header */
   }
 
 </style>
