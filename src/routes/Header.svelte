@@ -7,6 +7,8 @@
 	import { loadSettings, updateSettings } from '$lib/settings.js';
 	// reactive state management for scrollsearch component
     import {scrollStore} from '$lib/scrollStore.js'; 
+	import { activePage } from '$lib/headerchange.js';
+
 
 	let hideHeader = false;
 
@@ -18,7 +20,7 @@
     	}, 1000);
 
 		const checkMousePosition = (e) => {
-		if (e.clientY < 130) {
+		if (e.clientY < 55) {
 			hideHeader = false;
 		} else {
 			hideHeader = true;
@@ -39,7 +41,7 @@
 	
 </script>
 
-<header class:hide={hideHeader}> <!-- Add the transition directive here -->
+<header class:hide={hideHeader} class={$activePage === 'chatPage' ? 'bg-black' : 'bg-transparent'}> <!-- Add the transition directive here -->
 	
 	<div class="corner">
 		<div>
@@ -69,7 +71,7 @@
 		padding-top: 0px;
 		z-index: 2;
 		user-select: none;
-		background: black;
+		
 	}
 
     .write {
@@ -100,14 +102,14 @@
 		object-fit: fill;
         padding-right: 56px;
         padding-top: 26px;	
-  		opacity: 0.85;
+  		opacity: .9;
 	}
 
 	nav {
 		display: flex;
 		justify-content: center;
         padding-left: 0px;
-		background: transparent;
+		/* background: transparent;*/
 	}
 
 	ul {
@@ -119,7 +121,7 @@
 		justify-content: center;
 		align-items: center;
 		list-style: none;
-		background: var(--background);
+		/*background: var(--background);*/
 		background-size: contain;
 	}
 
@@ -162,7 +164,16 @@
   }
 
   .hide {
-    transform: translateY(-117%);
+    transform: translateY(-125%);
+  }
+
+  .bg-black {
+	background-color: rgba(0, 0, 0, 0.4);  
+    backdrop-filter: blur(3px) brightness(95%);  /* blurs the content behind the header */
+  }
+  .bg-transparent {
+    background-color: transparent;
+	backdrop-filter: blur(3px) brightness(200%);  /* blurs the content behind the header */
   }
 
 </style>

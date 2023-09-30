@@ -5,6 +5,8 @@
 	import { setSetting, getSetting, loadSettings } from '$lib/settings.js';
 	import { fade } from "svelte/transition";
 	import { settings } from '$lib/settings.js';
+	import { activePage } from '$lib/headerchange.js';
+	$activePage = 'settingsPage';
 
 	import { invoke } from '@tauri-apps/api/tauri';
 

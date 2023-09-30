@@ -337,7 +337,7 @@ const throttledFetch = throttle(fetchConversationSlice, 90);
 
     #clip-container {
     position: fixed;
-    top: 79px;
+    top: 5px;
     bottom: 5px;
     left: 0;
     right: 0;

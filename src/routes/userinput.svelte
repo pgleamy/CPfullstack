@@ -129,7 +129,7 @@
         background-color: transparent;
         border-radius: 0px;
         left: 0px;
-        padding-bottom: 85px;
+        padding-bottom: 10px;
     }
 
     #message-input textarea {

@@ -4,6 +4,8 @@
     import { writable } from 'svelte/store';
     import { fade } from "svelte/transition";
     import ScrollSearch from './scrollsearch.svelte';
+    import { activePage } from '$lib/headerchange.js';
+    $activePage = 'chatPage';
 
     let CurrentPage; // Reference to the current page component
 

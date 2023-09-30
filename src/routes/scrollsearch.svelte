@@ -131,8 +131,8 @@ function handleDownArrowClick() {
   const lowerBound = radius + 19;
   const range = upperBound - lowerBound;
 
-  const duration = 1000; // Duration in milliseconds
-  const steps = 50; // Number of animation steps
+  const duration = 400; // Duration in milliseconds
+  const steps = 100; // Number of animation steps
   const stepDuration = duration / steps; // Duration of each step
   let currentStep = 0;
 
@@ -354,7 +354,7 @@ function updateDotsBrightness() {
         <g id="elastic-grip" role="slider" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0" tabindex="0" 
             on:mousedown={startElasticDrag} on:mouseup={stopElasticDrag} on:mousemove={elasticDrag}> 
           <!-- Invisible clickable area for the elastic grip -->
-          <rect x="0" y="{gripY - 28}" width="40" height="33" fill="transparent" role="presentation" />
+          <rect x="10" y="{gripY - 28}" width="40" height="33" fill="transparent" role="presentation" />
           <!-- Elastic Grip visual element (capsule shape) -->
           <rect x="12" y="{gripY - 27}" width="16" height="30" rx="10" ry="5" stroke="{elasticGripColor}" stroke-width="3" fill="none" />
           <!-- First dot -->
@@ -368,7 +368,7 @@ function updateDotsBrightness() {
       <g role="slider" aria-valuemin="0" aria-valuemax="1" aria-valuenow="{gripY}" tabindex="0"
          on:mousedown={startDrag} on:mouseup={stopDrag}>
         <!-- Invisible clickable area for the grip -->
-        <rect x="0" y="{gripY + 11}" width="40" height="21" fill="transparent" role="presentation"/>
+        <rect x="10" y="{gripY + 11}" width="40" height="21" fill="transparent" role="presentation"/>
         <!-- Grip visual elements -->
         <rect x="10" y="{gripY + 11}" rx="3" ry="3" width="20" height="4" fill="{gripColor}" />
         <rect x="10" y="{gripY + 19}" rx="3" ry="3" width="20" height="4" fill="{gripColor}" />
@@ -384,7 +384,7 @@ function updateDotsBrightness() {
       <!-- Down arrow indicator for new messages -->
       <g id="down-arrow-indicator" role="presentation" on:click={handleDownArrowClick} visibility={downArrowIsVisible ? 'visible' : 'hidden' } class="fade-in {downArrowIsVisible ? 'visible' : ''}">
         <!-- Invisible clickable area for the down arrow -->
-        <rect x="0" y="{gripY + 38}" width="40" height="14" fill="transparent" role="presentation"/>
+        <rect x="10" y="{gripY + 38}" width="40" height="18" fill="transparent" role="presentation"/>
         <!-- Down arrow visual element -->
         <path bind:this={arrowPath} id="down-arrow-path" d="M 7 0 L 23 0 L 15 12 Z" stroke="#00C040" stroke-width="2" fill="none" stroke-linejoin="round" transform="translate(5, {gripY + 38})" />
       </g>
