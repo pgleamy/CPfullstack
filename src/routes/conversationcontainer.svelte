@@ -82,8 +82,8 @@
       lastRenderTime = currentTime;
       // the numeric value controls the relative speed of fine scrolling
       const dragSpeedUpDown = parseFloat(localStorage.getItem('dragSpeedUpDown')) * 0.6 || 0; 
-      container.scrollTop += dragSpeedUpDown * deltaTime;
-      requestAnimationFrame(animateScroll);
+      if (container) { container.scrollTop += dragSpeedUpDown * deltaTime; requestAnimationFrame(animateScroll); }
+      
     };
 
 
