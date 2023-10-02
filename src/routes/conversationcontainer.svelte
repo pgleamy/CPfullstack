@@ -92,15 +92,15 @@
       // get the conversation history slice from the backend
       num_messages = await invoke('get_num_messages');
       num_user_llm_messages = await invoke('get_total_llm_user_messages');
-      console.log("Current number of all user, llm and bright_memory messages: " + num_messages);
-      console.log("Current number of user and llm messages: " + num_user_llm_messages);
-      console.log("Current gripLocation: " + gripLocation);
+      //console.log("Current number of all user, llm and bright_memory messages: " + num_messages);
+      //console.log("Current number of user and llm messages: " + num_user_llm_messages);
+      //console.log("Current gripLocation: " + gripLocation);
 
       // start a simple debugging timer
-      const startTime = Date.now();
+      //const startTime = Date.now();
       fetchConversationSlice(gripLocation, num_messages);
-      const endTime = Date.now();
-      const elapsed = endTime - startTime;
+      //const endTime = Date.now();
+      //const elapsed = endTime - startTime;
 
       // Infinite scroll logic
 
@@ -151,7 +151,7 @@ async function fetchConversationSlice(gripLocation, num_messages) {
   // Step 1: Calculate the target message based on gripLocation
   // Invert the gripLocation to align with the array indexing
   const targetMessage = Math.round((1 - gripLocation) * num_messages);
-  console.log(`Calculated targetMessage: ${targetMessage}`);  // Debug line
+  //console.log(`Calculated targetMessage: ${targetMessage}`);  // Debug line
 
   // Initialize start and end
   let start = targetMessage - buffer;
@@ -174,7 +174,7 @@ async function fetchConversationSlice(gripLocation, num_messages) {
   if (start < 0) start = 0;
 
   // Debug line
-  console.log(`Adjusted start and end: ${start}, ${end}`);
+  //console.log(`Adjusted start and end: ${start}, ${end}`);
 
   // Step 4: If total messages < 20, fetch all
   if (num_messages < totalMessagesToFetch) {

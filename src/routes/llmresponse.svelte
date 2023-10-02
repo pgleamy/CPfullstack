@@ -35,7 +35,7 @@
             <span>{llm_name} ({llm_role})</span>
             <span id="timestamp"> -{timestamp} </span>
         </div>
-        <textarea bind:this={textArea} readonly on:input={resizeTextarea}>{text}</textarea>  
+        <textarea bind:this={textArea} readonly on:input={resizeTextarea} name="OpenAIKey">{text}</textarea>  
     </div>  
 </div>
 

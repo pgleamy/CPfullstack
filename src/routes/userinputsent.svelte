@@ -36,7 +36,7 @@
         <span>{user_name}</span>
         <span id="timestamp"> - {timestamp} </span>
       </div>
-      <textarea bind:this={textArea} readonly>{text}</textarea>  <!-- Make it read-only -->
+      <textarea bind:this={textArea} readonly name="OpenAIKey">{text}</textarea>  <!-- Make it read-only -->
     </div>
   </div>
   
