@@ -69,10 +69,13 @@
     // Scrubbing grip control logic
     // gripLocation is a number between 0 and 1 that represents the position of the grip relative to the whole conversation
     $: gripLocation = $scrollStore.gripPosition; // sets gripLocation to the current gripPosition in scrollStore
+    // controls the fetching of the conversation slice based on gripLocation for smooth interaction
     $: {
+      if (num_messages > 0) {
       throttledFetch(gripLocation, num_messages);
       debouncedFetch(gripLocation, num_messages);
-    } // controls the fetching of the conversation slice based on gripLocation for smooth interaction
+      }
+    } 
 
     // Infinite scroll animation speed control logic
     let lastRenderTime = Date.now();
@@ -83,7 +86,6 @@
       // the numeric value controls the relative speed of fine scrolling
       const dragSpeedUpDown = parseFloat(localStorage.getItem('dragSpeedUpDown')) * 0.6 || 0; 
       if (container) { container.scrollTop += dragSpeedUpDown * deltaTime; requestAnimationFrame(animateScroll); }
-      
     };
 
 
@@ -91,14 +93,17 @@
 
       // get the conversation history slice from the backend
       num_messages = await invoke('get_num_messages');
+
+    console.log("Current number of all user, llm and bright_memory messages: " + num_messages);
+
       num_user_llm_messages = await invoke('get_total_llm_user_messages');
       //console.log("Current number of all user, llm and bright_memory messages: " + num_messages);
       //console.log("Current number of user and llm messages: " + num_user_llm_messages);
-      //console.log("Current gripLocation: " + gripLocation);
+      console.log("Current gripLocation: " + gripLocation);
 
       // start a simple debugging timer
       //const startTime = Date.now();
-      fetchConversationSlice(gripLocation, num_messages);
+      fetchConversationSlice(gripLocation, num_messages); 
       //const endTime = Date.now();
       //const elapsed = endTime - startTime;
 
@@ -151,7 +156,7 @@ async function fetchConversationSlice(gripLocation, num_messages) {
   // Step 1: Calculate the target message based on gripLocation
   // Invert the gripLocation to align with the array indexing
   const targetMessage = Math.round((1 - gripLocation) * num_messages);
-  //console.log(`Calculated targetMessage: ${targetMessage}`);  // Debug line
+  console.log(`Calculated targetMessage: ${targetMessage}`);  // Debug line
 
   // Initialize start and end
   let start = targetMessage - buffer;
@@ -184,6 +189,10 @@ async function fetchConversationSlice(gripLocation, num_messages) {
   
   // Step 5: Fetch the conversation slice & handle top and bottom properly
   try {
+
+    //console.log(`Initial gripLocation: ${gripLocation}, Initial num_messages: ${num_messages}`);
+
+
     const fetchedData = await invoke('fetch_conversation_history', { params: {start, end} });
     console.log("Fetched conversation slice:", fetchedData);  // Debug line
 
