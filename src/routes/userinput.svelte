@@ -1,4 +1,10 @@
 <script>
+
+
+    
+
+
+
     let messageText = '';
     let username = 'Patrick';
     let startTime = new Date();
@@ -68,8 +74,11 @@
 
 
     import { onMount } from 'svelte';
+    import { writable } from 'svelte/store';
+    // Svelte store to hold user input height
+    export const userInputHeight = writable(0);
     onMount(() => {
-        resizeTextarea({ target: document.querySelector('#message-input textarea') });
+        //resizeTextarea({ target: document.querySelector('#message-input textarea') });
     });
 
     // Start the timer when the script loads

@@ -301,13 +301,15 @@ const throttledFetch = throttle(fetchConversationSlice, 90);
     <div bind:this={topObserverElement} id="top-observer"></div>
 
     {#each conversation as entry, index}
-      {#if entry.source === 'user' || entry.source === 'llm'}
-        {#if entry.source === 'user'}
-          <UserInputSent {...entry} />
-        {:else if entry.source === 'llm'}
-          <LLMResponse {...entry} />
+      <div class="{index === conversation.length - 1 ? 'last-message-class' : ''}" style="width: 100%;">
+        {#if entry.source === 'user' || entry.source === 'llm'}
+          {#if entry.source === 'user'}
+            <UserInputSent {...entry} />
+          {:else if entry.source === 'llm'}
+            <LLMResponse {...entry} />
+          {/if}
         {/if}
-      {/if}
+      </div>
     {/each}
 
     <div bind:this={bottomObserverElement} id="bottom-observer"></div>
@@ -319,6 +321,7 @@ const throttledFetch = throttle(fetchConversationSlice, 90);
     {/if}
   </div>
 </div>
+
 
 
    
@@ -340,6 +343,7 @@ const throttledFetch = throttle(fetchConversationSlice, 90);
 
       overflow-y: hidden; /* hides default vertical scrolling bar */
       overflow-x: hidden; /* hides default horizontal scrolling bar */
+
     }
 
     #clip-container {
@@ -354,6 +358,8 @@ const throttledFetch = throttle(fetchConversationSlice, 90);
     min-height: 100vh;
     width: 100%;
     overflow-y: auto;
+
+
   }
 
   #clip-container::-webkit-scrollbar {
@@ -371,6 +377,7 @@ const throttledFetch = throttle(fetchConversationSlice, 90);
     overflow-y: auto; /* Makes it scrollable */
     height: 100vh; /* Or some height that fits your layout */
     width: 100%;
+
   }
 
   .user-input {
@@ -378,6 +385,13 @@ const throttledFetch = throttle(fetchConversationSlice, 90);
     bottom: 0;
     width: 100%;
   }
+
+
+  .last-message-class {
+    padding-bottom: 90px; 
+  }
+
+
  
   </style>
   
