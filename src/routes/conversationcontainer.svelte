@@ -301,7 +301,7 @@ const throttledFetch = throttle(fetchConversationSlice, 90);
     <div bind:this={topObserverElement} id="top-observer"></div>
 
     {#each conversation as entry, index}
-      <div class="{index === conversation.length - 1 ? 'last-message-class' : ''}" style="width: 100%;">
+      <div class="{index === conversation.length - 1 && isEndOfConversation ? 'last-message-class' : ''}" style="width: 100%;">
         {#if entry.source === 'user' || entry.source === 'llm'}
           {#if entry.source === 'user'}
             <UserInputSent {...entry} />
@@ -386,9 +386,9 @@ const throttledFetch = throttle(fetchConversationSlice, 90);
     width: 100%;
   }
 
-
+   /* This attaches to the last conversation message only, pushing it up above user input component dynamically */
   .last-message-class {
-    padding-bottom: 90px; 
+    padding-bottom: 87px; /* dynamic, must be set to dynamic height of user inpucomponent */
   }
 
 
