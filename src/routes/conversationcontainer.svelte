@@ -6,18 +6,43 @@
     import {scrollStore, get} from '$lib/scrollStore.js';
     import { onMount, onDestroy } from 'svelte';
     import { invoke } from "@tauri-apps/api/tauri";
+    import { tick } from 'svelte';
 
     let conversation = []; // conversation history slice as requested from the backend
     let num_messages = 0; // total number of user, llm and bright_memory messages in the conversation
     let num_user_llm_messages = 0; // total number of user and llm messages in the conversation
     let container; // reference to the conversation container element    
 
-    //let targetMessage = 0; // The message that gripLocation is pointing to
-
-    // Infinite scroll observers
+     // Infinite scroll observers
     let topObserverElement;
     let bottomObserverElement;
     let userInputComponent; // Initialize the variable to bind the UserInput component
+
+
+
+    // Connects the top of user input to the bottom of last message as user types
+    let paddingBottom = '';  // Declare a variable to hold the padding-bottom value
+    // Create a reactive statement to update paddingBottom whenever userInputHeight changes
+    $: {
+      if (isEndOfConversation) {
+          paddingBottom = `padding-bottom: ${$scrollStore.userInputHeight}px;`;
+      } else {
+          paddingBottom = '';
+      }
+    }
+    function scrollToBottom() {
+      if (container) {
+          container.scrollTop = container.scrollHeight;
+        }
+        tick().then(() => {
+          if (userInputComponent) {
+            container.scrollTop = container.scrollHeight;
+          }
+        });
+        console.log("Scrolling to bottom");
+    }
+
+
 
 
     // Start/End of conversation logic to display the user input component only after the last message in the entire conversation history
@@ -36,7 +61,7 @@
     let endScrollTrigger = false;
     let startScrollTrigger = false;
 
-    import { tick } from 'svelte';
+    
 
     $: {
       if (isEndOfConversation && !endScrollTrigger) {
@@ -57,7 +82,7 @@
         startScrollTrigger = true; // Prevent further upward scrolling until flag is reset
         endScrollTrigger = false; // Reset the other flag
       } else if (!isEndOfConversation && !isStartOfConversation) {
-        // Reset both flags if neither condition is met
+        // Reset both flags if neither condition is metlogic
         endScrollTrigger = false;
         startScrollTrigger = false;
       }
@@ -139,6 +164,7 @@
       const observer = new IntersectionObserver(observerCallback, observerOptions);
       observer.observe(topObserverElement);
       observer.observe(bottomObserverElement);
+
 
       requestAnimationFrame(animateScroll);
 
@@ -301,7 +327,9 @@ const throttledFetch = throttle(fetchConversationSlice, 90);
     <div bind:this={topObserverElement} id="top-observer"></div>
 
     {#each conversation as entry, index}
-      <div class="{index === conversation.length - 1 && isEndOfConversation ? 'last-message-class' : ''}" style="width: 100%;">
+    <div class="{index === conversation.length - 1 && isEndOfConversation ? 'last-message-class' : ''}" 
+    style="{index === conversation.length - 1 && isEndOfConversation ? paddingBottom : ''} width: 100%; " 
+    >
         {#if entry.source === 'user' || entry.source === 'llm'}
           {#if entry.source === 'user'}
             <UserInputSent {...entry} />
@@ -316,16 +344,15 @@ const throttledFetch = throttle(fetchConversationSlice, 90);
 
     {#if isEndOfConversation}
       <div class="user-input">
-        <UserInput bind:this={userInputComponent} />
+        <UserInput bind:this={userInputComponent} on:input={scrollToBottom} />
       </div>
     {/if}
   </div>
 </div>
 
-
-
    
   <style>
+
     #conversation-container {
       transition: all 0.5s ease-in-out;
       display: flex;
@@ -382,15 +409,14 @@ const throttledFetch = throttle(fetchConversationSlice, 90);
 
   .user-input {
     position: absolute;
-    bottom: 0;
+    bottom: 0px;
     width: 100%;
   }
 
    /* This attaches to the last conversation message only, pushing it up above user input component dynamically */
   .last-message-class {
-    padding-bottom: 87px; /* dynamic, must be set to dynamic height of user inpucomponent */
+    padding-bottom: ''; /* will be dynamic, when set to dynamic height of user input component */
   }
-
 
  
   </style>

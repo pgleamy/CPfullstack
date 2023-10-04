@@ -1,14 +1,9 @@
 <script>
 
-    import { onMount } from 'svelte';
-    import { scrollStore, setInLocalStorage } from '$lib/scrollStore.js';
-    import { createEventDispatcher } from 'svelte';
-    const dispatch = createEventDispatcher();
 
-    function handleInput(event) {
-        dispatch('input', event.target.value);
-        console.log('Input event:', event.target.value);
-    }
+    
+
+
 
     let messageText = '';
     let username = 'Patrick';
@@ -24,42 +19,9 @@
     let disabled = true;
     $: disabled = !messageText;
 
-    // Function to resize the textarea based on the content and report total height of all elements in the .sticky-input container in pixels
-    //let cumulativeHeight;
-    let userInputHeight;
-
     function resizeTextarea(event) {
-        
         event.target.style.height = 'auto'; // Reset height
-        let height = event.target.scrollHeight - 7 + 'px';
-        event.target.style.height = event.target.scrollHeight - 7 + 'px'; // Set height based on content
-
-        // Get a reference to the .sticky-input container
-        let stickyInputContainer = document.querySelector('.sticky-input');
-
-        // Function to get the cumulative height of all child elements
-        function getCumulativeHeight(element) {
-            let cumulativeHeight = 0;
-            for (let i = 0; i < element.children.length; i++) {
-                let child = element.children[i];
-                let computedStyle = window.getComputedStyle(child);
-                cumulativeHeight += child.offsetHeight +
-                    parseInt(computedStyle.marginTop) +
-                    parseInt(computedStyle.marginBottom);
-            }
-            userInputHeight = cumulativeHeight;
-            setInLocalStorage('userInputHeight', userInputHeight);
-            return cumulativeHeight;
-        }
-
-        // Check the cumulative height of all elements in the .sticky-input container
-        if (stickyInputContainer) {
-            let cumulativeHeight = getCumulativeHeight(stickyInputContainer);
-            console.log("Cumulative height of all elements in .sticky-input container:", cumulativeHeight + 'px');
-        } else {
-            console.error("Could not find the .sticky-input container");
-        }
-
+        event.target.style.height = event.target.scrollHeight + 'px'; // Set height based on content
     }
 
     function startTimer() {
@@ -110,14 +72,13 @@
         }
     }
 
+
+    import { onMount } from 'svelte';
+    import { writable } from 'svelte/store';
+    // Svelte store to hold user input height
+    export const userInputHeight = writable(0);
     onMount(() => {
-
-        requestAnimationFrame(() => {
-            resizeTextarea({ target: document.querySelector('#message-input textarea') });
-
-        });
-
-
+        //resizeTextarea({ target: document.querySelector('#message-input textarea') });
     });
 
     // Start the timer when the script loads
@@ -135,7 +96,7 @@
             | {elapsedTime}
         </span>
     </div>
-    <textarea bind:value={messageText} placeholder="..." rows="1" on:input={resizeTextarea} input type="text" on:input={handleInput} on:keydown={handleTabKeyPress}></textarea>
+    <textarea bind:value={messageText} placeholder="..." rows="1" on:input={resizeTextarea} on:keydown={handleTabKeyPress}></textarea>
     <div id="button-container">
         <button on:click={sendMessage} {disabled}></button>
     </div>
@@ -148,7 +109,7 @@
         position: sticky;
         bottom: 0;
         z-index: 999; 
-        background: transparent;
+        background: white;
     }
 
     #wrapper {
@@ -173,35 +134,33 @@
         width: 98%;
         display: flex;
         flex-direction: column;
-        padding: 0px;
+        padding: 2px;
         background-color: transparent;
         border-radius: 0px;
         left: 0px;
-        padding-bottom: 12px;
+        padding-bottom: 10px;
     }
 
     #message-input textarea {
     padding: 8px;
-    padding-bottom: 2px;
-    padding-top: 5px;
+    padding-bottom: 1px;
     margin-right: 50px;
     border: rgba(249, 245, 10, 0.298) 2px solid;
     box-shadow: 0 0 0 0.3px #323232;
-    border-radius: 4px;
+    border-radius: 5px;
     background-color: #080808;
-    font-size: 14px;
-    line-height: 20px;
+    font-size: 12.4px;
+    line-height: 14.8px;
     color: #cccccc;
     resize: none;
     overflow: hidden;
     white-space: pre-wrap;
     word-wrap: break-word;
-    min-height: 0px;
+    min-height: 24px;
     }
 
     #message-input textarea::placeholder {
         color: #bbbbbb;
-        font-size: 10px;
     }
 
     #message-input textarea:focus {
@@ -213,11 +172,11 @@
 
     #button-container {
         width: calc(100% - 50px);
-        margin-top: 5px;
+        margin-top: 4px;
         margin-bottom: 0px;
         display: flex;
         justify-content: center;
-        align-items: cente
+        align-items: center;
     }
 
     #message-input button {
@@ -263,7 +222,7 @@
 
     #title {
         display: flex;
-        font-size: 0.8em;
+        font-size: 0.75em;
         justify-content: left;
         align-items: baseline;
         color: rgb(70, 145, 81);
@@ -272,10 +231,10 @@
     }
 
     #timestamp {
-        font-size: 0.85em;
-        color: rgb(151, 144, 144);
+        font-size: 0.75em;
+        color: rgb(93, 93, 93);
         padding-left: 2px;
-        padding-bottom: 3px;
+        padding-bottom: 0px;
     }
 
     

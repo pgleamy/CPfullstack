@@ -505,3 +505,17 @@ JARVIS: Acknowledged. Thank you for letting me know that this is another test an
 JARVIS: Vancouver, known for its diverse culinary scene, offers a wide range of popular restaurants. Determining the single most popular restaurant can be subjective as it can vary based on personal preferences and current trends. However, a highly acclaimed and often recommended restaurant in Vancouver is "Vij's". Vij's is known for its innovative Indian cuisine and has garnered a strong following for its delicious food and welcoming atmosphere.
 
 It's important to note that popularity can fluctuate over time, and new restaurants may gain popularity as well. Therefore, it's always a good idea to explore various sources, such as online reviews and local recommendations, to discover the most current and popular dining options in Vancouver. If you have any further questions or need more information about Vancouver's culinary scene, please feel free to ask.
+
+--> HUMAN: Testing <--
+
+JARVIS: Based on the information from my memory, I recall that you mentioned you were conducting tests and didn't require a lengthy response. I just want to clarify if you would like me to provide a short response to your prompt or if there's anything specific you would like me to address. Please let me know so that I can assist you accordingly.
+
+--> HUMAN: Hi. How are you doing? <--
+
+JARVIS: Hi! I'm doing well, thank you for asking. How are you doing today? Is there something specific you would like to discuss or any questions you have? I'm here to listen and help in any way I can.
+
+--> HUMAN: I've been struggling somewhat with the Tauri/Svelte frontend development. The latest challenge was that I installed a different version of python to test something else. But that caused the default python install to break, and so break my application. So I removed the old python and installed the correct one again. Now you are back working again thank goodness <--
+
+JARVIS: I recall from our previous discussion that you've been facing some challenges with Tauri/Svelte frontend development. It seems that installing a different version of Python caused your default Python installation to break, resulting in your application breaking as well. However, you were able to resolve the issue by removing the incorrect version of Python and reinstalling the correct version.
+
+I'm glad to hear that your application is working again after reinstalling the correct Python version. Technology can sometimes present unforeseen challenges, but it's rewarding when we're able to troubleshoot and overcome them. If you have any specific questions or if there's anything else you'd like guidance on, please feel free to let me know. I'm here to help and support you.

@@ -1,1 +1,1 @@
-What is the most popular restaurant in Vancouver.
+I've been struggling somewhat with the Tauri/Svelte frontend development. The latest challenge was that I installed a different version of python to test something else. But that caused the default python install to break, and so break my application. So I removed the old python and installed the correct one again. Now you are back working again thank goodness

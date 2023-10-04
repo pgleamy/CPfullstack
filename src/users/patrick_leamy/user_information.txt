@@ -21,11 +21,3 @@ RELATIONSHIP TO USER: son of Patrick and Nadia Leamy
 PNLEAMY HOLDINGS INC. (company):
 ATTRIBUTES: Incorporated in Alberta
 RELATIONSHIP TO USER: Patrick Leamy and Nadia Leamy are the sole equal shareholders
-
-Vancouver (place):
-ATTRIBUTES: diverse culinary scene, popular restaurants
-RELATIONSHIP TO USER: none
-
-Vij's (restaurant):
-ATTRIBUTES: innovative Indian cuisine, highly acclaimed, often recommended, delicious food, welcoming atmosphere
-RELATIONSHIP TO USER: none
