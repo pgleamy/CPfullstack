@@ -7,7 +7,7 @@
 
     function handleInput(event) {
         dispatch('input', event.target.value);
-        console.log('Input event:', event.target.value);
+        //console.log('Input event:', event.target.value);
     }
 
     let messageText = '';
@@ -55,7 +55,7 @@
         // Check the cumulative height of all elements in the .sticky-input container
         if (stickyInputContainer) {
             let cumulativeHeight = getCumulativeHeight(stickyInputContainer);
-            console.log("Cumulative height of all elements in .sticky-input container:", cumulativeHeight + 'px');
+            //console.log("Cumulative height of all elements in .sticky-input container:", cumulativeHeight + 'px');
         } else {
             console.error("Could not find the .sticky-input container");
         }

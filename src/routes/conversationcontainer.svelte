@@ -39,7 +39,7 @@
             container.scrollTop = container.scrollHeight;
           }
         });
-        console.log("Scrolling to bottom");
+        //console.log("Scrolling to bottom");
     }
 
 
@@ -51,10 +51,10 @@
     let isStartOfConversation = false; // Initialize to true
     $: {
         if (isEndOfConversation = (gripLocation === 0)) {;/* logic to check if the last fetched message is the last message in the entire conversation */
-          console.log(`isEndOfConversation: ${isEndOfConversation}`);
+          //console.log(`isEndOfConversation: ${isEndOfConversation}`);
         } 
         if (isStartOfConversation = (gripLocation === 1)) {;/* logic to check if the last fetched message is the first message in the entire conversation */
-          console.log(`isStartOfConversation: ${isStartOfConversation}`);
+          //console.log(`isStartOfConversation: ${isStartOfConversation}`);
         }
       }
 
@@ -327,7 +327,7 @@ function handleScroll() {
     //gripLocation = 1 - scrolledRatio; // Inverted to align with existing logic
     // Update the store value
     //$scrollStore.gripPosition = gripLocation;
-    console.log("Scrolling");
+    //console.log("Scrolling");
 }
 
 
