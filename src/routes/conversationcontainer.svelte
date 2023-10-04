@@ -3,7 +3,7 @@
     import UserInputSent from './userinputsent.svelte';
     import LLMResponse from './llmresponse.svelte';
     // reactive state management for scrollsearch component
-    import {scrollStore, get} from '$lib/scrollStore.js';
+    import {scrollStore, get, setInLocalStorage} from '$lib/scrollStore.js';
     import { onMount, onDestroy } from 'svelte';
     import { invoke } from "@tauri-apps/api/tauri";
     import { tick } from 'svelte';
@@ -165,12 +165,16 @@
       observer.observe(topObserverElement);
       observer.observe(bottomObserverElement);
 
-
+      container.addEventListener('scroll', handleScroll);
       requestAnimationFrame(animateScroll);
+
+      
 
   }); // end of onMount
 
-
+  onDestroy(() => {
+    container.removeEventListener('scroll', handleScroll);
+  });
 
 // Fetches a slice of the conversation history from the backend for the scrubbing grip element
 async function fetchConversationSlice(gripLocation, num_messages) {
@@ -316,6 +320,16 @@ function throttle(func, limit) {
     }
 }
 const throttledFetch = throttle(fetchConversationSlice, 90);
+
+function handleScroll() {
+    //const { scrollTop, scrollHeight, clientHeight } = container;
+    //const scrolledRatio = scrollTop / (scrollHeight - clientHeight);
+    //gripLocation = 1 - scrolledRatio; // Inverted to align with existing logic
+    // Update the store value
+    //$scrollStore.gripPosition = gripLocation;
+    console.log("Scrolling");
+}
+
 
 
 </script>

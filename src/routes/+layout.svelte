@@ -28,7 +28,7 @@
 	}
 
 	#bottom-lock {
-		height: 2px;
+		height: 1px;
 		background-color: rgb(12, 73, 30);  /* You can make it transparent */
 		position: fixed;
 		bottom: 0;
