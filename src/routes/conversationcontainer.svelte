@@ -170,6 +170,34 @@
 
       
 
+      //Constantly monitors the conversation container for changes in the number of messages
+      // and obtains the exact pixel height of all the components in the conversation container
+      // each time the messages in the container changes
+      const contain = document.getElementById('conversation-container');
+      let retryCount = 0;
+      const maxRetries = 10;
+      const retryDelay = 100;  // Delay in milliseconds
+
+      const observ = new MutationObserver(() => {
+          const totalHeight = contain.scrollHeight;
+          if (totalHeight > 2) {
+              console.log('Total Height:', totalHeight);
+              retryCount = 0;  // Reset retry count on successful measurement
+          } else if (retryCount < maxRetries) {
+              retryCount++;
+              console.log('Retrying measurement:', retryCount);
+              setTimeout(() => {
+                  const retryHeight = contain.scrollHeight;
+                  if (retryHeight > 2) {
+                      console.log('Total Height (after retry):', retryHeight);
+                      retryCount = 0;  // Reset retry count on successful measurement
+                  }
+              }, retryDelay);
+          }
+      });
+      observ.observe(contain, { childList: true, subtree: true });
+    
+
   }); // end of onMount
 
   onDestroy(() => {
@@ -184,7 +212,7 @@ async function fetchConversationSlice(gripLocation, num_messages) {
   // Step 1: Calculate the target message based on gripLocation
   // Invert the gripLocation to align with the array indexing
   const targetMessage = Math.round((1 - gripLocation) * num_messages);
-  //console.log(`Calculated targetMessage: ${targetMessage}`);  // Debug line
+  console.log(`Calculated targetMessage: ${targetMessage}`);  // Debug line
 
   // Initialize start and end
   let start = targetMessage - buffer;
@@ -222,7 +250,7 @@ async function fetchConversationSlice(gripLocation, num_messages) {
 
 
     const fetchedData = await invoke('fetch_conversation_history', { params: {start, end} });
-    //console.log("Fetched conversation slice:", fetchedData);  // Debug line
+    console.log("Fetched conversation slice:", fetchedData);  // Debug line
 
     // Additional logic to handle initial scroll position if grip at top or bottom
     if (gripLocation === 0 && container) {
@@ -321,13 +349,17 @@ function throttle(func, limit) {
 }
 const throttledFetch = throttle(fetchConversationSlice, 90);
 
+
+// Manipulation of gripLocation(local)/gripPosition(scrollStore) based on mouse scroll wheel events
 function handleScroll() {
-    //const { scrollTop, scrollHeight, clientHeight } = container;
-    //const scrolledRatio = scrollTop / (scrollHeight - clientHeight);
+    const { scrollTop, scrollHeight, clientHeight } = container;
+    const scrolledRatio = scrollTop / (scrollHeight - clientHeight);
     //gripLocation = 1 - scrolledRatio; // Inverted to align with existing logic
+    //console.log("gripLocation: ", gripLocation);
     // Update the store value
-    //$scrollStore.gripPosition = gripLocation;
+  //$scrollStore.gripPosition = gripLocation;
     //console.log("Scrolling");
+
 }
 
 

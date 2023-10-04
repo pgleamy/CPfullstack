@@ -153,7 +153,7 @@ function handleDownArrowClick() {
       gripPosition = Math.min(1, Math.max(0, gripPosition));
 
       setInLocalStorage('gripPosition', gripPosition);
-      //reloadScrollStore(); // Reload the scrollStore
+      
       //console.log(`Frame ${currentStep}: gripPosition = ${gripPosition}`);
 
       gripY = targetGripY;
@@ -166,7 +166,7 @@ function handleDownArrowClick() {
 
       downArrowIsVisible = false;
       setInLocalStorage('downArrow_isVisible', false);
-      //reloadScrollStore(); // Reload the scrollStore
+      
     }
   };
 
