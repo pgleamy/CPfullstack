@@ -182,10 +182,10 @@ const unsubscribe = scrollStore.subscribe(currentState => {
   if (prevState) {
     for (const key in currentState) {
       if (!deepEqual(currentState[key], prevState[key])) {
-        console.log(`Key ${key} changed`, {
+        /* console.log(`Key ${key} changed`, {
           from: prevState[key],
           to: currentState[key]
-        });
+        }); */
       }
     }
   }

@@ -59,6 +59,8 @@ const load = () => {
 
     userInputHeight: parseInt(get('userInputHeight')) || 0, // Height of the user input component elements in pixels
 
+    targetMessagesPixelHeight: parseInt(get('targetMessagesPixelHeight')) || 0, // Height of the conversation-container contents in pixels
+
   };
 };
 

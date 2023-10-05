@@ -170,18 +170,24 @@
 
       
 
-      //Constantly monitors the conversation container for changes in the number of messages
+      // Constantly monitors the conversation container for changes
       // and obtains the exact pixel height of all the components in the conversation container
-      // each time the messages in the container changes
+      // each time the contents of the container change. 
+      // Accounts for all changes, including window resizing, user input, etc.
+      // Retries are implemented because sometimes it returns only a 2 pixel height 
+      // because the contents of the container have not been fully rendered yet.
+      // It is set to retry the measurement 10 times very quickly.
       const contain = document.getElementById('conversation-container');
       let retryCount = 0;
       const maxRetries = 10;
-      const retryDelay = 100;  // Delay in milliseconds
+      const retryDelay = 1;  // Delay in milliseconds
+      let totalHeight = 0;
 
       const observ = new MutationObserver(() => {
-          const totalHeight = contain.scrollHeight;
+          totalHeight = contain.scrollHeight;
           if (totalHeight > 2) {
-              console.log('Total Height:', totalHeight);
+              //console.log('Total Height:', totalHeight);
+              setInLocalStorage('targetMessagesPixelHeight', totalHeight);
               retryCount = 0;  // Reset retry count on successful measurement
           } else if (retryCount < maxRetries) {
               retryCount++;
@@ -195,7 +201,7 @@
               }, retryDelay);
           }
       });
-      observ.observe(contain, { childList: true, subtree: true });
+      observ.observe(contain, { childList: true, subtree: true, attributes: true, characterData: true });
     
 
   }); // end of onMount

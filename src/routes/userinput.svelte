@@ -73,9 +73,8 @@
             let diffDays = Math.floor(diffHours / 24);
             elapsedTime = (diffDays > 0 ? diffDays + ' day(s) ' : '') + 
                           (diffHours % 24 > 0 ? diffHours % 24 + ' hrs ' : '') + 
-                          (diffMinutes % 60 > 0 ? diffMinutes % 60 + ' min ' : '') + 
-                          (diffSeconds % 60 > 0 ? diffSeconds % 60 + ' sec' : '');
-        }, 1000);
+                          (diffMinutes % 60 > 0 ? diffMinutes % 60 + ' min ' : '');
+        }, 60000);
     }
     
     import { invoke } from '@tauri-apps/api/tauri';
@@ -135,7 +134,7 @@
             | {elapsedTime}
         </span>
     </div>
-    <textarea bind:value={messageText} placeholder="..." rows="1" on:input={resizeTextarea} input type="text" on:input={handleInput} on:keydown={handleTabKeyPress}></textarea>
+    <textarea bind:value={messageText} placeholder="..." rows="1" on:input={resizeTextarea} input type="text" on:input={handleInput} on:keydown={handleTabKeyPress} name="userinput"></textarea>
     <div id="button-container">
         <button on:click={sendMessage} {disabled}></button>
     </div>
