@@ -55,11 +55,15 @@ const load = () => {
     },
     totalMessages: parseInt(get('totalMessages')) || 0,
 
+    targetMessage: parseInt(get('targetMessage')) || 0, // The target message of the fetchConversationSlice function
+
     dragSpeedUpDown: parseFloat(get('dragSpeedUpDown')) || 0, // Elastic grip scroll speed. Defaults to 0 to signify 0 drag velocity, otherwise is a positive number for up and a negative number for down
 
     userInputHeight: parseInt(get('userInputHeight')) || 0, // Height of the user input component elements in pixels
 
     targetMessagesPixelHeight: parseInt(get('targetMessagesPixelHeight')) || 0, // Height of the conversation-container contents in pixels
+
+    unsentPrompt: get('unsentPrompt') || "", // The unset prompt contents
 
   };
 };

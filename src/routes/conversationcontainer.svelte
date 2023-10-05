@@ -18,7 +18,8 @@
     let bottomObserverElement;
     let userInputComponent; // Initialize the variable to bind the UserInput component
 
-
+    $: targetMessage = $scrollStore.targetMessage; // Reactive assignment
+    $: totalMessages = $scrollStore.totalMessages; // Reactive assignment
 
     // Connects the top of user input to the bottom of last message as user types
     let paddingBottom = '';  // Declare a variable to hold the padding-bottom value
@@ -50,7 +51,7 @@
     let isEndOfConversation = false;  // Initialize to false
     let isStartOfConversation = false; // Initialize to true
     $: {
-        if (isEndOfConversation = (gripLocation === 0)) {;/* logic to check if the last fetched message is the last message in the entire conversation */
+        if (isEndOfConversation = (gripLocation === 0 && targetMessage === totalMessages)) {;/* logic to check if the last fetched message is the last message in the entire conversation */
           //console.log(`isEndOfConversation: ${isEndOfConversation}`);
         } 
         if (isStartOfConversation = (gripLocation === 1)) {;/* logic to check if the last fetched message is the first message in the entire conversation */
@@ -116,6 +117,7 @@
 
       // get the conversation history slice from the backend
       num_messages = await invoke('get_num_messages');
+      setInLocalStorage('totalMessages', num_messages);
 
     //console.log("Current number of all user, llm and bright_memory messages: " + num_messages);
 
@@ -219,6 +221,7 @@ async function fetchConversationSlice(gripLocation, num_messages) {
   // Invert the gripLocation to align with the array indexing
   const targetMessage = Math.round((1 - gripLocation) * num_messages);
   console.log(`Calculated targetMessage: ${targetMessage}`);  // Debug line
+  setInLocalStorage('targetMessage', targetMessage);
 
   // Initialize start and end
   let start = targetMessage - buffer;
@@ -406,19 +409,19 @@ function handleScroll() {
   <style>
 
     #conversation-container {
-      transition: all 0.5s ease-in-out;
+      transition: all 0.3s ease-in-out;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
       width: 100%;
       position: relative;
       bottom: 0;
-      left: 5px !important;
+      left: 7px !important;
       padding-bottom: 0px;
       padding-right: 0px;
       user-select: none;
       opacity: 1;
-      transition: opacity 500ms ease-in-out;
+      transition: opacity 300ms ease-in-out;
 
       overflow-y: hidden; /* hides default vertical scrolling bar */
       overflow-x: hidden; /* hides default horizontal scrolling bar */

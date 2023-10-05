@@ -1,16 +1,23 @@
 <script>
 
-    import { onMount } from 'svelte';
+    import { onMount, onDestroy } from 'svelte';
     import { scrollStore, setInLocalStorage } from '$lib/scrollStore.js';
     import { createEventDispatcher } from 'svelte';
     const dispatch = createEventDispatcher();
 
+    // Prompt handling before it is sent by the user
     function handleInput(event) {
+        // tells conversationcontainer everytime a text event occurs
         dispatch('input', event.target.value);
-        //console.log('Input event:', event.target.value);
+        // save the unsent prompt to local storage character by character for persistence across scrolling/resize/page events
+        setInLocalStorage('unsentPrompt', event.target.value);
+        //console.log('Unsent prompt returned from local storage:', localStorage.getItem('unsentPrompt'));
+        messageText = event.target.value;
+        //console.log(messageText);
     }
 
     let messageText = '';
+    let messageTextBackup = '';
     let username = 'Patrick';
     let startTime = new Date();
     let endTime = new Date();
@@ -102,7 +109,7 @@
             const end = event.target.selectionEnd;
 
             // Insert the tab character at the cursor position
-            messageText = messageText.substring(0, start) + '   ' + messageText.substring(end);
+            messageText = messageText.substring(0, start) + '\t' + messageText.substring(end);
 
             // Move the cursor to the right of the inserted tab character
             event.target.selectionStart = event.target.selectionEnd = start + 1;
@@ -112,15 +119,43 @@
     onMount(() => {
 
         requestAnimationFrame(() => {
-            resizeTextarea({ target: document.querySelector('#message-input textarea') });
+
+            // Get the unsent prompt from local storage and set messageText
+            const unsentPrompt = localStorage.getItem('unsentPrompt');
+            if (unsentPrompt) {
+                messageText = unsentPrompt;
+            }
+
+            const textarea = document.querySelector('#message-input textarea');
+            textarea.value = messageText;  // Set the value directly on the textarea element
+
+            // Create a new input event
+            const event = new Event('input', {
+                bubbles: true,
+                cancelable: true,
+            });
+            // Dispatch the event on the textarea element multiple times
+            textarea.dispatchEvent(event);
+            textarea.dispatchEvent(event);
+            
+            //resizeTextarea(event);
 
         });
 
+        
 
+    }); // end onMount
+
+    onDestroy(() => {
+        // Save the unsent prompt to local storage
+        setInLocalStorage('unsentPrompt', messageText);
+        //console.log('Unsent prompt saved to local storage:', localStorage.getItem('unsentPrompt'));
     });
 
-    // Start the timer when the script loads
+    // Start the prompt timer when the script loads
     startTimer();
+
+    console.log('User Input component LOADED');
 
 </script>
 
@@ -134,7 +169,7 @@
             | {elapsedTime}
         </span>
     </div>
-    <textarea bind:value={messageText} placeholder="..." rows="1" on:input={resizeTextarea} input type="text" on:input={handleInput} on:keydown={handleTabKeyPress} name="userinput"></textarea>
+    <textarea bind:value={messageText} placeholder="..."  rows="1" on:update={resizeTextarea} on:input={resizeTextarea} input type="text" on:input={handleInput} on:keydown={handleTabKeyPress} name="userinput"></textarea>
     <div id="button-container">
         <button on:click={sendMessage} {disabled}></button>
     </div>
@@ -196,6 +231,7 @@
     white-space: pre-wrap;
     word-wrap: break-word;
     min-height: 0px;
+    tab-size: 3;
     }
 
     #message-input textarea::placeholder {
