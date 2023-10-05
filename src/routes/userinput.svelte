@@ -142,15 +142,7 @@
 
         });
 
-        
-
     }); // end onMount
-
-    onDestroy(() => {
-        // Save the unsent prompt to local storage
-        setInLocalStorage('unsentPrompt', messageText);
-        //console.log('Unsent prompt saved to local storage:', localStorage.getItem('unsentPrompt'));
-    });
 
     // Start the prompt timer when the script loads
     startTimer();

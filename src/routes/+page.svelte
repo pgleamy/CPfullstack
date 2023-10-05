@@ -32,11 +32,11 @@
 
 <div class="contentWrapper" id='flex'>
     <section class="chatWindow">
-        <div transition:fade="{{ duration: 500, delay: 60 }}">
+        <div transition:fade="{{ duration: 100, delay: 30 }}">
             <ConversationContainer />
         </div>
     </section>
-    <div class="scrollSearchWrapper" transition:fade="{{ duration: 100, delay: 10 }}">
+    <div class="scrollSearchWrapper" transition:fade="{{ duration: 100, delay: 30 }}">
         <ScrollSearch />
     </div>
 

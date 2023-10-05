@@ -51,19 +51,17 @@
     let isEndOfConversation = false;  // Initialize to false
     let isStartOfConversation = false; // Initialize to true
     $: {
-        if (isEndOfConversation = (gripLocation === 0 && targetMessage === totalMessages)) {;/* logic to check if the last fetched message is the last message in the entire conversation */
+        if (isEndOfConversation = (targetMessage === totalMessages)) {;/* logic to check if the last fetched message is the last message in the entire conversation */
           //console.log(`isEndOfConversation: ${isEndOfConversation}`);
         } 
-        if (isStartOfConversation = (gripLocation === 1)) {;/* logic to check if the last fetched message is the first message in the entire conversation */
+        if (isStartOfConversation = (targetMessage === 0)) {;/* logic to check if the last fetched message is the first message in the entire conversation */
           //console.log(`isStartOfConversation: ${isStartOfConversation}`);
         }
       }
 
+
     let endScrollTrigger = false;
     let startScrollTrigger = false;
-
-    
-
     $: {
       if (isEndOfConversation && !endScrollTrigger) {
         if (container) {
@@ -204,7 +202,6 @@
           }
       });
       observ.observe(contain, { childList: true, subtree: true, attributes: true, characterData: true });
-    
 
   }); // end of onMount
 
@@ -220,7 +217,7 @@ async function fetchConversationSlice(gripLocation, num_messages) {
   // Step 1: Calculate the target message based on gripLocation
   // Invert the gripLocation to align with the array indexing
   const targetMessage = Math.round((1 - gripLocation) * num_messages);
-  console.log(`Calculated targetMessage: ${targetMessage}`);  // Debug line
+  //console.log(`Calculated targetMessage: ${targetMessage}`);  // Debug line
   setInLocalStorage('targetMessage', targetMessage);
 
   // Initialize start and end
@@ -259,7 +256,7 @@ async function fetchConversationSlice(gripLocation, num_messages) {
 
 
     const fetchedData = await invoke('fetch_conversation_history', { params: {start, end} });
-    console.log("Fetched conversation slice:", fetchedData);  // Debug line
+    //console.log("Fetched conversation slice:", fetchedData);  // Debug line
 
     // Additional logic to handle initial scroll position if grip at top or bottom
     if (gripLocation === 0 && container) {
@@ -361,13 +358,7 @@ const throttledFetch = throttle(fetchConversationSlice, 90);
 
 // Manipulation of gripLocation(local)/gripPosition(scrollStore) based on mouse scroll wheel events
 function handleScroll() {
-    const { scrollTop, scrollHeight, clientHeight } = container;
-    const scrolledRatio = scrollTop / (scrollHeight - clientHeight);
-    //gripLocation = 1 - scrolledRatio; // Inverted to align with existing logic
-    //console.log("gripLocation: ", gripLocation);
-    // Update the store value
-  //$scrollStore.gripPosition = gripLocation;
-    //console.log("Scrolling");
+    
 
 }
 
