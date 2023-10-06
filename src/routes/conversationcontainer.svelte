@@ -8,6 +8,13 @@
     import { invoke } from "@tauri-apps/api/tauri";
     import { tick } from 'svelte';
 
+
+
+    
+
+
+
+
     let conversation = []; // conversation history slice as requested from the backend
     let num_messages = 0; // total number of user, llm and bright_memory messages in the conversation
     let num_user_llm_messages = 0; // total number of user and llm messages in the conversation
@@ -17,7 +24,7 @@
     let topObserverElement;
     let bottomObserverElement;
     let userInputComponent; // Initialize the variable to bind the UserInput component
-
+    
     $: targetMessage = $scrollStore.targetMessage; // Reactive assignment
     $: totalMessages = $scrollStore.totalMessages; // Reactive assignment
 
