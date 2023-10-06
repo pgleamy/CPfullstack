@@ -30,6 +30,19 @@
     unsubscribe();  // Unsubscribe from the store
   });
 
+
+  function resetElasticGripToNeutral() {
+    // set dragspeed to 0
+    setInLocalStorage('dragSpeedUpDown', 0);
+    // set gripPosition to 0
+    setInLocalStorage('gripPosition', 0);
+    // set targetMessage to 0
+    setInLocalStorage('targetMessage', 0);
+  }
+
+
+
+
   function setInitialGripPosition() {
     const container = document.getElementById("custom-scrollbar");
     
@@ -55,6 +68,8 @@
   }
 
   onMount(() => {
+
+    resetElasticGripToNeutral();
 
     setInitialGripPosition();
 

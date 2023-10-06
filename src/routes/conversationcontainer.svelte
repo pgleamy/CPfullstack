@@ -178,14 +178,32 @@
       // Retries are implemented because sometimes it returns only a 2 pixel height 
       // because the contents of the container have not been fully rendered yet.
       // It is set to retry the measurement 10 times very quickly.
+      const contain = document.getElementById('clip-container');
+      async function measureHeight() {        
+        const currentHeight = contain.scrollHeight;       
+        await setInLocalStorage('targetMessagesPixelHeight', currentHeight);
+        return;
+      }
+
+      const observ = new MutationObserver(async () => {
+        await measureHeight();
+      });
+
+      observ.observe(contain, { childList: true, subtree: true, attributes: true, characterData: true });
+
+
+
+      /*
       const contain = document.getElementById('conversation-container');
       let retryCount = 0;
       const maxRetries = 10;
-      const retryDelay = 1;  // Delay in milliseconds
+      const retryDelay = 100;  // Delay in milliseconds
       let totalHeight = 0;
 
       const observ = new MutationObserver(() => {
+        tick().then(() => {
           totalHeight = contain.scrollHeight;
+        });
           if (totalHeight > 2) {
               //console.log('Total Height:', totalHeight);
               setInLocalStorage('targetMessagesPixelHeight', totalHeight);
@@ -203,6 +221,8 @@
           }
       });
       observ.observe(contain, { childList: true, subtree: true, attributes: true, characterData: true });
+      */
+
 
   }); // end of onMount
 
@@ -369,7 +389,7 @@ function handleScroll() {
 
 
 <div id="clip-container" bind:this={container} class="parent-container">
-  <div id="conversation-container"> 
+  <div id="conversation-container"  > 
 
     <div bind:this={topObserverElement} id="top-observer"></div>
 
@@ -408,11 +428,11 @@ function handleScroll() {
       width: 100%;
       position: relative;
       bottom: 0;
-      left: 7px !important;
+      left: 7px;
       padding-bottom: 0px;
       padding-right: 0px;
       user-select: none;
-      opacity: 1;
+      opacity: 0.9;
       transition: opacity 300ms ease-in-out;
 
       overflow-y: hidden; /* hides default vertical scrolling bar */
@@ -422,8 +442,8 @@ function handleScroll() {
 
     #clip-container {
     position: fixed;
-    top: 5px;
-    bottom: 5px;
+    top: 0px;
+    bottom: 0px;
     left: 0;
     right: 0;
     clip-path: inset(0);
@@ -431,7 +451,7 @@ function handleScroll() {
     scrollbar-width: none; /* hides scrollbar in Firefox */
     min-height: 100vh;
     width: 100%;
-    overflow-y: auto;
+    overflow-y: auto; /* Makes it scrollable */
 
 
   }

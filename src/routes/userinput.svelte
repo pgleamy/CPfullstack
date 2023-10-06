@@ -41,7 +41,7 @@
     let userInputHeight;
     function resizeTextarea(event) {
 
-    console.log('resizeTextarea ran');
+    //console.log('resizeTextarea ran');
     console.log('scrollstore.userInputHeight: ', $scrollStore.userInputHeight + 'px'); // correct
 
     const textarea = document.querySelector('#message-input textarea');
@@ -81,7 +81,7 @@
     }
 
     const cumulativeHeight = getCumulativeHeight(stickyInputContainer);
-    console.log("Cumulative height of all elements in .sticky-input container:", cumulativeHeight + 'px'); // bad
+    //console.log("Cumulative height of all elements in .sticky-input container:", cumulativeHeight + 'px'); // bad
 }
 
 
