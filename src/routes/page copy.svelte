@@ -1,5 +1,5 @@
 <script>
-    import UserInput from './userinput.svelte';
+    import UserInput from './userinput.svelte.failed';
     import { writable } from 'svelte/store';
 	import { fade } from "svelte/transition";
 

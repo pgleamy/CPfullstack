@@ -1,5 +1,5 @@
 <script>
-    import UserInput from './userinput.svelte';
+    import UserInput from './userinput.svelte.failed';
     import UserInputSent from './userinputsent.svelte';
     import LLMResponse from './llmresponse.svelte';
     

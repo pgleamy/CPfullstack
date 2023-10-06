@@ -1,6 +1,6 @@
 <script>
 
-    import { onMount, onDestroy, afterUpdate } from 'svelte';
+    import { onMount, onDestroy } from 'svelte';
     import { scrollStore, setInLocalStorage } from '$lib/scrollStore.js';
     import { createEventDispatcher } from 'svelte';
 
@@ -33,30 +33,60 @@
     $: disabled = !messageText;
 
 
+
+
+
     // Function to resize the textarea based on the content and report total height of all elements in the .sticky-input container in pixels
+    //let cumulativeHeight;
+    let userInputHeight;
     function resizeTextarea(event) {
 
-        // Directly use event.target instead of querying the DOM
-        const textarea = event.target;
+    console.log('resizeTextarea ran');
+    console.log('scrollstore.userInputHeight: ', $scrollStore.userInputHeight + 'px'); // correct
 
-        // Dynamically set textarea height based on scrollHeight
-        textarea.style.height = 'auto';
-        textarea.style.height = `${textarea.scrollHeight}px`;
+    const textarea = document.querySelector('#message-input textarea');
+    textarea.value = messageText;  // Set the value directly on the textarea element
+    console.log(textarea.value); // correct
+    
+    // Reset height
+    event.target.style.height = 'auto';
 
-        const stickyInputContainer = document.querySelector('.sticky-input');
-        if (!stickyInputContainer) return;
+    // Calculate new height based on content
+    const height = event.target.scrollHeight - 7 + 'px';
+    event.target.style.height = height;
 
-        // Calculate cumulative height
-        let cumulativeHeight = Array.from(stickyInputContainer.children).reduce((acc, child) => {
-            const computedStyle = window.getComputedStyle(child);
-            return acc + child.offsetHeight + parseInt(computedStyle.marginTop) + parseInt(computedStyle.marginBottom);
-        }, 0);
-
-        // Update height and unsentPrompt in local storage
-        setInLocalStorage('userInputHeight', cumulativeHeight);
-        setInLocalStorage('unsentPrompt', textarea.value);
-
+    // Reference to the .sticky-input container
+    const stickyInputContainer = document.querySelector('.sticky-input');
+    if (!stickyInputContainer) {
+        console.error("Could not find the .sticky-input container");
+        return;
     }
+
+    // Function to get the cumulative height of all child elements
+    function getCumulativeHeight(element) {
+        let cumulativeHeight = 0;
+        Array.from(element.children).forEach(child => {
+            const computedStyle = window.getComputedStyle(child);
+            cumulativeHeight += child.offsetHeight +
+                parseInt(computedStyle.marginTop) +
+                parseInt(computedStyle.marginBottom);
+        });
+        
+        // Update local state or store
+        setInLocalStorage('userInputHeight', cumulativeHeight);
+        // Update scrollStore if needed
+        // scrollStore.userInputHeight = cumulativeHeight; 
+
+        return cumulativeHeight;
+    }
+
+    const cumulativeHeight = getCumulativeHeight(stickyInputContainer);
+    console.log("Cumulative height of all elements in .sticky-input container:", cumulativeHeight + 'px'); // bad
+}
+
+
+
+
 
     function startTimer() {
         startTime = new Date();
@@ -109,6 +139,7 @@
 
         requestAnimationFrame(() => {
 
+
             // Get the unsent prompt from local storage and set messageText
             const unsentPrompt = localStorage.getItem('unsentPrompt');
             if (unsentPrompt) {
@@ -118,6 +149,19 @@
             const textarea = document.querySelector('#message-input textarea');
             textarea.value = messageText;  // Set the value directly on the textarea element
 
+            // Create a new input event
+            const event = new Event('input', {
+                bubbles: true,
+                cancelable: true,
+            });
+            // Dispatch the event on the textarea element multiple times
+            textarea.dispatchEvent(event);
+            textarea.dispatchEvent(event);
+
+
+
+
+
             console.log('onMount ran with userInputHeight:', $scrollStore.userInputHeight + 'px');
            
             resizeTextarea({ target: textarea });
@@ -125,14 +169,22 @@
             console.log('after resizeTextarea onMount ran with userInputHeight:', $scrollStore.userInputHeight + 'px');
 
 
+
+
         });
+
+
+
         dispatch('mounted', { resizeTextarea: () => resizeTextarea({ target: textarea }) });
+
+
 
     }); // end onMount
 
     // Start the prompt timer when the script loads
     startTimer();
-    //console.log('User Input component LOADED');
+
+    console.log('User Input component LOADED');
 
 </script>
 
@@ -146,7 +198,7 @@
             | {elapsedTime}
         </span>
     </div>
-    <textarea bind:value={messageText} placeholder="..." on:input={resizeTextarea} input type="text" on:input={handleInput} on:keydown={handleTabKeyPress} name="userinput"></textarea>
+    <textarea bind:value={messageText} placeholder="..." rows="1" on:input={resizeTextarea} input type="text" on:input={handleInput} on:keydown={handleTabKeyPress} name="userinput"></textarea>
     <div id="button-container">
         <button on:click={sendMessage} {disabled}></button>
     </div>
