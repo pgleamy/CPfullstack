@@ -362,6 +362,7 @@ function debounce(func, wait) {
 const debouncedFetch = debounce(fetchConversationSlice, 90);
 
 // throttle function to prevent excessive calls to fetchConversationSlice
+
 function throttle(func, limit) {
     let inThrottle;
     return function() {

@@ -18,7 +18,6 @@
     }
 
     let messageText = '';
-    let messageTextBackup = '';
     let username = 'Patrick';
     let startTime = new Date();
     let endTime = new Date();
@@ -164,7 +163,10 @@
 
             console.log('onMount ran with userInputHeight:', $scrollStore.userInputHeight + 'px');
            
-            resizeTextarea({ target: textarea });
+            requestAnimationFrame(() => {
+              resizeTextarea({ target: textarea });  
+            });
+            
 
             console.log('after resizeTextarea onMount ran with userInputHeight:', $scrollStore.userInputHeight + 'px');
 
@@ -180,6 +182,11 @@
 
 
     }); // end onMount
+
+
+    onDestroy(() => {
+        clearInterval(interval);
+    });
 
     // Start the prompt timer when the script loads
     startTimer();
