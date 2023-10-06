@@ -44,8 +44,20 @@
     */
 
     
+    // moves the messages up out of the way of the growing user input
+    $: {
+        if ($scrollStore.targetMessage === $scrollStore.totalMessages) {
+            requestAnimationFrame(() => {
+                const textarea = document.querySelector('#message-input textarea');
 
-   
+                if (textarea && typeof $scrollStore.userInputHeight === 'number') {
+                    // Set the height of the textarea element directly
+                    textarea.style.height = $scrollStore.userInputHeight;
+                }
+            });
+        }
+    }
+
 
 
 
@@ -182,7 +194,7 @@
             console.log('onMount ran with userInputHeight:', $scrollStore.userInputHeight + 'px');
            
             requestAnimationFrame(() => {
-              resizeTextarea({ target: textarea });  
+              //resizeTextarea({ target: textarea });  
             });
             
 
@@ -195,7 +207,7 @@
 
 
 
-        dispatch('mounted', { resizeTextarea: () => resizeTextarea({ target: textarea }) });
+        //dispatch('mounted', { resizeTextarea: () => resizeTextarea({ target: textarea }) });
 
 
 
@@ -211,6 +223,9 @@
 
     console.log('User Input component LOADED');
 
+    // Set the number of rows of the textarea prompt based on the height of the .sticky-input container
+    const rowsOfPrompt = ($scrollStore.userInputHeight - 58) / 20;
+
 </script>
 
 <div id="wrapper" class="sticky-input">
@@ -223,7 +238,7 @@
             | {elapsedTime}
         </span>
     </div>
-    <textarea bind:value={messageText} placeholder="..." rows="1" on:input={resizeTextarea} input type="text" on:input={handleInput} on:keydown={handleTabKeyPress} name="userinput"></textarea>
+    <textarea bind:value={messageText} placeholder="..." rows="{rowsOfPrompt}" on:input={resizeTextarea} input type="text" on:input={handleInput} on:keydown={handleTabKeyPress} name="userinput"></textarea>
     <div id="button-container">
         <button on:click={sendMessage} {disabled}></button>
     </div>
