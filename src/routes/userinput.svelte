@@ -33,6 +33,24 @@
 
 
 
+    /*
+    $: {
+        if ($scrollStore.targetMessage === $scrollStore.totalMessages) {
+                requestAnimationFrame(() => {
+                resizeTextarea({ target: textarea });  
+                });
+            }
+        }
+    */
+
+    
+
+   
+
+
+
+
+
 
 
     // Function to resize the textarea based on the content and report total height of all elements in the .sticky-input container in pixels
