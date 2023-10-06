@@ -1,6 +1,6 @@
 <script>
 
-    import { onMount, onDestroy } from 'svelte';
+    import { onMount, onDestroy, afterUpdate } from 'svelte';
     import { scrollStore, setInLocalStorage } from '$lib/scrollStore.js';
     import { createEventDispatcher } from 'svelte';
 
@@ -36,16 +36,8 @@
     // Function to resize the textarea based on the content and report total height of all elements in the .sticky-input container in pixels
     function resizeTextarea(event) {
 
-        // Load unsentPrompt from scrollStore
-        const messageText = $scrollStore.unsentPrompt;
-
         // Directly use event.target instead of querying the DOM
         const textarea = event.target;
-
-        // If textarea is empty, populate it with the unsentPrompt
-        if (textarea.value === '') {
-            textarea.value = messageText;
-        }
 
         // Dynamically set textarea height based on scrollHeight
         textarea.style.height = 'auto';
@@ -134,20 +126,15 @@
 
 
         });
-        //dispatch('mounted');
+        dispatch('mounted', { resizeTextarea: () => resizeTextarea({ target: textarea }) });
 
     }); // end onMount
-
-   
 
     // Start the prompt timer when the script loads
     startTimer();
     //console.log('User Input component LOADED');
 
 </script>
-
-
-
 
 <div id="wrapper" class="sticky-input">
 <div id="message-input">
@@ -165,9 +152,6 @@
     </div>
 </div>
 </div>
-
-
-
 
 <style>
 
