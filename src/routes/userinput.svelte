@@ -4,19 +4,6 @@
     import { scrollStore, setInLocalStorage } from '$lib/scrollStore.js';
     import { createEventDispatcher } from 'svelte';
 
-    const dispatch = createEventDispatcher();
-
-    // Prompt handling before it is sent by the user
-    function handleInput(event) {
-        // tells conversationcontainer everytime a text event occurs
-        dispatch('input', event.target.value);
-        // save the unsent prompt to local storage character by character for persistence across scrolling/resize/page events
-        setInLocalStorage('unsentPrompt', event.target.value);
-        //console.log('Unsent prompt returned from local storage:', localStorage.getItem('unsentPrompt'));
-        messageText = event.target.value;
-        //console.log(messageText);
-    }
-
     let messageText = '';
     let username = 'Patrick';
     let startTime = new Date();
@@ -27,94 +14,79 @@
     let interval;
     let elapsedTime = '';
 
-    // Reactive statement to control the disabled state
+    // Event dispatcher used by the resizeTextarea function below to communicate changes 
+    // in this component to the parent component so the parent can then make adjustment to sibling components
+    // based on the data returned by this component after it has been resized
+    const dispatch = createEventDispatcher();
+
+    // Prompt handling before it is sent by the user to update local storage and the messageText variable
+    function handleInput(event) {
+        
+        // save the unsent prompt to local storage character by character for persistence across scrolling/resize/page events
+        setInLocalStorage('unsentPrompt', event.target.value);
+        //console.log('Unsent prompt returned from local storage:', localStorage.getItem('unsentPrompt'));
+        
+        // save the same data to the messageText variable for use in the sendMessage function
+        messageText = event.target.value;
+        //console.log(messageText);
+
+    }   // end handleInput
+
+    // Reactive statement to control the disabled state of the send button
+    // If there is no message text, the button is disabled
     let disabled = true;
     $: disabled = !messageText;
 
+   
+    function handleTabKeyPress(event) {
+    if (event.key === 'Tab') {
+        event.preventDefault();  // Prevent focus switch
+        const textarea = event.target;
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
 
+        // Insert the tab character at the cursor position
+        textarea.value = textarea.value.substring(0, start) + '\t' + textarea.value.substring(end);
 
-    /*
-    $: {
-        if ($scrollStore.targetMessage === $scrollStore.totalMessages) {
-                requestAnimationFrame(() => {
-                resizeTextarea({ target: textarea });  
-                });
-            }
-        }
-    */
+        // Move the cursor to the right of the inserted tab character
+        textarea.selectionStart = textarea.selectionEnd = start + 1;
 
-    
-    // moves the messages up out of the way of the growing user input
-    $: {
-        if ($scrollStore.targetMessage === $scrollStore.totalMessages) {
-            requestAnimationFrame(() => {
-                const textarea = document.querySelector('#message-input textarea');
-
-                if (textarea && typeof $scrollStore.userInputHeight === 'number') {
-                    // Set the height of the textarea element directly
-                    textarea.style.height = $scrollStore.userInputHeight;
-                }
-            });
-        }
+        // Update messageText to keep it in sync with textarea's value
+        messageText = textarea.value;
     }
+}
 
 
-
-
-
-
-
-
-    // Function to resize the textarea based on the content and report total height of all elements in the .sticky-input container in pixels
-    //let cumulativeHeight;
-    let userInputHeight;
+    // Function to resize the textarea based on the content and to report total height of all elements in the .sticky-input container in pixels
     function resizeTextarea(event) {
 
-    console.log('resizeTextarea ran');
-    console.log('scrollstore.userInputHeight: ', $scrollStore.userInputHeight + 'px'); // correct
+        // 1. Resize the textarea based on its content
+        event.target.style.height = '0px';  // Reset height
+        const newHeight = event.target.scrollHeight + 'px';
+        event.target.style.height = newHeight; 
 
-    const textarea = document.querySelector('#message-input textarea');
-    textarea.value = messageText;  // Set the value directly on the textarea element
-    console.log(textarea.value); // correct
-    
-    // Reset height
-    event.target.style.height = 'auto';
+        // 2. Calculate the cumulative height of all elements within the component
+        const componentContainer = document.querySelector('.sticky-input');
+        if (!componentContainer) {
+            console.error("Could not find the .sticky-input container");
+            return;
+        }
 
-    // Calculate new height based on content
-    const height = event.target.scrollHeight - 7 + 'px';
-    event.target.style.height = height;
-
-    // Reference to the .sticky-input container
-    const stickyInputContainer = document.querySelector('.sticky-input');
-    if (!stickyInputContainer) {
-        console.error("Could not find the .sticky-input container");
-        return;
-    }
-
-    // Function to get the cumulative height of all child elements
-    function getCumulativeHeight(element) {
         let cumulativeHeight = 0;
-        Array.from(element.children).forEach(child => {
+        Array.from(componentContainer.children).forEach(child => {
             const computedStyle = window.getComputedStyle(child);
             cumulativeHeight += child.offsetHeight +
                 parseInt(computedStyle.marginTop) +
                 parseInt(computedStyle.marginBottom);
         });
         
-        // Update local state or store
-        setInLocalStorage('userInputHeight', cumulativeHeight);
-        // Update scrollStore if needed
-        // scrollStore.userInputHeight = cumulativeHeight; 
+        // Tell parent container about all relevent changes to this component
+        // such as: the new height of the textarea, the new cumulative height of all elements in the component
+        setInLocalStorage('userInputComponentHeight', cumulativeHeight + 7); // pixel height of the whole component. 7px is a buffer so the messages above it are spaced up a bit
+        setInLocalStorage('unsentPromptHeight', newHeight); // pixel height of only the textarea
+        dispatch('resize', { newHeight: newHeight, cumulativeHeight: cumulativeHeight + 7 });
 
-        return cumulativeHeight;
-    }
-
-    const cumulativeHeight = getCumulativeHeight(stickyInputContainer);
-    console.log("Cumulative height of all elements in .sticky-input container:", cumulativeHeight + 'px'); // bad
-}
-
-
-
+    } // end resizeTextarea
 
 
     function startTimer() {
@@ -130,10 +102,9 @@
                           (diffHours % 24 > 0 ? diffHours % 24 + ' hrs ' : '') + 
                           (diffMinutes % 60 > 0 ? diffMinutes % 60 + ' min ' : '');
         }, 60000);
-    }
+    } // end startTimer
     
     import { invoke } from '@tauri-apps/api/tauri';
-
     function sendMessage() {
     // Call the Rust backend command with the message text
         invoke('send_prompt', { messageText })
@@ -146,90 +117,37 @@
 
         // Clear the message text
         messageText = '';
+        setInLocalStorage('unsentPrompt', '');
         // Stop the timer
         clearInterval(interval);
-    }
+    } // end sendMessage
 
-    function handleTabKeyPress(event) {
-        if (event.key === 'Tab') {
-            event.preventDefault();  // Prevent focus switch
-            const start = event.target.selectionStart;
-            const end = event.target.selectionEnd;
 
-            // Insert the tab character at the cursor position
-            messageText = messageText.substring(0, start) + '\t' + messageText.substring(end);
-
-            // Move the cursor to the right of the inserted tab character
-            event.target.selectionStart = event.target.selectionEnd = start + 1;
-        }
-    }
 
     onMount(() => {
 
-        requestAnimationFrame(() => {
-
-
-            // Get the unsent prompt from local storage and set messageText
-            const unsentPrompt = localStorage.getItem('unsentPrompt');
-            if (unsentPrompt) {
-                messageText = unsentPrompt;
-            }
-
-            const textarea = document.querySelector('#message-input textarea');
-            textarea.value = messageText;  // Set the value directly on the textarea element
-
-            // Create a new input event
-            const event = new Event('input', {
-                bubbles: true,
-                cancelable: true,
-            });
-            // Dispatch the event on the textarea element multiple times
-            textarea.dispatchEvent(event);
-            textarea.dispatchEvent(event);
-
-
-
-
-
-            console.log('onMount ran with userInputHeight:', $scrollStore.userInputHeight + 'px');
-           
-            requestAnimationFrame(() => {
-              //resizeTextarea({ target: textarea });  
-            });
-            
-
-            console.log('after resizeTextarea onMount ran with userInputHeight:', $scrollStore.userInputHeight + 'px');
-
-
-
-
-        });
-
-
-
-        //dispatch('mounted', { resizeTextarea: () => resizeTextarea({ target: textarea }) });
-
-
+        messageText = localStorage.getItem('unsentPrompt') || '';
+        // set the textarea height to the height of the unsent prompt
+        const textarea = document.querySelector('.sticky-input textarea');
+        console.log('message-input textarea:', textarea);
+        textarea.style.height = localStorage.getItem('unsentPromptHeight') || '0px';
 
     }); // end onMount
 
 
     onDestroy(() => {
+
         clearInterval(interval);
-    });
+
+    }); // end onDestroy
 
     // Start the prompt timer when the script loads
-    startTimer();
-
-    console.log('User Input component LOADED');
-
-    // Set the number of rows of the textarea prompt based on the height of the .sticky-input container
-    const rowsOfPrompt = ($scrollStore.userInputHeight - 58) / 20;
+    startTimer()
 
 </script>
 
-<div id="wrapper" class="sticky-input">
-<div id="message-input">
+
+<div id="message-input" class="sticky-input">
     <div id="title" contenteditable="false">
         <span>{username}</span>
         <span id="timestamp">
@@ -238,12 +156,13 @@
             | {elapsedTime}
         </span>
     </div>
-    <textarea bind:value={messageText} placeholder="..." rows="{rowsOfPrompt}" on:input={resizeTextarea} input type="text" on:input={handleInput} on:keydown={handleTabKeyPress} name="userinput"></textarea>
+    <textarea bind:value={messageText} placeholder="..." rows="1" on:input={resizeTextarea} on:input={handleInput} on:keydown={handleTabKeyPress} name="userinput"></textarea>
     <div id="button-container">
         <button on:click={sendMessage} {disabled}></button>
     </div>
 </div>
-</div>
+
+
 
 <style>
 
@@ -252,18 +171,6 @@
         bottom: 0;
         z-index: 999; 
         background: transparent;
-    }
-
-    #wrapper {
-        width: 100%;
-        display: contents;
-        flex-direction: column;
-        justify-content: flex-end;
-        position: relative;
-        Left: 0;
-        right: 0;
-        padding-top: 0px;
-        padding-bottom: 0px;
     }
 
     #message-input {
@@ -284,23 +191,23 @@
     }
 
     #message-input textarea {
-    padding: 8px;
-    padding-bottom: 2px;
-    padding-top: 5px;
-    margin-right: 50px;
-    border: rgba(249, 245, 10, 0.298) 2px solid;
-    box-shadow: 0 0 0 0.3px #323232;
-    border-radius: 4px;
-    background-color: #080808;
-    font-size: 14px;
-    line-height: 20px;
-    color: #cccccc;
-    resize: none;
-    overflow: hidden;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    min-height: 0px;
-    tab-size: 3;
+        padding: 8px;
+        padding-bottom: 2px;
+        padding-top: 5px;
+        margin-right: 50px;
+        border: rgba(249, 245, 10, 0.298) 2px solid;
+        box-shadow: 0 0 0 0.3px #323232;
+        border-radius: 4px;
+        background-color: #080808;
+        font-size: 14px;
+        line-height: 20px;
+        color: #cccccc;
+        resize: none;
+        overflow: hidden;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        min-height: 0px;
+        tab-size: 3;
     }
 
     #message-input textarea::placeholder {

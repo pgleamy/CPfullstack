@@ -59,11 +59,13 @@ const load = () => {
 
     dragSpeedUpDown: parseFloat(get('dragSpeedUpDown')) || 0, // Elastic grip scroll speed. Defaults to 0 to signify 0 drag velocity, otherwise is a positive number for up and a negative number for down
 
-    userInputHeight: parseInt(get('userInputHeight')) || 0, // Height of the user input component elements in pixels
+    userInputComponentHeight: parseInt(get('userInputComponentHeight')) || 0, // Height of the user input component elements in pixels
 
     targetMessagesPixelHeight: parseInt(get('targetMessagesPixelHeight')) || 0, // Height of the conversation-container contents in pixels
 
     unsentPrompt: get('unsentPrompt') || "", // The unset prompt contents
+
+    unsentPromptHeight: parseInt(get('unsentPromptHeight')) || 0, // Height of the unsent prompt component elements in pixels
 
   };
 };

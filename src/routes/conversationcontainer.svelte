@@ -27,7 +27,9 @@
     // Create a reactive statement to update paddingBottom whenever userInputHeight changes
     $: {
       if (isEndOfConversation) {
-          paddingBottom = `padding-bottom: ${$scrollStore.userInputHeight}px;`;
+          paddingBottom = `padding-bottom: ${$scrollStore.userInputComponentHeight}px;`;
+          // scroll to bottom of conversation container so the send button is always visible
+          scrollToBottom();
       } else {
           paddingBottom = '';
       }
@@ -383,8 +385,6 @@ function handleScroll() {
     
 
 }
-
-
 
 </script>
 

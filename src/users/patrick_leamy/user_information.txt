@@ -21,3 +21,43 @@ RELATIONSHIP TO USER: son of Patrick and Nadia Leamy
 PNLEAMY HOLDINGS INC. (company):
 ATTRIBUTES: Incorporated in Alberta
 RELATIONSHIP TO USER: Patrick Leamy and Nadia Leamy are the sole equal shareholders
+
+Max (pet):
+ATTRIBUTES: golden retriever, friendly nature, love for adventure
+RELATIONSHIP TO USER: dog in the story
+
+Sarah (person):
+ATTRIBUTES: none mentioned
+RELATIONSHIP TO USER: none
+
+Charlie (person):
+ATTRIBUTES: young boy, sad expression, special bond with Max
+RELATIONSHIP TO USER: none
+
+Park (place):
+ATTRIBUTES: nearby park
+RELATIONSHIP TO USER: none
+
+Bench (place):
+ATTRIBUTES: where Charlie was sitting
+RELATIONSHIP TO USER: none
+
+Max's family (family):
+ATTRIBUTES: none mentioned
+RELATIONSHIP TO USER: none
+
+Max's friends (people):
+ATTRIBUTES: none mentioned
+RELATIONSHIP TO USER: none
+
+Woods (place):
+ATTRIBUTES: where Max and Charlie would explore
+RELATIONSHIP TO USER: none
+
+Charlie's family (family):
+ATTRIBUTES: none mentioned
+RELATIONSHIP TO USER: none
+
+Memories:
+ATTRIBUTES: none mentioned
+RELATIONSHIP TO USER: none

@@ -1,5 +1,1 @@
-// Get the unsent prompt from local storage and set     messageText
-        const unsentPrompt = localStorage.getItem('unsentPrompt');
-        if (unsentPrompt) {
-            messageText = unsentPrompt;
-        }
+Write a story about a dog. 
