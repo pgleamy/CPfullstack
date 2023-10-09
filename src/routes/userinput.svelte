@@ -39,22 +39,22 @@
 
    
     function handleTabKeyPress(event) {
-    if (event.key === 'Tab') {
-        event.preventDefault();  // Prevent focus switch
-        const textarea = event.target;
-        const start = textarea.selectionStart;
-        const end = textarea.selectionEnd;
+        if (event.key === 'Tab') {
+            event.preventDefault();  // Prevent focus switch
+            const textarea = event.target;
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
 
-        // Insert the tab character at the cursor position
-        textarea.value = textarea.value.substring(0, start) + '\t' + textarea.value.substring(end);
+            // Insert the tab character at the cursor position
+            textarea.value = textarea.value.substring(0, start) + '\t' + textarea.value.substring(end);
 
-        // Move the cursor to the right of the inserted tab character
-        textarea.selectionStart = textarea.selectionEnd = start + 1;
+            // Move the cursor to the right of the inserted tab character
+            textarea.selectionStart = textarea.selectionEnd = start + 1;
 
-        // Update messageText to keep it in sync with textarea's value
-        messageText = textarea.value;
+            // Update messageText to keep it in sync with textarea's value
+            messageText = textarea.value;
+        }
     }
-}
 
 
     // Function to resize the textarea based on the content and to report total height of all elements in the .sticky-input container in pixels
@@ -130,13 +130,19 @@
         // set the textarea height to the height of the unsent prompt
         const textarea = document.querySelector('.sticky-input textarea');
         console.log('message-input textarea:', textarea);
-        textarea.style.height = localStorage.getItem('unsentPromptHeight') || '0px';
+        if (textarea) {
+            textarea.style.height = (localStorage.getItem('unsentPromptHeight') || '0') + 'px';
+            console.log('message-input textarea height:', textarea.style.height);
+
+            //resizeTextarea({ target: textarea });
+        }
 
     }); // end onMount
 
 
     onDestroy(() => {
 
+        // Stop the timer
         clearInterval(interval);
 
     }); // end onDestroy
