@@ -57,7 +57,3 @@ RELATIONSHIP TO USER: none
 Charlie's family (family):
 ATTRIBUTES: none mentioned
 RELATIONSHIP TO USER: none
-
-Memories:
-ATTRIBUTES: none mentioned
-RELATIONSHIP TO USER: none

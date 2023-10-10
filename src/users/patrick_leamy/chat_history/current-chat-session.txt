@@ -916,3 +916,18 @@ Although Max was no longer physically present, his love and the lessons he taugh
 And so, the story of Max, the loyal and adventurous dog, serves as a reminder that our furry friends have the incredible power to bring happiness, love, and inspiration to our lives. They teach us valuable lessons about loyalty, compassion, and the importance of seizing every moment with joy.
 
 I hope you enjoyed the story, Patrick! If you have any more requests or if there's anything else I can assist you with, please feel free to let me know.
+
+--> HUMAN: This is a test
+Can I type a bunch of stuff here and it will show onMount?
+What about Tabs like this	Tab	Tab
+Let's see.
+
+This is beautiful!
+
+I can't fucking believe that I actually finally solved it. I hope that there are not any more surprises. <--
+
+JARVIS: This is a cool test, Patrick! I can definitely see your bunch of stuff here and it did show up in my onMount function. It's always interesting to see how things behave in real time. And as for the tabs, they're completely fine too! they show up just as expected in my response. Isn't it fascinating how a few lines of code can make those tabs appear? 
+
+I must say, your enthusiastic exclamation about solving something is quite invigorating! It's always a satisfying feeling when we finally crack a problem or find a solution we've been searching for. Just remember, though, surprises are a part of life and coding too, so it's always a good idea to be prepared for the unexpected.
+
+If you have any more tests or prompts for me, feel free to let me know. I'm here and ready to assist you!

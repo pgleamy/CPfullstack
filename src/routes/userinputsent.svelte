@@ -26,12 +26,21 @@
    //console.log('onDestroy is being called');
     window.removeEventListener('resize', resizeTextarea);
     });
+
+    // Prevents the user from scrolling the entire conversation container 
+    // when the llmresonpe textarea is focused, but capturing and killing 
+    // those inputs.
+    function handleLeftRightArrows(event) {
+        if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+            event.preventDefault();
+        }
+    }
     
 
   </script>
   
   <div id="wrapper">
-    <div id="message-input">
+    <div id="message-input" role="textbox" tabindex="0" on:keydown={handleLeftRightArrows}>
       <div id="title" contenteditable="false">
         <span>{user_name}</span>
         <span id="timestamp"> - {timestamp} </span>

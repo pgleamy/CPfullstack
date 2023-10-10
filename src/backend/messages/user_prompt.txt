@@ -1,1 +1,8 @@
-Write a story about a dog. 
+This is a test
+Can I type a bunch of stuff here and it will show onMount?
+What about Tabs like this	Tab	Tab
+Let's see.
+
+This is beautiful!
+
+I can't fucking believe that I actually finally solved it. I hope that there are not any more surprises.
