@@ -120,6 +120,18 @@
         setInLocalStorage('unsentPrompt', '');
         // Stop the timer
         clearInterval(interval);
+        
+        setInLocalStorage('unsentPromptHeight', 27);
+        setInLocalStorage('userInputComponentHeight', 81); 
+
+        const textarea = document.querySelector('.sticky-input textarea');
+        //console.log('message-input textarea:', textarea);
+        if (textarea) {
+            textarea.style.height = (localStorage.getItem('unsentPromptHeight') || '0') + 'px';
+            //console.log('message-input textarea height:', textarea.style.height);
+
+        }
+
     } // end sendMessage
 
 
