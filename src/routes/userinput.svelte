@@ -129,12 +129,11 @@
         messageText = localStorage.getItem('unsentPrompt') || '';
         // set the textarea height to the height of the unsent prompt
         const textarea = document.querySelector('.sticky-input textarea');
-        console.log('message-input textarea:', textarea);
+        //console.log('message-input textarea:', textarea);
         if (textarea) {
             textarea.style.height = (localStorage.getItem('unsentPromptHeight') || '0') + 'px';
-            console.log('message-input textarea height:', textarea.style.height);
+            //console.log('message-input textarea height:', textarea.style.height);
 
-            //resizeTextarea({ target: textarea });
         }
 
     }); // end onMount

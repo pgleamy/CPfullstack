@@ -174,8 +174,9 @@
     };
 
     animateGrip(); // Initial call to start the animation
-  } 
+  }  // End of handleDownArrowClick()
 
+  
   function handleUpArrowClick() {
     console.log("Up arrow clicked");
   }
@@ -303,6 +304,7 @@ let initialDragY;  // Y-coordinate of where the drag started
 
       // Update visual feedback
       updateDotsBrightness();
+
   } // End of elasticDrag()
 
   function updateDotsBrightness() {
