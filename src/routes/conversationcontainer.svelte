@@ -33,7 +33,9 @@
       } else {
           paddingBottom = '';
       }
-    }
+    } // end of reactive statement to update paddingBottom
+
+
     function scrollToBottom() {
       if (container) {
           container.scrollTop = container.scrollHeight;
@@ -44,8 +46,7 @@
           }
         });
         //console.log("Scrolling to bottom");
-    }
-
+    } // end of scrollToBottom function
 
 
 
@@ -60,9 +61,7 @@
         if (isStartOfConversation = (targetMessage === 0)) {;/* logic to check if the last fetched message is the first message in the entire conversation */
           //console.log(`isStartOfConversation: ${isStartOfConversation}`);
         }
-      }
-
-
+      } // end of reactive statement to start/end of conversation 
     let endScrollTrigger = false;
     let startScrollTrigger = false;
     $: {
@@ -88,7 +87,7 @@
         endScrollTrigger = false;
         startScrollTrigger = false;
       }
-    }
+    } // end of reactive statement to position the view of the messages correctly when the user input component is displayed or when at top of conversation showing from very start
 
 
     // Scrubbing grip control logic
@@ -100,9 +99,9 @@
       throttledFetch(gripLocation, num_messages);
       debouncedFetch(gripLocation, num_messages);
       }
-    } 
+    } // end of reactive statement to fetch conversation slice based on local variable gripLocation (throttled and debounced)
 
-    // Infinite scroll animation speed control logic
+    // Infinite scroll animation speed control logic used by the elastic grip element
     let lastRenderTime = Date.now();
     const animateScroll = () => {
       const currentTime = Date.now();
@@ -111,7 +110,7 @@
       // the numeric value controls the relative speed of fine scrolling
       const dragSpeedUpDown = parseFloat(localStorage.getItem('dragSpeedUpDown')) * 0.6 || 0; 
       if (container) { container.scrollTop += dragSpeedUpDown * deltaTime; requestAnimationFrame(animateScroll); }
-    };
+    }; // end of elastic grip animateScroll function. 
 
 
   onMount(async () => {
@@ -136,33 +135,34 @@
       // Infinite scroll logic
 
       const observerOptions = {
-        root: null,
-        rootMargin: '0px', // how early to start fetching the next part of the conversation
-        threshold: 0.1
+        root: container,
+        rootMargin: '500px', // how early to start fetching the next part of the conversation
+        threshold: 0
       };
 
       // Callback function to be executed when the top or bottom observer elements are intersecting
       // due to the user fine scrolling with the elastic grip element up or down respectively
       const observerCallback = async (entries, observer) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          const dragSpeedUpDown = parseFloat(localStorage.getItem('dragSpeedUpDown')) || 0;
+          const direction = Math.sign(dragSpeedUpDown);  // 1 for down, -1 for up
 
-        let num_user_llm_messages = await invoke('get_total_llm_user_messages');
+          console.log(`direction: ${direction}`);  // Debug line
 
-        entries.forEach(async (entry) => {
-          if (entry.isIntersecting) {
-            const dragSpeedUpDown = parseFloat(localStorage.getItem('dragSpeedUpDown')) || 0;
-            const direction = Math.sign(dragSpeedUpDown);  // 1 for up, -1 for down
-            //console.log(`direction: ${direction}`);  // Debug line
-
-            if (entry.target === topObserverElement && direction < 0) {
-              // Fetch 10 messages from the top
-              await fetchConversationPart("UP", num_user_llm_messages);
-            } else if (entry.target === bottomObserverElement && direction > 0) {
-              // Fetch 10 messages from the bottom
-              await fetchConversationPart("DOWN", num_user_llm_messages);
-            }
+          if (direction > 0) {
+            console.log('Triggered later messages...');
+            await fetchConversationPart("DOWN");
+          } else if (direction < 0) {
+            console.log('Triggered earlier messages...');
+            await fetchConversationPart("UP");
           }
-        });
-      };
+        }
+      }
+    };
+
+
+ // end of observerCallback function
 
       const observer = new IntersectionObserver(observerCallback, observerOptions);
       observer.observe(topObserverElement);
@@ -192,39 +192,6 @@
       });
 
       observ.observe(contain, { childList: true, subtree: true, attributes: true, characterData: true });
-
-
-
-      /*
-      const contain = document.getElementById('conversation-container');
-      let retryCount = 0;
-      const maxRetries = 10;
-      const retryDelay = 100;  // Delay in milliseconds
-      let totalHeight = 0;
-
-      const observ = new MutationObserver(() => {
-        tick().then(() => {
-          totalHeight = contain.scrollHeight;
-        });
-          if (totalHeight > 2) {
-              //console.log('Total Height:', totalHeight);
-              setInLocalStorage('targetMessagesPixelHeight', totalHeight);
-              retryCount = 0;  // Reset retry count on successful measurement
-          } else if (retryCount < maxRetries) {
-              retryCount++;
-              console.log('Retrying measurement:', retryCount);
-              setTimeout(() => {
-                  const retryHeight = contain.scrollHeight;
-                  if (retryHeight > 2) {
-                      console.log('Total Height (after retry):', retryHeight);
-                      retryCount = 0;  // Reset retry count on successful measurement
-                  }
-              }, retryDelay);
-          }
-      });
-      observ.observe(contain, { childList: true, subtree: true, attributes: true, characterData: true });
-      */
-
 
   }); // end of onMount
 
@@ -309,17 +276,26 @@ async function fetchConversationSlice(gripLocation, num_messages) {
 // Fetches a part of the conversation history from the backend for the infinite scrolling elastic grip element
 // Unlike the scrubbing grip, this function does NOT need throttling or debouncing
 async function fetchConversationPart(direction) {
-  const totalMessagesToFetch = 10; // Number of messages to fetch
+  const totalMessagesToFetch = 5; // Number of messages to fetch
 
   let start, end;
 
   if (direction === "UP") {
     const firstBlockIdNum = parseInt(conversation[0].block_id.split("_").pop(), 10);
-    start = Math.max(firstBlockIdNum - totalMessagesToFetch, 0);
+
+    console.log('Fetching earlier messages...');
+    console.log(`firstBlockIdNum: ${firstBlockIdNum}`);  // Debug line
+
+    start = Math.max((firstBlockIdNum - 1) - totalMessagesToFetch, 0);
     end = firstBlockIdNum - 1;
+
   } else if (direction === "DOWN") {
     const lastBlockIdNum = parseInt(conversation[conversation.length - 1].block_id.split("_").pop(), 10);
-    start = lastBlockIdNum + 1;
+
+    console.log('Fetching later messages...');
+    console.log(`lastBlockIdNum: ${lastBlockIdNum}`);  // Debug line
+
+    start = lastBlockIdNum;
     end = Math.min(lastBlockIdNum + totalMessagesToFetch, num_user_llm_messages);
   }
 
@@ -341,12 +317,12 @@ async function fetchConversationPart(direction) {
       console.error(`Failed to fetch conversation part: ${error}`);
     }
 
-    //console.log("Current conversation:", conversation);  // Debug line
+    console.log("Current conversation:", conversation);  // Debug line
 
   } else {
     console.warn("Start and end values are out of range.");
   }
-}
+} // end of fetchConversationPart function
 
 
 
