@@ -9,6 +9,7 @@
     import { invoke } from "@tauri-apps/api/tauri";
     import { tick } from 'svelte';
 
+
     let conversation = []; // conversation history slice as requested from the backend
     let num_messages = 0; // total number of user, llm and bright_memory messages in the conversation
     let num_user_llm_messages = 0; // total number of user and llm messages in the conversation
@@ -18,6 +19,24 @@
     let topObserverElement;
     let bottomObserverElement;
     let userInputComponent; // Initialize the variable to bind the UserInput component
+
+
+
+    // Reactive state management for fine scrolling scroll adjustments in fetchConversationPart function
+    let initialBeforeScrollTop = null; 
+    let initialGripLocation = gripLocation;  // Initialize with the current gripLocation value
+    // Reactive statement to monitor gripLocation
+    $: {
+      // Logic to reset initialBeforeScrollTop when gripLocation changes
+      if (initialBeforeScrollTop !== null && gripLocation !== initialGripLocation) {
+        initialBeforeScrollTop = null;
+      }
+      initialGripLocation = gripLocation;  // Update initialGripPosition to the new value
+    }
+    
+
+
+
     
     $: targetMessage = $scrollStore.targetMessage; // Reactive assignment
     $: totalMessages = $scrollStore.totalMessages; // Reactive assignment
@@ -96,8 +115,8 @@
     // controls the fetching of the conversation slice based on gripLocation for smooth interaction
     $: {
       if (num_messages > 0) {
-      throttledFetch(gripLocation, num_messages);
-      debouncedFetch(gripLocation, num_messages);
+        throttledFetch(gripLocation, num_messages);
+        debouncedFetch(gripLocation, num_messages);
       }
     } // end of reactive statement to fetch conversation slice based on local variable gripLocation (throttled and debounced)
 
@@ -136,33 +155,32 @@
 
       const observerOptions = {
         root: container,
-        rootMargin: '500px', // how early to start fetching the next part of the conversation
+        rootMargin: '50px', // how early to start fetching the next part of the conversation
         threshold: 0
       };
 
       // Callback function to be executed when the top or bottom observer elements are intersecting
       // due to the user fine scrolling with the elastic grip element up or down respectively
+      
       const observerCallback = async (entries, observer) => {
-      for (const entry of entries) {
-        if (entry.isIntersecting) {
-          const dragSpeedUpDown = parseFloat(localStorage.getItem('dragSpeedUpDown')) || 0;
-          const direction = Math.sign(dragSpeedUpDown);  // 1 for down, -1 for up
 
-          console.log(`direction: ${direction}`);  // Debug line
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            const dragSpeedUpDown = parseFloat(localStorage.getItem('dragSpeedUpDown')) || 0;
+            const direction = Math.sign(dragSpeedUpDown);  // 1 for down, -1 for up
 
-          if (direction > 0) {
-            console.log('Triggered later messages...');
-            await fetchConversationPart("DOWN");
-          } else if (direction < 0) {
-            console.log('Triggered earlier messages...');
-            await fetchConversationPart("UP");
+            console.log(`direction: ${direction}`);  // Debug line
+
+            if (direction > 0) {
+              console.log('Triggered later messages...');
+              await fetchConversationPart("DOWN");
+            } else if (direction < 0) {
+              console.log('Triggered earlier messages...');
+              await fetchConversationPart("UP");
+            }
           }
         }
-      }
-    };
-
-
- // end of observerCallback function
+      }; // end of observerCallback function
 
       const observer = new IntersectionObserver(observerCallback, observerOptions);
       observer.observe(topObserverElement);
@@ -172,25 +190,19 @@
       requestAnimationFrame(animateScroll);
 
       
-
       // Constantly monitors the conversation container for changes
       // and obtains the exact pixel height of all the components in the conversation container
       // each time the contents of the container change. 
       // Accounts for all changes, including window resizing, user input, etc.
-      // Retries are implemented because sometimes it returns only a 2 pixel height 
-      // because the contents of the container have not been fully rendered yet.
-      // It is set to retry the measurement 10 times very quickly.
       const contain = document.getElementById('clip-container');
       async function measureHeight() {        
         const currentHeight = contain.scrollHeight;       
         await setInLocalStorage('targetMessagesPixelHeight', currentHeight);
         return;
       }
-
       const observ = new MutationObserver(async () => {
         await measureHeight();
       });
-
       observ.observe(contain, { childList: true, subtree: true, attributes: true, characterData: true });
 
   }); // end of onMount
@@ -198,6 +210,13 @@
   onDestroy(() => {
     container.removeEventListener('scroll', handleScroll);
   });
+
+  // Non-reactive function to return the container pixel height
+  async function getContainerHeight() {
+      const contain = document.getElementById('clip-container');
+      const currentHeight = contain.scrollHeight;
+      return currentHeight;
+  }
 
 // Fetches a slice of the conversation history from the backend for the scrubbing grip element
 async function fetchConversationSlice(gripLocation, num_messages) {
@@ -244,7 +263,6 @@ async function fetchConversationSlice(gripLocation, num_messages) {
 
     //console.log(`Initial gripLocation: ${gripLocation}, Initial num_messages: ${num_messages}`);
 
-
     const fetchedData = await invoke('fetch_conversation_history', { params: {start, end} });
     //console.log("Fetched conversation slice:", fetchedData);  // Debug line
 
@@ -254,7 +272,6 @@ async function fetchConversationSlice(gripLocation, num_messages) {
     } else if (gripLocation === 1 && container) {
       container.scrollTop = 0;
     }
-
 
     if (fetchedData && Array.isArray(fetchedData.message)) {
       conversation = fetchedData.message;
@@ -269,8 +286,7 @@ async function fetchConversationSlice(gripLocation, num_messages) {
     conversation = [];
     return null;
   }
-}
-
+} // end of fetchConversationSlice function
 
 
 // Fetches a part of the conversation history from the backend for the infinite scrolling elastic grip element
@@ -278,7 +294,7 @@ async function fetchConversationSlice(gripLocation, num_messages) {
 async function fetchConversationPart(direction) {
 
   console.log("Running fetchConversationPart");  // Debug line
-
+  
   const totalMessagesToFetch = 5; // Number of messages to fetch
 
   let start, end;
@@ -310,22 +326,33 @@ async function fetchConversationPart(direction) {
       if (fetchedData && Array.isArray(fetchedData.message)) {
         if (direction === "UP") {
           
-          //conversation = [...fetchedData.message, ...conversation]; // Update for reactivity
+          
           // Measure the scroll position before modifying the array
-          const beforeScrollTop = container.scrollTop;
+          //const beforeScrollTop = await getContainerHeight();
+          //console.log(`beforeScrollTop: ${beforeScrollTop}`);  // Debug line
+
+          // If initialBeforeScrollTop is null, set it to the current scroll position
+          if (initialBeforeScrollTop === null) {
+            initialBeforeScrollTop = await getContainerHeight();
+            console.log(`initialBeforeScrollTop: ${initialBeforeScrollTop}`);  // Debug line
+          }
+          
 
           // Add new messages to the start of the conversation array
           conversation = [...fetchedData.message, ...conversation];
 
           // Allow the UI to update
           await tick();
+          
 
           // Measure the scroll position after modifying the array
-          const afterScrollTop = container.scrollTop;
+          const afterScrollTop = await getContainerHeight();
+          console.log(`afterScrollTop: ${afterScrollTop}`);  // Debug line
 
           // Calculate the difference and adjust the scroll position
-          const scrollDifference = afterScrollTop - beforeScrollTop;
-          container.scrollTop = beforeScrollTop + scrollDifference;
+          const scrollDifference = afterScrollTop - initialBeforeScrollTop;
+          console.log(`scrollDifference: ${scrollDifference}`);  // Debug line
+          container.scrollTop = initialBeforeScrollTop + scrollDifference;
           
         } else if (direction === "DOWN") {
           
@@ -343,6 +370,7 @@ async function fetchConversationPart(direction) {
   } else {
     console.warn("Start and end values are out of range.");
   }
+
 } // end of fetchConversationPart function
 
 
