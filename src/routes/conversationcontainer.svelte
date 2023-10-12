@@ -276,6 +276,9 @@ async function fetchConversationSlice(gripLocation, num_messages) {
 // Fetches a part of the conversation history from the backend for the infinite scrolling elastic grip element
 // Unlike the scrubbing grip, this function does NOT need throttling or debouncing
 async function fetchConversationPart(direction) {
+
+  console.log("Running fetchConversationPart");  // Debug line
+
   const totalMessagesToFetch = 5; // Number of messages to fetch
 
   let start, end;
@@ -306,9 +309,27 @@ async function fetchConversationPart(direction) {
   
       if (fetchedData && Array.isArray(fetchedData.message)) {
         if (direction === "UP") {
-          conversation.unshift(...fetchedData.message); // Add the fetched messages to the beginning of the array
+          
+          //conversation = [...fetchedData.message, ...conversation]; // Update for reactivity
+          // Measure the scroll position before modifying the array
+          const beforeScrollTop = container.scrollTop;
+
+          // Add new messages to the start of the conversation array
+          conversation = [...fetchedData.message, ...conversation];
+
+          // Allow the UI to update
+          await tick();
+
+          // Measure the scroll position after modifying the array
+          const afterScrollTop = container.scrollTop;
+
+          // Calculate the difference and adjust the scroll position
+          const scrollDifference = afterScrollTop - beforeScrollTop;
+          container.scrollTop = beforeScrollTop + scrollDifference;
+          
         } else if (direction === "DOWN") {
-          conversation.push(...fetchedData.message); // Add the fetched messages to the end of the array
+          
+          conversation = [...conversation, ...fetchedData.message]; // Update for reactivity
         }
       } else {
         console.warn("Fetched data is not in the expected format:", fetchedData);
