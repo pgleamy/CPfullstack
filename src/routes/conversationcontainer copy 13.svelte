@@ -21,14 +21,11 @@
     let userInputComponent; // Initialize the variable to bind the UserInput component
     let observer; // Initialize the observer variable for the infinite scroll logic
 
-    // UP scroll positioning calculation variables for infinite scroll logic in UP direction
-    let beforeScrollTop; // original scrollTop
-    let afterScrollTop; // new scrollTop
-    let scrollTopDifference; // difference between beforeScrollTop and afterScrollTop
-    let beforeContainerHeight; // original height of entire conversation container before any changes
-    let afterContainerHeight; // new height of entire conversation container after any changes
-    let containerHeightDifference; // difference between beforeContainerHeight and afterContainerHeight
-    let newScrollTop; // new scrollTop after accounting for the difference between before and after scrollTop and containerHeight
+
+
+
+
+
 
 
     // Reactive state management for fine scrolling scroll adjustments in fetchConversationPart function
@@ -43,6 +40,9 @@
       initialGripLocation = gripLocation;  // Update initialGripPosition to the new value
     }
     
+
+
+
     
     $: targetMessage = $scrollStore.targetMessage; // Reactive assignment
     $: totalMessages = $scrollStore.totalMessages; // Reactive assignment
@@ -161,7 +161,7 @@
 
       const observerOptions = {
         root: container,
-        rootMargin: '200px', // how early to start fetching the next part of the conversation
+        rootMargin: '50px', // how early to start fetching the next part of the conversation
         threshold: 0
       };
 
@@ -299,8 +299,15 @@ async function fetchConversationSlice(gripLocation, num_messages) {
 // Unlike the scrubbing grip, this function does NOT need throttling or debouncing
 async function fetchConversationPart(direction) {
 
-  console.log("fetchConversationPart()");  // Debug line
+  let beforeScrollTop = null; // Initialize to null
+
+  // renable the observer
+  //observer.observe(bottomObserverElement);
+
+  console.log("Running fetchConversationPart");  // Debug line
+  
   const totalMessagesToFetch = 5; // Number of messages to fetch
+
   let start, end;
 
   if (direction === "UP") {
@@ -324,48 +331,33 @@ async function fetchConversationPart(direction) {
 
   // Validate start and end ranges against num_user_llm_messages
   if (start >= 0 && end <= num_user_llm_messages) {
-
     try {
       const fetchedData = await invoke('fetch_conversation_history', { params: {start, end} });
   
       if (fetchedData && Array.isArray(fetchedData.message)) {
         if (direction === "UP") {
       
-          beforeScrollTop = container.scrollTop; // Measure the scroll position before modifying the array
-          beforeContainerHeight = container.scrollHeight; // Measure the container height before modifying the array
-
+          beforeScrollTop = await getContainerHeight();
           console.log(`beforeScrollTop: ${beforeScrollTop}`);  // Debug line
-          console.log(`beforeContainerHeight: ${beforeContainerHeight}`);  // Debug line
 
           // Add new messages to the start of the conversation array
           conversation = [...fetchedData.message, ...conversation];
-          console.log("Current conversation:", conversation);  // Debug line
-             
+
           await tick(); // Wait for the DOM to update
 
+          // Measure the scroll position after modifying the array
+          const afterScrollTop = await getContainerHeight();
+          console.log(`afterScrollTop: ${afterScrollTop}`);  // Debug line
 
-          // Use requestAnimationFrame to wait until the next repaint
-          requestAnimationFrame(async () => {
-            
-            afterScrollTop = container.scrollTop; // Measure the scroll position after modifying the array
-            afterContainerHeight = container.scrollHeight; // Measure the container height after modifying the array
+          //observer.unobserve(bottomObserverElement); // disable the bottom observer
 
-            console.log(`afterScrollTop: ${afterScrollTop}`);  // Debug line
-            console.log(`afterContainerHeight: ${afterContainerHeight}`);  // Debug line
-
-            // Calculate the difference and adjust the scroll position
-            scrollTopDifference = afterScrollTop - beforeScrollTop;
-            containerHeightDifference = afterContainerHeight - beforeContainerHeight;
-            console.log(`scrollTopDifference: ${scrollTopDifference}`);  // Debug line
-            console.log(`ContainerHeightDifference: ${containerHeightDifference}`);  // Debug line
-
-            //container.scrollTop = afterScrollTop - scrollDifference;
-            newScrollTop = beforeScrollTop + scrollTopDifference + containerHeightDifference;
-            console.log(`newScrollTop: ${newScrollTop}`);  // Debug line
-            container.scrollTop = newScrollTop;
-            console.log(`container.scrollTop: ${container.scrollTop}`);  // Debug line
-          });
-
+          // Calculate the difference and adjust the scroll position
+          const scrollDifference = afterScrollTop - beforeScrollTop;
+          console.log(`scrollDifference: ${scrollDifference}`);  // Debug line
+          
+          container.scrollTop = afterScrollTop - scrollDifference;
+          console.log(`container.scrollTop: ${container.scrollTop}`);  // Debug line
+          
         } else if (direction === "DOWN") {
           conversation = [...conversation, ...fetchedData.message]; // Update for reactivity
         }
@@ -376,9 +368,14 @@ async function fetchConversationPart(direction) {
       console.error(`Failed to fetch conversation part: ${error}`);
     }
 
+    console.log("Current conversation:", conversation);  // Debug line
+
   } else {
     console.warn("Start and end values are out of range.");
   }
+
+  // renable the observer
+  //observer.observe(bottomObserverElement);
 
 } // end of fetchConversationPart function
 
@@ -416,7 +413,8 @@ const throttledFetch = throttle(fetchConversationSlice, 90);
 
 // Manipulation of gripLocation(local)/gripPosition(scrollStore) based on mouse scroll wheel events
 function handleScroll() {
-  
+    
+
 }
 
 </script>
