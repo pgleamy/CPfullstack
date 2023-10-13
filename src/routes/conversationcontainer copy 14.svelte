@@ -161,7 +161,7 @@
 
       const observerOptions = {
         root: container,
-        rootMargin: '0px', // how early to start fetching the next part of the conversation
+        rootMargin: '200px', // how early to start fetching the next part of the conversation
         threshold: 0
       };
 
@@ -322,14 +322,6 @@ async function fetchConversationPart(direction) {
     end = Math.min(lastBlockIdNum + totalMessagesToFetch, num_user_llm_messages);
   }
 
-  
-  if(end > num_user_llm_messages) {
-    end = num_user_llm_messages;
-    start = end - 20;
-  }
-
-  console.log(`end: ${end}`);  // Debug line
-
   // Validate start and end ranges against num_user_llm_messages
   if (start >= 0 && end <= num_user_llm_messages) {
 
@@ -347,6 +339,9 @@ async function fetchConversationPart(direction) {
 
           // Add new messages to the start of the conversation array
           conversation = [...fetchedData.message, ...conversation];
+
+          // Remove the same number of messages from the end
+          //conversation.splice(-totalMessagesToFetch, totalMessagesToFetch);
 
           console.log("Current conversation:", conversation);  // Debug line
              
