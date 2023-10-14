@@ -4,7 +4,7 @@
     import UserInputSent from './userinputsent.svelte';
     import LLMResponse from './llmresponse.svelte';
     // reactive state management for scrollsearch component
-    import {scrollStore, get, setInLocalStorage, updateScrollSettings} from '$lib/scrollStore.js';
+    import {scrollStore, get, setInLocalStorage} from '$lib/scrollStore.js';
     import { onMount, onDestroy } from 'svelte';
     import { invoke } from "@tauri-apps/api/tauri";
     import { tick } from 'svelte';
@@ -72,6 +72,7 @@
         });
         //console.log("Scrolling to bottom");
     } // end of scrollToBottom function
+
 
 
     // Start/End of conversation logic to display the user input component only after the last message in the entire conversation history
@@ -280,7 +281,6 @@ async function fetchConversationSlice(gripLocation, num_messages) {
 
     if (fetchedData && Array.isArray(fetchedData.message)) {
       conversation = fetchedData.message;
-
     } else {
       console.warn("Fetched data is not in the expected format:", fetchedData);
       conversation = [];

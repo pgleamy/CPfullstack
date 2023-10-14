@@ -37,7 +37,6 @@ const remove = (key) => {
 
 // Function to load all settings from Local Storage into an object
 const load = () => {
-
   return {
     gripPosition: parseFloat(get('gripPosition')) || 0,
     downArrow: {
@@ -64,11 +63,9 @@ const load = () => {
 
     targetMessagesPixelHeight: parseInt(get('targetMessagesPixelHeight')) || 0, // Height of the conversation-container contents in pixels
 
-    unsentPrompt: get('unsentPrompt') || "", // The unsent prompt contents
+    unsentPrompt: get('unsentPrompt') || "", // The unset prompt contents
 
     unsentPromptHeight: parseInt(get('unsentPromptHeight')) || 0, // Height of the unsent prompt component elements in pixels
- 
-    block_idDisplayedInMiddleOfDOM: get('block_idDisplayedInMiddleOfDom') || "", // The message displayed in the middle of the DOM
 
   };
 };

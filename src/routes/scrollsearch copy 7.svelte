@@ -2,7 +2,7 @@
   //@ts-nocheck
   import { onMount, onDestroy } from "svelte";
   import { writable } from 'svelte/store';
-  import { scrollStore, setInLocalStorage, get, load } from '$lib/scrollStore.js';
+  import { scrollStore, setInLocalStorage, get, load, reloadScrollStore } from '$lib/scrollStore.js';
   import { createEventDispatcher } from 'svelte';
 
   let isDragging = false;
