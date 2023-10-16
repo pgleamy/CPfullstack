@@ -68,7 +68,12 @@ const load = () => {
 
     unsentPromptHeight: parseInt(get('unsentPromptHeight')) || 0, // Height of the unsent prompt component elements in pixels
  
-    block_idDisplayedInMiddleOfDOM: get('block_idDisplayedInMiddleOfDom') || "", // The message displayed in the middle of the DOM
+    // variables for the persistent scroll restoration feature
+    block_idDisplayedInMiddleOfDOM: get('block_idDisplayedInMiddleOfDom') || "", // The message currently displayed in the middle of the DOM
+    startRestore: get('startRestore') || "", // The start block_id of the restore range
+    endRestore: get('endRestore') || "", // The end block_id of the restore range
+    targetMessagesPixelHeightRestore: parseInt(get('targetMessagesPixelHeightRestore')) || 0, // The target messages pixel height restoring into
+    scrollTopRestore: parseInt(get('scrollTopRestore')) || 0, // Calculated ScrollTop value to restore to
 
   };
 };

@@ -11,12 +11,37 @@
     export let llm_role; // will hold the llm role
     export let status; // will hold the status of the message
     export let block_id; // will hold the block id
+    let formattedTimestamp = formatTimestamp(timestamp);
+    let roleClass;
+    $: roleClass = llm_role;
 
     function resizeTextarea() {
         //const textArea = document.querySelector('#llm-response-textarea');
         textArea.style.height = 'auto'; // Reset height
         textArea.style.height = (textArea.scrollHeight) + 'px'; // Set height based on content
     }
+
+    function formatTimestamp(isoTimestamp) {
+        const date = new Date(isoTimestamp);
+        
+        const year = date.getFullYear();
+        const month = date.toLocaleString('default', { month: 'short' });  // 'short' provides abbreviated month name
+        const day = date.getDate();
+        
+        let hour = date.getHours();
+        const minute = date.getMinutes();
+        const second = date.getSeconds();
+
+        const ampm = hour >= 12 ? 'pm' : 'am';
+
+        // Convert hour from 24-hour to 12-hour format
+        hour = hour % 12;
+        hour = hour ? hour : 12; // the hour '0' should be '12'
+
+        return `${month} ${day}, ${year}, ${hour}:${minute} ${ampm}`;
+    }
+
+
 
     onMount(() => {
         resizeTextarea();
@@ -43,8 +68,8 @@
 <div id="wrapper">
     <div id="message-input" role="textbox" tabindex="0" on:keydown={handleLeftRightArrows}>
         <div id="title" contenteditable="false">
-            <span>{llm_name} ({llm_role})</span>
-            <span id="timestamp"> -{timestamp} </span>
+            <span>{llm_name} <span class={roleClass}>{llm_role}</span></span>
+            <span id="timestamp"> - {formattedTimestamp} </span>
         </div>
         <textarea bind:this={textArea} readonly on:input={resizeTextarea} name="OpenAIKey">{text}</textarea>  
     </div>  
@@ -82,23 +107,24 @@
 
     #message-input textarea {
     padding: 8px;
-    padding-bottom: 0px;
+    padding-bottom: 2px;
     border: rgb(144, 119, 101) 0px solid;
     border-radius: 5px;
     background-color: transparent;
-    font-size: 12.4px;
-    line-height: 14.8px;
-    color: #cccccc;
+    font-size: 14px;
+    line-height: 20px;
+    color: #ffffff;
     resize: none;
     overflow: hidden;
     white-space: pre-wrap;
     word-wrap: break-word;
-    min-height: 24px;
+    min-height: 0px;
     margin-right: 50px;
+    tab-size: 3;
     }
 
     #message-input textarea::placeholder {
-        color: #767676;
+        color: #ffffff;
     }
 
     #message-input textarea:focus {
@@ -109,19 +135,37 @@
 
     #title {
         display: flex;
-        font-size: 0.75em;
+        font-size: 0.8em;
         justify-content: left;
         align-items: baseline;
-        color: rgb(213, 93, 28);
+        color: rgb(254, 199, 169);
         padding-left: 3px;
         padding-bottom: 2px;
     }
 
     #timestamp {
-        font-size: 0.75em;
-        color: rgb(93, 93, 93);
+        font-size: 0.8em;
+        color: rgb(161, 161, 161);
         padding-left: 2px;
         padding-bottom: 0px;
+    }
+
+    .Write {
+        color: rgb(77, 168, 224);
+        font-size: 0.8em;
+        text-transform: lowercase;
+    }
+
+    .Code {
+        color: rgb(236, 130, 77);
+        font-size: 0.8em;
+        text-transform: lowercase;
+    }
+
+    .Talk {
+        color: rgb(113, 208, 44);
+        font-size: 0.8em;
+        text-transform: lowercase;
     }
 
 

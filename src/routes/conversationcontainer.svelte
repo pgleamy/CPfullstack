@@ -160,7 +160,7 @@
 
       const observerOptions = {
         root: container,
-        rootMargin: '0px', // how early to start fetching the next part of the conversation
+        rootMargin: '200px', // how early to start fetching the next part of the conversation
         threshold: 0
       };
 

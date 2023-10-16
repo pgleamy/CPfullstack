@@ -169,7 +169,7 @@
         <span>{username}</span>
         <span id="timestamp">
             -
-            {endTime.toLocaleString('en-US', { month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true })} 
+            {endTime.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true })} 
             | {elapsedTime}
         </span>
     </div>
@@ -218,7 +218,7 @@
         background-color: #080808;
         font-size: 14px;
         line-height: 20px;
-        color: #cccccc;
+        color: #eceaea;
         resize: none;
         overflow: hidden;
         white-space: pre-wrap;
@@ -228,7 +228,7 @@
     }
 
     #message-input textarea::placeholder {
-        color: #bbbbbb;
+        color: #fcfcfc;
         font-size: 10px;
     }
 
@@ -253,7 +253,7 @@
         height: 14px;
         border: 0px solid;
         border-radius: 4px;
-        background-color: rgb(22, 64, 20);
+        background-color: rgb(32, 90, 29);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -294,14 +294,14 @@
         font-size: 0.8em;
         justify-content: left;
         align-items: baseline;
-        color: rgb(70, 145, 81);
+        color: rgb(111, 217, 127);
         padding-left: 3px;
         padding-bottom: 0px;
     }
 
     #timestamp {
-        font-size: 0.85em;
-        color: rgb(151, 144, 144);
+        font-size: 0.8em;
+        color: rgb(194, 194, 194);
         padding-left: 2px;
         padding-bottom: 3px;
     }
