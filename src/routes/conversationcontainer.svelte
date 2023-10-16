@@ -160,7 +160,7 @@
 
       const observerOptions = {
         root: container,
-        rootMargin: '200px', // how early to start fetching the next part of the conversation
+        rootMargin: '300px', // how early to start fetching the next part of the conversation
         threshold: 0
       };
 
@@ -276,6 +276,13 @@ async function fetchConversationSlice(gripLocation, num_messages) {
       container.scrollTop = container.scrollHeight;
     } else if (gripLocation === 1 && container) {
       container.scrollTop = 0;
+    }
+
+    // scrolls to the middle of the fetched message slice
+    if (gripLocation > 0 && gripLocation < 1) {
+      await tick();  // Wait for Svelte to update the DOM
+      const sliceHeight = await getContainerHeight();
+      container.scrollTop = (sliceHeight/2);
     }
 
     if (fetchedData && Array.isArray(fetchedData.message)) {

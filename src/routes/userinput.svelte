@@ -218,18 +218,20 @@
         background-color: #080808;
         font-size: 14px;
         line-height: 20px;
-        color: #eceaea;
+        color: #ffffff;
         resize: none;
         overflow: hidden;
         white-space: pre-wrap;
         word-wrap: break-word;
         min-height: 0px;
         tab-size: 3;
+        -webkit-font-smoothing: antialiased;
     }
 
     #message-input textarea::placeholder {
         color: #fcfcfc;
         font-size: 10px;
+        -webkit-font-smoothing: antialiased;
     }
 
     #message-input textarea:focus {
@@ -237,6 +239,7 @@
         border: rgb(22, 64, 20) 2px solid;
         box-shadow: 0 0 0 0.3px #323232;
         transition: box-shadow 0.15s ease-in-out;
+        -webkit-font-smoothing: antialiased;
     }
 
     #button-container {
@@ -250,16 +253,16 @@
 
     #message-input button {
         width: 95%;
-        height: 14px;
+        height: 18px;
         border: 0px solid;
         border-radius: 4px;
-        background-color: rgb(32, 90, 29);
+        background-color: rgb(46, 129, 41);
         display: flex;
         align-items: center;
         justify-content: center;
         color: #FFFFFF;
         cursor: pointer;
-        transition: background-color 0.1s ease-in-out 0.1s;
+        transition: background-color 0.05s ease-in-out 0.05s;
     }
 
     #message-input button:disabled {
@@ -274,7 +277,7 @@
     }
 
     #message-input button:not(:disabled):hover {
-        background-color: #1d437b;
+        background-color: #00FF00;
         border: none;
     }
 
@@ -297,6 +300,7 @@
         color: rgb(111, 217, 127);
         padding-left: 3px;
         padding-bottom: 0px;
+        -webkit-font-smoothing: antialiased;
     }
 
     #timestamp {
@@ -304,6 +308,7 @@
         color: rgb(194, 194, 194);
         padding-left: 2px;
         padding-bottom: 3px;
+        -webkit-font-smoothing: antialiased;
     }
 
     

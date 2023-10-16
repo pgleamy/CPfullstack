@@ -121,16 +121,19 @@
     min-height: 0px;
     margin-right: 50px;
     tab-size: 3;
+    -webkit-font-smoothing: antialiased;
     }
 
     #message-input textarea::placeholder {
         color: #ffffff;
+        -webkit-font-smoothing: antialiased;
     }
 
     #message-input textarea:focus {
         outline: none;
         box-shadow: 0 0 0 0.5px #492f0a;
         transition: box-shadow 0.25s ease-in-out;
+        -webkit-font-smoothing: antialiased;
     }
 
     #title {
@@ -141,6 +144,7 @@
         color: rgb(254, 199, 169);
         padding-left: 3px;
         padding-bottom: 2px;
+        -webkit-font-smoothing: antialiased;
     }
 
     #timestamp {
@@ -148,24 +152,28 @@
         color: rgb(161, 161, 161);
         padding-left: 2px;
         padding-bottom: 0px;
+        -webkit-font-smoothing: antialiased;
     }
 
     .Write {
         color: rgb(77, 168, 224);
         font-size: 0.8em;
         text-transform: lowercase;
+        -webkit-font-smoothing: antialiased;
     }
 
     .Code {
         color: rgb(236, 130, 77);
         font-size: 0.8em;
         text-transform: lowercase;
+        -webkit-font-smoothing: antialiased;
     }
 
     .Talk {
         color: rgb(113, 208, 44);
         font-size: 0.8em;
         text-transform: lowercase;
+        -webkit-font-smoothing: antialiased;
     }
 
 
