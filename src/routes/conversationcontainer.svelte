@@ -30,6 +30,18 @@
     let containerHeightDifference; // difference between beforeContainerHeight and afterContainerHeight
     let newScrollTop; // new scrollTop after accounting for the difference between before and after scrollTop and containerHeight
 
+
+
+    let lastScrollTop = 0;
+    let isScrollingUp = false;
+    $: if (targetMessage != totalMessages) {
+      isScrollingUp = false;
+    }
+
+
+
+
+
     // Reactive state management for fine scrolling scroll adjustments in fetchConversationPart function
     let initialBeforeScrollTop = null; 
     let initialGripLocation = gripLocation;  // Initialize with the current gripLocation value
@@ -221,19 +233,24 @@
 
 
 
+
+
       // Event listener to control scrollBottom function when at end of entire conversation
-      let container;
       let lastScrollTop = 0;
       let isScrollingUp = false;
-      container.addEventListener("scroll", function() {
-        let st = container.scrollTop;
+      contain.addEventListener("scroll", function() {
+        let st = contain.scrollTop;
         if (st < lastScrollTop){
           isScrollingUp = true;
+          console.log(`isScrollingUp: ${isScrollingUp}`);
         } else {
           isScrollingUp = false;
+          console.log(`isScrollingUp: ${isScrollingUp}`);
         }
         lastScrollTop = st <= 0 ? 0 : st;
       }, false);
+
+
 
 
 
