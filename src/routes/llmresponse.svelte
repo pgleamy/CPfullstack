@@ -138,7 +138,7 @@
 
     #title {
         display: flex;
-        font-size: 0.8em;
+        font-size: 0.85em;
         justify-content: left;
         align-items: baseline;
         color: rgb(254, 199, 169);

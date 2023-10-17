@@ -11,6 +11,7 @@
     export let status; // will hold the status of the message
     export let block_id; // will hold the block id
     let formattedTimestamp = formatTimestamp(timestamp);
+    
     let roleClass;
     $: roleClass = llm_role;
    
@@ -19,25 +20,33 @@
         textArea.style.height = (textArea.scrollHeight) + 'px';
     }
 
+
+
+    
+
     function formatTimestamp(isoTimestamp) {
+
+        // Pre-compute month names to avoid using toLocaleString
+        const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         const date = new Date(isoTimestamp);
         
         const year = date.getFullYear();
-        const month = date.toLocaleString('default', { month: 'short' });  // 'short' provides abbreviated month name
+        const month = MONTH_NAMES[date.getMonth()];  // Use pre-computed array
         const day = date.getDate();
         
         let hour = date.getHours();
         const minute = date.getMinutes();
-        const second = date.getSeconds();
-
+        
+        // Directly calculate 12-hour format and AM/PM
         const ampm = hour >= 12 ? 'pm' : 'am';
+        hour = (hour % 12) || 12;  // Convert to 12-hour format and handle the '0' case
 
-        // Convert hour from 24-hour to 12-hour format
-        hour = hour % 12;
-        hour = hour ? hour : 12; // the hour '0' should be '12'
-
-        return `${month} ${day}, ${year}, ${hour}:${minute} ${ampm}`;
+        return `${month} ${day}, ${year}, ${hour}:${String(minute).padStart(2, '0')} ${ampm}`;
     }
+
+
+
+
 
     onMount(() => {
       resizeTextarea();
@@ -128,7 +137,7 @@
 
     #title {
         display: flex;
-        font-size: 0.8em;
+        font-size: 0.85em;
         justify-content: left;
         align-items: baseline;
         color: rgb(110, 195, 225);

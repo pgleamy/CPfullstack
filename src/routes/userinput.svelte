@@ -248,11 +248,11 @@
         margin-bottom: 0px;
         display: flex;
         justify-content: center;
-        align-items: cente
+        align-items: center;
     }
 
     #message-input button {
-        width: 95%;
+        width: 99%;
         height: 18px;
         border: 0px solid;
         border-radius: 4px;

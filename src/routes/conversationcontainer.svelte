@@ -30,7 +30,6 @@
     let containerHeightDifference; // difference between beforeContainerHeight and afterContainerHeight
     let newScrollTop; // new scrollTop after accounting for the difference between before and after scrollTop and containerHeight
 
-
     // Reactive state management for fine scrolling scroll adjustments in fetchConversationPart function
     let initialBeforeScrollTop = null; 
     let initialGripLocation = gripLocation;  // Initialize with the current gripLocation value
@@ -43,11 +42,10 @@
       initialGripLocation = gripLocation;  // Update initialGripPosition to the new value
     }
     
-    
     $: targetMessage = $scrollStore.targetMessage; // Reactive assignment
     $: totalMessages = $scrollStore.totalMessages; // Reactive assignment
 
-    // Connects the top of user input to the bottom of last message as user types
+    // paddingBottom connects the top of user input to the bottom of last message as user types and then scrolls to bottom
     let paddingBottom = '';  // Declare a variable to hold the padding-bottom value
     // Create a reactive statement to update paddingBottom whenever userInputHeight changes
     $: {
@@ -64,13 +62,14 @@
     function scrollToBottom() {
       if (container) {
           container.scrollTop = container.scrollHeight;
+      }
+      tick().then(() => {
+        if (userInputComponent) {
+          container.scrollTop = container.scrollHeight;
+          console.log(`scrollToBottom ran`);  // Debug line
+          
         }
-        tick().then(() => {
-          if (userInputComponent) {
-            container.scrollTop = container.scrollHeight;
-          }
-        });
-        //console.log("Scrolling to bottom");
+      });
     } // end of scrollToBottom function
 
 
@@ -79,26 +78,32 @@
     let isEndOfConversation = false;  // Initialize to false
     let isStartOfConversation = false; // Initialize to true
     $: {
-        if (isEndOfConversation = (targetMessage === totalMessages)) {;/* logic to check if the last fetched message is the last message in the entire conversation */
+        if (isEndOfConversation = (targetMessage === totalMessages)) {/* logic to check if the last fetched message is the last message in the entire conversation */
           //console.log(`isEndOfConversation: ${isEndOfConversation}`);
         } 
-        if (isStartOfConversation = (targetMessage === 0)) {;/* logic to check if the last fetched message is the first message in the entire conversation */
+        if (isStartOfConversation = (targetMessage === 0)) {/* logic to check if the last fetched message is the first message in the entire conversation */
           //console.log(`isStartOfConversation: ${isStartOfConversation}`);
         }
       } // end of reactive statement to start/end of conversation 
+      
+
+
+
+    let hasResetEndScrollTrigger = false;  // Initialize a flag to keep track  
     let endScrollTrigger = false;
     let startScrollTrigger = false;
     $: {
       if (isEndOfConversation && !endScrollTrigger) {
-        if (container) {
+        /*if (container) {
           container.scrollTop = container.scrollHeight;
         }
         tick().then(() => {
           if (userInputComponent) {
             container.scrollTop = container.scrollHeight;
           }
-        });
+        });*/
         endScrollTrigger = true;  // Prevent further downward scrolling until flag is reset
+        console.log(`endScrollTrigger: ${endScrollTrigger}`);
         startScrollTrigger = false; // Reset the other flag
       } else if (isStartOfConversation && !startScrollTrigger) {
         if (container) {
@@ -106,10 +111,14 @@
         }
         startScrollTrigger = true; // Prevent further upward scrolling until flag is reset
         endScrollTrigger = false; // Reset the other flag
-      } else if (!isEndOfConversation && !isStartOfConversation) {
-        // Reset both flags if neither condition is metlogic
+        //console.log(`endScrollTrigger: ${endScrollTrigger}`);
+      } else if (!hasResetEndScrollTrigger) {
+        // Reset both flags if neither condition is met
         endScrollTrigger = false;
+        //console.log(`endScrollTrigger: ${endScrollTrigger}`);
         startScrollTrigger = false;
+        hasResetEndScrollTrigger = true; // Prevent further resetting until flag is reset
+        //console.log(`hasResetEndScrollTrigger: ${hasResetEndScrollTrigger}`);
       }
     } // end of reactive statement to position the view of the messages correctly when the user input component is displayed or when at top of conversation showing from very start
 
@@ -160,7 +169,7 @@
 
       const observerOptions = {
         root: container,
-        rootMargin: '300px', // how early to start fetching the next part of the conversation
+        rootMargin: '200px', // how early to start fetching the next part of the conversation
         threshold: 0
       };
 
@@ -173,13 +182,13 @@
             const dragSpeedUpDown = parseFloat(localStorage.getItem('dragSpeedUpDown')) || 0;
             const direction = Math.sign(dragSpeedUpDown);  // 1 for down, -1 for up
 
-            console.log(`direction: ${direction}`);  // Debug line
+            //console.log(`direction: ${direction}`);  // Debug line
 
             if (direction > 0) {
-              console.log('Triggered later messages...');
+              //console.log('Triggered later messages...');
               await fetchConversationPart("DOWN");
             } else if (direction < 0) {
-              console.log('Triggered earlier messages...');
+              //console.log('Triggered earlier messages...');
               await fetchConversationPart("UP");
             }
           }
@@ -279,11 +288,13 @@ async function fetchConversationSlice(gripLocation, num_messages) {
     }
 
     // scrolls to the middle of the fetched message slice
+  
     if (gripLocation > 0 && gripLocation < 1) {
       await tick();  // Wait for Svelte to update the DOM
       const sliceHeight = await getContainerHeight();
       container.scrollTop = (sliceHeight/2);
     }
+    
 
     if (fetchedData && Array.isArray(fetchedData.message)) {
       conversation = fetchedData.message;
@@ -306,15 +317,15 @@ async function fetchConversationSlice(gripLocation, num_messages) {
 // Unlike the scrubbing grip, this function does NOT need throttling or debouncing
 async function fetchConversationPart(direction) {
 
-  console.log("fetchConversationPart()");  // Debug line
+  //console.log("fetchConversationPart()");  // Debug line
   const totalMessagesToFetch = 5; // Number of messages to fetch
   let start, end;
 
   if (direction === "UP") {
     const firstBlockIdNum = parseInt(conversation[0].block_id.split("_").pop(), 10);
 
-    console.log('Fetching earlier messages...');
-    console.log(`firstBlockIdNum: ${firstBlockIdNum}`);  // Debug line
+    //console.log('Fetching earlier messages...');
+    //console.log(`firstBlockIdNum: ${firstBlockIdNum}`);  // Debug line
 
     start = Math.max((firstBlockIdNum - 1) - totalMessagesToFetch, 0);
     end = firstBlockIdNum - 1;
@@ -322,8 +333,8 @@ async function fetchConversationPart(direction) {
   } else if (direction === "DOWN") {
     const lastBlockIdNum = parseInt(conversation[conversation.length - 1].block_id.split("_").pop(), 10);
 
-    console.log('Fetching later messages...');
-    console.log(`lastBlockIdNum: ${lastBlockIdNum}`);  // Debug line
+    //console.log('Fetching later messages...');
+    //console.log(`lastBlockIdNum: ${lastBlockIdNum}`);  // Debug line
 
     start = lastBlockIdNum;
     end = Math.min(lastBlockIdNum + totalMessagesToFetch, num_user_llm_messages);
@@ -335,7 +346,7 @@ async function fetchConversationPart(direction) {
     start = end - 20;
   }
 
-  console.log(`end: ${end}`);  // Debug line
+  //console.log(`end: ${end}`);  // Debug line
 
   // Validate start and end ranges against num_user_llm_messages
   if (start >= 0 && end <= num_user_llm_messages) {
@@ -349,13 +360,13 @@ async function fetchConversationPart(direction) {
           beforeScrollTop = container.scrollTop; // Measure the scroll position before modifying the array
           beforeContainerHeight = container.scrollHeight; // Measure the container height before modifying the array
 
-          console.log(`beforeScrollTop: ${beforeScrollTop}`);  // Debug line
-          console.log(`beforeContainerHeight: ${beforeContainerHeight}`);  // Debug line
+          //console.log(`beforeScrollTop: ${beforeScrollTop}`);  // Debug line
+          //console.log(`beforeContainerHeight: ${beforeContainerHeight}`);  // Debug line
 
           // Add new messages to the start of the conversation array
           conversation = [...fetchedData.message, ...conversation];
 
-          console.log("Current conversation:", conversation);  // Debug line
+          //console.log("Current conversation:", conversation);  // Debug line
              
           await tick(); // Wait for the DOM to update
 
@@ -366,20 +377,20 @@ async function fetchConversationPart(direction) {
             afterScrollTop = container.scrollTop; // Measure the scroll position after modifying the array
             afterContainerHeight = container.scrollHeight; // Measure the container height after modifying the array
 
-            console.log(`afterScrollTop: ${afterScrollTop}`);  // Debug line
-            console.log(`afterContainerHeight: ${afterContainerHeight}`);  // Debug line
+            //console.log(`afterScrollTop: ${afterScrollTop}`);  // Debug line
+            //console.log(`afterContainerHeight: ${afterContainerHeight}`);  // Debug line
 
             // Calculate the difference and adjust the scroll position
             scrollTopDifference = afterScrollTop - beforeScrollTop;
             containerHeightDifference = afterContainerHeight - beforeContainerHeight;
-            console.log(`scrollTopDifference: ${scrollTopDifference}`);  // Debug line
-            console.log(`ContainerHeightDifference: ${containerHeightDifference}`);  // Debug line
+            //console.log(`scrollTopDifference: ${scrollTopDifference}`);  // Debug line
+            //console.log(`ContainerHeightDifference: ${containerHeightDifference}`);  // Debug line
 
             //container.scrollTop = afterScrollTop - scrollDifference;
             newScrollTop = beforeScrollTop + scrollTopDifference + containerHeightDifference;
-            console.log(`newScrollTop: ${newScrollTop}`);  // Debug line
+            //console.log(`newScrollTop: ${newScrollTop}`);  // Debug line
             container.scrollTop = newScrollTop;
-            console.log(`container.scrollTop: ${container.scrollTop}`);  // Debug line
+            //console.log(`container.scrollTop: ${container.scrollTop}`);  // Debug line
           });
 
         } else if (direction === "DOWN") {
@@ -461,7 +472,7 @@ function handleScroll() {
 
     {#if isEndOfConversation}
       <div class="user-input">
-        <UserInput bind:this={userInputComponent} on:input={scrollToBottom} />
+        <UserInput bind:this={userInputComponent} on:input={scrollToBottom}/> 
       </div>
     {/if}
   </div>
