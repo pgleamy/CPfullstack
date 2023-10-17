@@ -33,9 +33,12 @@
 
 
     let lastScrollTop = 0;
-    let isScrollingUp = false;
+    let isScrolling = false;
     $: if (targetMessage != totalMessages) {
-      isScrollingUp = false;
+      console.log(`targetMessage: ${targetMessage}`);  // Debug line
+      console.log(`totalMessages: ${totalMessages}`);  // Debug line
+      isScrolling = false;
+      console.log(`isScrolling: ${isScrolling}`);  // Debug line
     }
 
 
@@ -70,7 +73,7 @@
       }
     } // end of reactive statement to update paddingBottom
 
-
+    /*
     function scrollToBottom() {
       if (container) {
           container.scrollTop = container.scrollHeight;
@@ -83,6 +86,23 @@
         }
       });
     } // end of scrollToBottom function
+    */
+
+  function scrollToBottom() {
+    if (isEndOfConversation && !isScrolling) {
+      if (container) {
+        container.scrollTop = container.scrollHeight;
+      }
+      tick().then(() => {
+        if (userInputComponent) {
+          container.scrollTop = container.scrollHeight;
+          console.log(`scrollToBottom ran`);
+        }
+      });
+    }
+  } // end of scrollToBottom function
+
+
 
 
     // Start/End of conversation logic to display the user input component only after the last message in the entire conversation history
@@ -236,19 +256,21 @@
 
 
       // Event listener to control scrollBottom function when at end of entire conversation
-      let lastScrollTop = 0;
-      let isScrollingUp = false;
+      
       contain.addEventListener("scroll", function() {
-        let st = contain.scrollTop;
-        if (st < lastScrollTop){
-          isScrollingUp = true;
-          console.log(`isScrollingUp: ${isScrollingUp}`);
+      let st = contain.scrollTop;
+      let atBottom = get('targetMessage') === get('totalMessages'); // Check if at the bottom
+
+      if (st != lastScrollTop && atBottom) { // Add the atBottom condition
+        isScrolling = true;
+        console.log(`isScrolling: ${isScrolling}`);
         } else {
-          isScrollingUp = false;
-          console.log(`isScrollingUp: ${isScrollingUp}`);
+          isScrolling = false;
+          console.log(`isScrolling: ${isScrolling}`);
         }
-        lastScrollTop = st <= 0 ? 0 : st;
+      lastScrollTop = st <= 0 ? 0 : st;
       }, false);
+
 
 
 
