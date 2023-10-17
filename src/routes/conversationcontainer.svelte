@@ -35,10 +35,10 @@
     let lastScrollTop = 0;
     let isScrolling = false;
     $: if (targetMessage != totalMessages) {
-      console.log(`targetMessage: ${targetMessage}`);  // Debug line
-      console.log(`totalMessages: ${totalMessages}`);  // Debug line
+      //console.log(`targetMessage: ${targetMessage}`);  // Debug line
+      //console.log(`totalMessages: ${totalMessages}`);  // Debug line
       isScrolling = false;
-      console.log(`isScrolling: ${isScrolling}`);  // Debug line
+      //console.log(`isScrolling: ${isScrolling}`);  // Debug line
     }
 
 
@@ -96,7 +96,7 @@
       tick().then(() => {
         if (userInputComponent) {
           container.scrollTop = container.scrollHeight;
-          console.log(`scrollToBottom ran`);
+          //console.log(`scrollToBottom ran`);
         }
       });
     }
@@ -135,7 +135,7 @@
           }
         });*/
         endScrollTrigger = true;  // Prevent further downward scrolling until flag is reset
-        console.log(`endScrollTrigger: ${endScrollTrigger}`);
+        //console.log(`endScrollTrigger: ${endScrollTrigger}`);
         startScrollTrigger = false; // Reset the other flag
       } else if (isStartOfConversation && !startScrollTrigger) {
         if (container) {
@@ -256,19 +256,18 @@
 
 
       // Event listener to control scrollBottom function when at end of entire conversation
-      
       contain.addEventListener("scroll", function() {
       let st = contain.scrollTop;
-      let atBottom = get('targetMessage') === get('totalMessages'); // Check if at the bottom
-
-      if (st != lastScrollTop && atBottom) { // Add the atBottom condition
+      let atBottom = targetMessage === totalMessages; // Check if at the bottom
+      
+      if (st != lastScrollTop && (targetMessage === totalMessages)) { // Add the atBottom condition
         isScrolling = true;
-        console.log(`isScrolling: ${isScrolling}`);
-        } else {
+        console.log(`Scrolling at the bottom`);
+        } else if (targetMessage !== totalMessages) {
           isScrolling = false;
-          console.log(`isScrolling: ${isScrolling}`);
+          console.log(`Not scrolling at the bottom`);
         }
-      lastScrollTop = st <= 0 ? 0 : st;
+        lastScrollTop = st <= 0 ? 0 : st;
       }, false);
 
 
