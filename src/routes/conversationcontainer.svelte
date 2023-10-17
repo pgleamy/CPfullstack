@@ -219,10 +219,28 @@
       });
       observ.observe(contain, { childList: true, subtree: true, attributes: true, characterData: true });
 
+
+
+      // Event listener to control scrollBottom function when at end of entire conversation
+      let container;
+      let lastScrollTop = 0;
+      let isScrollingUp = false;
+      container.addEventListener("scroll", function() {
+        let st = container.scrollTop;
+        if (st < lastScrollTop){
+          isScrollingUp = true;
+        } else {
+          isScrollingUp = false;
+        }
+        lastScrollTop = st <= 0 ? 0 : st;
+      }, false);
+
+
+
   }); // end of onMount
 
   onDestroy(() => {
-    container.removeEventListener('scroll', handleScroll);
+    //container.removeEventListener('scroll', handleScroll);
   });
 
   // Non-reactive function to return the container pixel height
@@ -440,11 +458,12 @@ function throttle(func, limit) {
 }
 const throttledFetch = throttle(fetchConversationSlice, 90);
 
-
+/*
 // Manipulation of gripLocation(local)/gripPosition(scrollStore) based on mouse scroll wheel events
 function handleScroll() {
   
 }
+*/
 
 </script>
 
