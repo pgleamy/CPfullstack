@@ -18,7 +18,6 @@
         }
       },
       theme: 'snow',
-      placeholder: "",
         
     };
   
@@ -28,8 +27,6 @@
     let disabled = true;
     $: disabled = !messageText;
     let content = { html: "", text: "" };
-
-
     
     import { invoke } from '@tauri-apps/api/tauri';
     function sendMessage() {
@@ -96,6 +93,11 @@
     -ms-overflow-style: none;
     }
 
+    :global(.ql-placeholder) {
+        color: white !important;
+        font-size: 14px;
+        font-family: Arial, Helvetica, sans-serif;
+    }
 
     /* The Quill editor when not focussed */
     #editor-container:focus-visible {
@@ -121,13 +123,14 @@
     }   
 
     #editor {
+        
         width: calc(100vw - 67px);
         position: static;
         bottom: 4px;
-        max-height: 180px;
-        min-height: 20px;
+        height: 150px;
+        /*min-height: 20px;*/
         background: black;
-        opacity: 0.7;
+        opacity: 0.1;
         color: rgba(255, 255, 255, 0.1);
         padding: 0px;
         padding-left: 10px;
@@ -138,12 +141,13 @@
         border: 2px solid #593d04;
         overflow-y: auto;
         overflow-wrap: break-word;
-        overflow-x: auto;
+        overflow-x: hidden;
         font-smooth: always;
         -webkit-font-smoothing: antialiased;
         scroll-behavior: smooth;
         scrollbar-width: thin;
         scrollbar-color: #1d24a1;
+        
     }   
 
     /* The Quill editor when it's focused */
@@ -207,5 +211,31 @@
         background-color: rgba(46, 129, 41, 1);
 
     }
+
+
+
+    /* Style the scrollbar container */
+#editor::-webkit-scrollbar {
+    width: 12px;
+}
+
+/* Style the scrollbar handle (thumb) */
+#editor::-webkit-scrollbar-thumb {
+    background-color: rgb(154, 11, 11) !important;
+    outline: 1px solid rgb(188, 8, 29) !important;
+}
+
+/* Style the scrollbar track */
+#editor::-webkit-scrollbar-track {
+    background-color: rgb(192, 9, 9) !important;
+}
+
+/* Style scrollbar for Firefox */
+#editor {
+    scrollbar-color: rgb(181, 3, 3) red !important;
+}
+
+
+
 
 </style>
