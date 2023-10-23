@@ -1,1 +1,21 @@
-Your answer "dfdsfdf" doesn't provide much context or information. Could you please provide more details or clarify what you would like me to do or discuss regarding "dfdsfdf"? I'm here to assist you and I want to make sure I understand your request. Feel free to let me know how I can help you.
+Based on the information you provided, it seems that you are developing a Tauri application for Windows. Microsoft Edge and Internet Explorer are indeed the browsers commonly used on Windows systems. That's why I suggested using the `-ms-overflow-style` property to target the scrollbar appearance in your application.
+
+In the context of your project, you can amend the CSS codes like this:
+
+```css
+#editor {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(154, 11, 11) rgb(192, 9, 9);
+  -ms-overflow-style: none; /* Hide the default scrollbar in Microsoft Edge and Internet Explorer */
+}
+
+#editor::-webkit-scrollbar {
+  width: 0; /* Disable the scrollbar for WebKit-based browsers */
+}
+```
+
+By using the `-ms-overflow-style` property with a value of "none", you can hide the default scrollbar in Microsoft Edge and Internet Explorer. The `scrollbar-width` and `scrollbar-color` properties allow you to customize the scrollbar appearance as desired.
+
+With these adjustments, you should be able to target the scrollbar correctly in your Tauri application on Windows. Remember to test your application in different browsers to ensure cross-browser compatibility.
+
+I hope this clarifies why I suggested these changes. Let me know if you have any further questions or need additional assistance!

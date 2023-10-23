@@ -142,7 +142,7 @@
         scroll-behavior: smooth;
         scrollbar-width: thin;
         scrollbar-color: #1d24a1;
-        
+        transition: opacity 0.2s ease, color 0.2s ease;
     }   
 
     /* The Quill editor when it's focused */
@@ -155,6 +155,7 @@
         color: rgba(255, 255, 255, 1);
         overflow-y: auto;
         overflow-x: hidden;
+        transition: opacity 0.2s ease, color 0.2s ease;
     }
 
     #button-container {
