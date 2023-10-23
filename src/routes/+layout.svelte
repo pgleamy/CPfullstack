@@ -7,12 +7,9 @@
 
 <div class="app">
 	<Header />
-
 	<main>
 		<slot />
-		<div id="bottom-lock"></div>
 	</main>
-
 </div>
 
 <style>
@@ -26,15 +23,5 @@
 		display: flex;
 		flex-direction: column;
 	}
-
-	#bottom-lock {
-		height: 1px;
-		background-color: rgb(12, 73, 30);  /* You can make it transparent */
-		position: fixed;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		z-index: 0;  /* optional, if you want this to be above everything else */
-  	}
 
 </style>

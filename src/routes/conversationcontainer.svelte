@@ -34,17 +34,12 @@
 
     let lastScrollTop = 0;
     let isScrolling = false;
-    $: if (targetMessage != totalMessages) {
-      //console.log(`targetMessage: ${targetMessage}`);  // Debug line
-      //console.log(`totalMessages: ${totalMessages}`);  // Debug line
-      isScrolling = false;
-      //console.log(`isScrolling: ${isScrolling}`);  // Debug line
-    }
+    $: if (targetMessage != totalMessages) { isScrolling = false } // Reactive statement to reset isScrolling when not at the bottom of the conversation
 
 
 
 
-
+    /*
     // Reactive state management for fine scrolling scroll adjustments in fetchConversationPart function
     let initialBeforeScrollTop = null; 
     let initialGripLocation = gripLocation;  // Initialize with the current gripLocation value
@@ -56,6 +51,8 @@
       }
       initialGripLocation = gripLocation;  // Update initialGripPosition to the new value
     }
+    */
+
     
     $: targetMessage = $scrollStore.targetMessage; // Reactive assignment
     $: totalMessages = $scrollStore.totalMessages; // Reactive assignment
@@ -73,34 +70,22 @@
       }
     } // end of reactive statement to update paddingBottom
 
-    /*
-    function scrollToBottom() {
-      if (container) {
-          container.scrollTop = container.scrollHeight;
-      }
-      tick().then(() => {
-        if (userInputComponent) {
-          container.scrollTop = container.scrollHeight;
-          console.log(`scrollToBottom ran`);  // Debug line
-          
-        }
-      });
-    } // end of scrollToBottom function
-    */
+  
 
-  function scrollToBottom() {
-    if (isEndOfConversation && !isScrolling) {
-      if (container) {
-        container.scrollTop = container.scrollHeight;
-      }
-      tick().then(() => {
-        if (userInputComponent) {
+    function scrollToBottom() {
+      if (isEndOfConversation && !isScrolling) {
+        if (container) {
           container.scrollTop = container.scrollHeight;
-          //console.log(`scrollToBottom ran`);
         }
-      });
-    }
-  } // end of scrollToBottom function
+        tick().then(() => {
+          if (userInputComponent) {
+            container.scrollTop = container.scrollHeight;
+            console.log(`scrollToBottom ran`);
+            //console.log(`scrollToBottom ran`);
+          }
+        });
+      }
+    } // end of scrollToBottom function
 
 
 
@@ -118,31 +103,51 @@
         }
       } // end of reactive statement to start/end of conversation 
       
+    
 
 
+     
+/*
 
     let hasResetEndScrollTrigger = false;  // Initialize a flag to keep track  
     let endScrollTrigger = false;
     let startScrollTrigger = false;
+
+
+    $: { 
+      if (endScrollTrigger) { 
+        console.log(`endScrollTrigger: ${endScrollTrigger}`);
+      }
+      if (!endScrollTrigger) { 
+        console.log(`!endScrollTrigger: ${endScrollTrigger}`);
+      }
+    }  
+
+
+    
     $: {
       if (isEndOfConversation && !endScrollTrigger) {
-        /*if (container) {
+        if (container) {
           container.scrollTop = container.scrollHeight;
+          console.log(`1`);
         }
         tick().then(() => {
           if (userInputComponent) {
             container.scrollTop = container.scrollHeight;
+            console.log(`2`);
           }
-        });*/
+        });
         endScrollTrigger = true;  // Prevent further downward scrolling until flag is reset
-        //console.log(`endScrollTrigger: ${endScrollTrigger}`);
+        console.log('3');
         startScrollTrigger = false; // Reset the other flag
       } else if (isStartOfConversation && !startScrollTrigger) {
         if (container) {
           container.scrollTop = 0;
+          console.log(`4`);
         }
         startScrollTrigger = true; // Prevent further upward scrolling until flag is reset
         endScrollTrigger = false; // Reset the other flag
+        console.log(`5`);
         //console.log(`endScrollTrigger: ${endScrollTrigger}`);
       } else if (!hasResetEndScrollTrigger) {
         // Reset both flags if neither condition is met
@@ -151,9 +156,11 @@
         startScrollTrigger = false;
         hasResetEndScrollTrigger = true; // Prevent further resetting until flag is reset
         //console.log(`hasResetEndScrollTrigger: ${hasResetEndScrollTrigger}`);
+        console.log(`6`);
       }
     } // end of reactive statement to position the view of the messages correctly when the user input component is displayed or when at top of conversation showing from very start
-
+    
+    */
 
     // Scrubbing grip control logic
     // gripLocation is a number between 0 and 1 that represents the position of the grip relative to the whole conversation
@@ -262,12 +269,14 @@
       
       if (st != lastScrollTop && (targetMessage === totalMessages)) { // Add the atBottom condition
         isScrolling = true;
-        console.log(`Scrolling at the bottom`);
+        //console.log(`Scrolling at the bottom`);
         } else if (targetMessage !== totalMessages) {
           isScrolling = false;
-          console.log(`Not scrolling at the bottom`);
+          //console.log(`Not scrolling at the bottom`);
+          return;
         }
         lastScrollTop = st <= 0 ? 0 : st;
+        //console.log(`last bit ran`);
       }, false);
 
 
@@ -507,35 +516,32 @@ function handleScroll() {
 
 
 <div id="clip-container" bind:this={container} class="parent-container">
-  <div id="conversation-container"  > 
+  <div id="conversation-container">
 
     <div bind:this={topObserverElement} id="top-observer"></div>
 
     {#each conversation as entry, index}
-    <div class="{index === conversation.length - 1 && isEndOfConversation ? 'last-message-class' : ''}" 
-    style="{index === conversation.length - 1 && isEndOfConversation ? paddingBottom : ''} width: 100%; " 
-    >
-        {#if entry.source === 'user' || entry.source === 'llm'}
-          {#if entry.source === 'user'}
-            <UserInputSent {...entry} />
-          {:else if entry.source === 'llm'}
-            <LLMResponse {...entry} />
+      <div class="{index === conversation.length - 1 ? 'last-message-class' : ''}" 
+      style="{index === conversation.length - 1 ? paddingBottom : ''} width: 100%;" 
+      >
+          {#if entry.source === 'user' || entry.source === 'llm'}
+            {#if entry.source === 'user'}
+              <UserInputSent {...entry} />
+            {:else if entry.source === 'llm'}
+              <LLMResponse {...entry} />
+            {/if}
           {/if}
-        {/if}
       </div>
     {/each}
-
     <div bind:this={bottomObserverElement} id="bottom-observer"></div>
+  </div> <!-- End of conversation-container -->
+</div> <!-- End of clip-container -->
 
-    {#if isEndOfConversation}
-      <div class="user-input">
-        <UserInput bind:this={userInputComponent} on:input={scrollToBottom}/> 
-      </div>
-    {/if}
-  </div>
+<div class="user-input-container">
+  <UserInput bind:this={userInputComponent} />
 </div>
 
-   
+
   <style>
 
     #conversation-container {
@@ -545,9 +551,9 @@ function handleScroll() {
       align-items: flex-start;
       width: 100%;
       position: relative;
-      bottom: 0;
+      bottom: 0px;
       left: 7px;
-      padding-bottom: 0px;
+      padding-bottom: 5px;
       padding-right: 0px;
       user-select: none;
       opacity: 0.9;
@@ -556,28 +562,30 @@ function handleScroll() {
       overflow-y: hidden; /* hides default vertical scrolling bar */
       overflow-x: hidden; /* hides default horizontal scrolling bar */
 
+      overflow: hidden; /* hides default scrolling bars */
+
     }
 
     #clip-container {
     position: fixed;
     top: 0px;
-    bottom: 0px;
-    left: 0;
-    right: 0;
-    clip-path: inset(0);
-    overflow: auto;
+    bottom: 10px;
+    left: 0px;
+    right: 0px;
+    overflow: hidden;
     scrollbar-width: none; /* hides scrollbar in Firefox */
-    min-height: 100vh;
+    min-height: 96%;
     width: 100%;
+    height: 98%;
     overflow-y: auto; /* Makes it scrollable */
-
-
+    background-color: transparent;
+   
   }
 
   #clip-container::-webkit-scrollbar {
     display: none; /* For Chrome, Safari */
+    
   }
-
 
   #top-observer, #bottom-observer {
     width: 100%;
@@ -590,19 +598,26 @@ function handleScroll() {
     height: 100vh; /* Or some height that fits your layout */
     width: 100%;
 
-  }
-
-  .user-input {
-    position: absolute;
-    bottom: 0px;
-    width: 100%;
+    margin-bottom: 15px; 
   }
 
    /* This attaches to the last conversation message only, pushing it up above user input component dynamically */
   .last-message-class {
     padding-bottom: ''; /* will be dynamic, when set to dynamic height of user input component */
+ 
   }
 
+
+.user-input-container {
+  position: fixed;
+  bottom: 5px;
+  left: 7px;
+  right: 53px;
+  max-height: 40vh; /* Maximum of 20% of the view height */
+  overflow-y: auto;  /* Hide overflow */
+  padding-right: 3px;
+  overflow: hidden; /* hides default scrolling bars */
+}
  
   </style>
   

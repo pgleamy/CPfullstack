@@ -51,7 +51,6 @@
     }
     .chatWindow {
         flex-grow: 1;
-
     }
     .scrollSearchWrapper {
         flex-shrink: 0;
