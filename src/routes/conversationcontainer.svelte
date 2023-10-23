@@ -80,7 +80,7 @@
         tick().then(() => {
           if (userInputComponent) {
             container.scrollTop = container.scrollHeight;
-            console.log(`scrollToBottom ran`);
+            //console.log(`scrollToBottom ran`);
             //console.log(`scrollToBottom ran`);
           }
         });
@@ -576,7 +576,7 @@ function handleScroll() {
     scrollbar-width: none; /* hides scrollbar in Firefox */
     min-height: 96%;
     width: 100%;
-    height: 98%;
+    height: 100%;
     overflow-y: auto; /* Makes it scrollable */
     background-color: transparent;
    
@@ -610,13 +610,13 @@ function handleScroll() {
 
 .user-input-container {
   position: fixed;
-  bottom: 5px;
+  bottom: 1.5px;
   left: 7px;
   right: 53px;
   max-height: 40vh; /* Maximum of 20% of the view height */
   overflow-y: auto;  /* Hide overflow */
   padding-right: 3px;
-  overflow: hidden; /* hides default scrolling bars */
+  overflow: auto; /* hides default scrolling bars */
 }
  
   </style>
