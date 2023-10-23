@@ -93,12 +93,7 @@
     -ms-overflow-style: none;
     }
 
-    :global(.ql-placeholder) {
-        color: white !important;
-        font-size: 14px;
-        font-family: Arial, Helvetica, sans-serif;
-    }
-
+    
     /* The Quill editor when not focussed */
     #editor-container:focus-visible {
         width: calc(100vw - 67px);
@@ -131,7 +126,7 @@
         /*min-height: 20px;*/
         background: black;
         opacity: 0.1;
-        color: rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.2);
         padding: 0px;
         padding-left: 10px;
         font-size: 14px; 
@@ -178,7 +173,7 @@
         height: 39px;
         width: 24px;
         padding: 0px;
-        border: 11px dotted #000000;
+        border: 11px dotted rgba(0,0,0,1);
         border-radius: 40px;
         background-color: rgba(83, 202, 56, 0.542);
         display: flex;
@@ -194,6 +189,7 @@
         background-color: transparent;
         cursor: not-allowed;
         pointer-events: none;
+        border: 11px dotted rgba(0,0,0,0);
     }
 
     #button-container button:not(:disabled):hover {
