@@ -22,7 +22,7 @@
     };
   
     let messageText = 'test';
-    let username = 'Patrick';
+    let username = 'Human(s)';
     let quillInstance;
     let disabled = true;
     $: disabled = !messageText;
@@ -125,8 +125,8 @@
         height: 150px;
         /*min-height: 20px;*/
         background: black;
-        opacity: 0.1;
-        color: rgba(255, 255, 255, 0.2);
+        opacity: 0.18;
+        color: rgba(255, 255, 255, 0.18);
         padding: 0px;
         padding-left: 10px;
         font-size: 14px; 

@@ -2288,3 +2288,46 @@ By using the `-ms-overflow-style` property with a value of "none", you can hide 
 With these adjustments, you should be able to target the scrollbar correctly in your Tauri application on Windows. Remember to test your application in different browsers to ensure cross-browser compatibility.
 
 I hope this clarifies why I suggested these changes. Let me know if you have any further questions or need additional assistance!
+
+--> HUMAN: Well, I agree! <--
+
+JARVIS: It's great to see that we agree! Having reviewed the code you shared, I understand your frustration with changing the appearance of the vertical scrollbar. Since you're developing for a Tauri backend on Windows, we can modify the CSS to target the scrollbar correctly.
+
+Instead of using the `-webkit` prefix, which is specific to WebKit-based browsers, we can use the `-ms-overflow-style` property to customize scrollbars in Microsoft Edge and Internet Explorer. Here's an example of how you can amend the CSS code for your Tauri application on Windows:
+
+```css
+#editor {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(154, 11, 11) rgb(192, 9, 9);
+  -ms-overflow-style: none; /* Hide the default scrollbar in Microsoft Edge and Internet Explorer */
+}
+
+#editor::-webkit-scrollbar {
+  width: 0; /* Disable the scrollbar for WebKit-based browsers */
+}
+```
+
+With these changes, you should be able to target the scrollbar appearance correctly in your Tauri application. Remember to test the application in different browsers to ensure cross-browser compatibility, as Microsoft Edge and Internet Explorer are commonly used on Windows systems.
+
+If you have any more questions or need further assistance with your project, feel free to let me know. I'm here to help!
+
+--> HUMAN: Hello, 
+What the fuck man.
+
+Whoa.   fucking fuck
+
+Awesome!!!!!!! I'm loving this interface. I'm so happy about it right now!  Anyway, I don't need anything right now. I'm heading to bed. Have a good night. <--
+
+JARVIS: Well, it seems like you're expressing a mix of surprise, frustration, and excitement about something related to the interface. While I understand that emotions can be complex, it's important to communicate your thoughts and concerns clearly so that I can provide the best assistance. 
+
+If you could provide more context or specific information about what aspect of the interface you're referring to, I would be happy to offer my thoughts and help address any issues you may be experiencing. Remember, I'm here to support you and make your experience as smooth and enjoyable as possible. So, let's dive into the details and see how I can assist you further!
+
+
+
+--> HUMAN: I'm sorry, I didn't mean to confuse you. I was just excitedly happy. It was in that context that I then said:
+
+Awesome!!!!!!! I'm loving this interface. I'm so happy about it right now!  Anyway, I don't need anything right now. I'm heading to bed. Have a good night. <--
+
+JARVIS: Oh, I understand now! No need to apologize, it's great to see you excited and happy about the interface! It's important to express those positive emotions. I'm glad that you're enjoying the interface so much, it's a wonderful feeling when things come together.
+
+Since you don't need any assistance at the moment, I'll let you head to bed. Have a good night, Patrick! If you have any questions or need help in the future, don't hesitate to reach out. Sleep well and have sweet dreams!
