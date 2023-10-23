@@ -172,7 +172,6 @@
         background: black;
         color: rgba(255, 255, 255, 1);
         overflow-y: auto;
-        overflow-wrap: break-word;
         overflow-x: hidden;
     }
 
@@ -192,13 +191,13 @@
         height: 39px;
         width: 24px;
         padding: 0px;
-        border: 2px solid #055306;
+        border: 11px dotted #000000;
         border-radius: 40px;
-        background-color: rgba(46, 129, 41, 0.4);
+        background-color: rgba(83, 202, 56, 0.542);
         display: flex;
         align-items: right;
         justify-content: right;
-        color: #FFFFFF;
+        color: #ffffff;
         cursor: pointer;
         transition: background-color 0.05s ease-in-out 0.05s;
         position: absolute;
