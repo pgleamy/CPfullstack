@@ -1,69 +1,8 @@
 <script>
     import { onMount } from 'svelte';
     import { setInLocalStorage } from '$lib/scrollStore.js';
-    import { quill } from 'svelte-quill';
-  
-    let messageText = 'test';
-    let username = 'Patrick';
-    
-    let quillInstance;
-  
-    let disabled = true;
-    $: disabled = !messageText;
+    import Quill from 'quill'; 
 
-    let content = { html: "", text: "" };
-    
-    import { invoke } from '@tauri-apps/api/tauri';
-    function sendMessage() {
-      invoke('send_prompt', { messageText })
-        .then(() => {
-          console.log('Message sent successfully:', messageText);
-        })
-        .catch(error => {
-          console.error('Failed to send message:', error);
-        });
-      messageText = '';
-      setInLocalStorage('unsentPrompt', '');
-    }
-    
-    onMount(() => {
-    messageText = localStorage.getItem('unsentPrompt') || '';   
-  
-});
-
-
-   
-    
-    function handleTextChange() {
-        
-        console.log('Text changed:', quillInstance.getText());
-        messageText = quillInstance.getText().trim();
-        // pause for 0.1 seconds
-        setTimeout(() => {
-            // get the text from the editor
-            let text = quillInstance.getText();
-            // set the text to the content variable
-            content.text = text;
-            // set the html to the content variable
-            content.html = quillInstance.root.innerHTML;
-            // log the content variable
-            console.log(content);
-        }, 100);
-        setInLocalStorage('unsentPrompt', messageText);      
-        console.log(messageText);
-    }
-
-
-
-
-    function initializeQuill(el, { quill: quillInstance }) {
-        quillInstance.on('text-change', function() {
-            messageText = quillInstance.getText().trim();
-            setInLocalStorage('unsentPrompt', messageText);
-        });
-    }
-
-     
     // Quill editor options
     let options = {
       modules: {
@@ -82,9 +21,49 @@
       placeholder: "",
         
     };
+  
+    let messageText = 'test';
+    let username = 'Patrick';
+    let quillInstance;
+    let disabled = true;
+    $: disabled = !messageText;
+    let content = { html: "", text: "" };
 
 
+    
+    import { invoke } from '@tauri-apps/api/tauri';
+    function sendMessage() {
+      invoke('send_prompt', { messageText })
+        .then(() => {
+          console.log('Message sent successfully:', messageText);
+        })
+        .catch(error => {
+          console.error('Failed to send message:', error);
+        });
+      messageText = '';
+      setInLocalStorage('unsentPrompt', '');
+    }
+    
+    onMount(() => {
+        // Initialize messageText from local storage
+        messageText = localStorage.getItem('unsentPrompt') || '';   
 
+        // Initialize Quill instance
+        quillInstance = new Quill('#editor', options);
+
+        // Set the Quill editor text from local storage
+        quillInstance.setText(messageText);
+
+        // Listen for text changes in Quill editor
+        quillInstance.on('text-change', async function() {
+            // Wait for Quill to finish its internal update
+            await new Promise(r => setTimeout(r, 0));
+
+            // Update messageText and local storage
+            messageText = quillInstance.getText().trim();
+            setInLocalStorage('unsentPrompt', messageText);
+        });
+    });
 
     
 </script>
@@ -92,7 +71,7 @@
 
     <main>
         <div id="editor-container">
-            <div id="editor" use:quill={options} use:initializeQuill />
+            <div id="editor"></div>
         </div>
 
         <div id="button-container">
