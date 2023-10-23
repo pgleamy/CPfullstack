@@ -1,5 +1,5 @@
 <script>
-    import { onMount } from 'svelte';
+    import { onMount, onDestroy } from 'svelte';
     import { setInLocalStorage } from '$lib/scrollStore.js';
     import Quill from 'quill'; 
 
@@ -60,15 +60,28 @@
             messageText = quillInstance.getText().trim();
             setInLocalStorage('unsentPrompt', messageText);
         });
+
     });
+
+
+
+
+
+
+
+
+
+
+
+
 
     
 </script>
 
 
     <main>
-        <div id="editor-container">
-            <div id="editor"></div>
+        <div id="editor-container">            
+            <div id="editor" spellcheck="false"></div>
         </div>
 
         <div id="button-container">
@@ -81,17 +94,7 @@
 
 <style>
 
-    #editor-container::-webkit-scrollbar,
-    #editor-container {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    }
-
-    #editor::-webkit-scrollbar,
-    #editor {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    }
+    
 
     
     /* The Quill editor when not focussed */
@@ -99,7 +102,7 @@
         width: calc(100vw - 67px);
         position: fixed;
         bottom: 4px;
-        max-height: 180px;
+        max-height: 300px; /* 180px */
         min-height: 20px;
         background: black;
         opacity: 0.7;
@@ -121,16 +124,13 @@
         
         width: calc(100vw - 67px);
         position: static;
-        bottom: 4px;
-        height: 150px;
-        /*min-height: 20px;*/
+        height: 170px; 
         background: black;
         opacity: 0.18;
         color: rgba(255, 255, 255, 0.18);
         padding: 0px;
-        padding-left: 10px;
-        font-size: 14px; 
-        font-family: Arial, Helvetica, sans-serif;
+        padding-left: 0px;
+        font-size: 14.5px;
         margin: 0px;
         border-radius: 17px;
         border: 2px solid #593d04;
@@ -143,6 +143,9 @@
         scrollbar-width: thin;
         scrollbar-color: #1d24a1;
         transition: opacity 0.2s ease, color 0.2s ease;
+
+        font-family: var(--font-body); /* Futura from styles.css */
+        
     }   
 
     /* The Quill editor when it's focused */
@@ -212,25 +215,9 @@
 
 
     /* Style the scrollbar container */
-#editor::-webkit-scrollbar {
-    width: 12px;
-}
-
-/* Style the scrollbar handle (thumb) */
-#editor::-webkit-scrollbar-thumb {
-    background-color: rgb(154, 11, 11) !important;
-    outline: 1px solid rgb(188, 8, 29) !important;
-}
-
-/* Style the scrollbar track */
-#editor::-webkit-scrollbar-track {
-    background-color: rgb(192, 9, 9) !important;
-}
-
-/* Style scrollbar for Firefox */
-#editor {
-    scrollbar-color: rgb(181, 3, 3) red !important;
-}
+    #editor::-webkit-scrollbar {
+        width: 12px;
+    }
 
 
 

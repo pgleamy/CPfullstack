@@ -613,10 +613,11 @@ function handleScroll() {
   bottom: 1.5px;
   left: 7px;
   right: 53px;
-  max-height: 40vh; /* Maximum of 20% of the view height */
+  max-height: 100vh; /* Maximum of 20% of the view height = 40vh */
   overflow-y: auto;  /* Hide overflow */
-  padding-right: 3px;
+  padding-right:3px;
   overflow: auto; /* hides default scrolling bars */
+  overflow-x: hidden; /* hides default horizontal scrolling bar */
 }
  
   </style>

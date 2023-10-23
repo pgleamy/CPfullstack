@@ -1,8 +1,8 @@
 @import '@fontsource/fira-mono';
 
 :root {
-	--font-body: Söhne, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-	--font-mono: "Söhne Mono", Monaco, "Andale Mono", "Ubuntu Mono", monospace !important;
+	--font-body: Futura, "Trebuchet MS", Arial, sans-serif !important;
+	--font-mono: FiraCode-Retina, "Fira Code Retina", "Fira Code", "FiraCode", monospace !important;
 	--color-bg-0: rgb(0, 0, 0);
 	--color-bg-1: hsl(201, 64%, 9%);
 	--color-bg-2: hsl(220, 93%, 6%);
@@ -32,12 +32,15 @@ body {
 
 h1,
 h2,
+
 p {
-	font-weight: 400;
+	font-weight: 200;
 }
 
 p {
-	line-height: 1.5;
+	font-size:0.85rem;
+	line-height: 1.4;
+	tab-size: 5;
 }
 
 a {
@@ -59,7 +62,7 @@ h2 {
 }
 
 pre {
-	font-size: 16px;
+	font-size: 14px;
 	font-family: var(--font-mono);
 	background-color: rgba(255, 255, 255, 0.45);
 	border-radius: 3px;
@@ -94,26 +97,36 @@ button:focus:not(:focus-visible) {
 	}
 }
 
-.visually-hidden {
-	border: 0;
-	clip: rect(0 0 0 0);
-	height: auto;
-	margin: 0;
-	overflow: hidden;
-	padding: 0;
-	position: absolute;
-	width: 1px;
-	white-space: nowrap;
-}
 
-.parent-container {
-	position: relative;
-	overflow-y: auto; /* Makes it scrollable */
-	height: 100vh; /* Or some height that fits your layout */
+
+
+/* Webkit browsers */
+::-webkit-scrollbar {
+	width: 10px; /* width of the entire scrollbar */
   }
   
-  .user-input {
-	position: absolute;
-	bottom: 0;
+  ::-webkit-scrollbar-track {
+	background: transparent; /* color of the tracking area */
   }
   
+  ::-webkit-scrollbar-thumb {
+	background: #001502;  /* color of the thumb */
+	border-radius: 10px;
+	border: 3px solid transparent;  /* invisible border */
+  	background-clip: content-box;  /* so the background doesn't extend into the border */
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+	background: #d97f01; /* color when hovering over the thumb */
+	border: 3px solid transparent;  /* invisible border */
+  	background-clip: content-box;  /* so the background doesn't extend into the border */
+  }
+  
+  /* Firefox */
+* {
+	scrollbar-width: thin;
+	scrollbar-color: #888 transparent;
+  }
+  
+
+ 
