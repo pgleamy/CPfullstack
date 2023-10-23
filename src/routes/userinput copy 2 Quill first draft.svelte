@@ -2,6 +2,7 @@
     import { onMount } from 'svelte';
     import { setInLocalStorage } from '$lib/scrollStore.js';
     import { quill } from 'svelte-quill';
+    import Quill from 'quill'; 
   
     let messageText = 'test';
     let username = 'Patrick';
@@ -29,10 +30,38 @@
     onMount(() => {
     messageText = localStorage.getItem('unsentPrompt') || '';   
   
+    quillInstance = new Quill('#editor', options);
+    quillInstance.setText(messageText);
+
+    quillInstance.on('text-change', async function() {
+        // Wait for Quill to finish its internal update
+        await new Promise(r => setTimeout(r, 0));
+        
+        messageText = quillInstance.getText().trim();
+        setInLocalStorage('unsentPrompt', messageText);
+    });
 });
 
 
-   
+    
+    // Quill editor options
+    let options = {
+      modules: {
+        toolbar: false,
+        clipboard: {},
+        keyboard: {
+          bindings: {}
+        },
+        history: {
+          delay: 2000,
+          maxStack: 100,
+          userOnly: true
+        }
+      },
+      theme: 'snow',
+      placeholder: "",
+        
+    };
     
     function handleTextChange() {
         
@@ -56,32 +85,7 @@
 
 
 
-    function initializeQuill(el, { quill: quillInstance }) {
-        quillInstance.on('text-change', function() {
-            messageText = quillInstance.getText().trim();
-            setInLocalStorage('unsentPrompt', messageText);
-        });
-    }
 
-     
-    // Quill editor options
-    let options = {
-      modules: {
-        toolbar: false,
-        clipboard: {},
-        keyboard: {
-          bindings: {}
-        },
-        history: {
-          delay: 2000,
-          maxStack: 100,
-          userOnly: true
-        }
-      },
-      theme: 'snow',
-      placeholder: "",
-        
-    };
 
 
 
@@ -92,7 +96,7 @@
 
     <main>
         <div id="editor-container">
-            <div id="editor" use:quill={options} use:initializeQuill />
+            <div id="editor" use:quill={options} on:input={ handleTextChange } />
         </div>
 
         <div id="button-container">
