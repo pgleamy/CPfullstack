@@ -62,19 +62,6 @@
         });
 
     });
-
-
-
-
-
-
-
-
-
-
-
-
-
     
 </script>
 
@@ -124,7 +111,7 @@
         
         width: calc(100vw - 67px);
         position: static;
-        height: 170px; 
+        height: 190px; 
         background: black;
         opacity: 0.18;
         color: rgba(255, 255, 255, 0.18);
