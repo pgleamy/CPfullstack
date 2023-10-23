@@ -2,8 +2,6 @@
     import { onMount } from 'svelte';
     import { setInLocalStorage } from '$lib/scrollStore.js';
     import { quill } from 'svelte-quill';
-    
-
   
     let messageText = 'test';
     let username = 'Patrick';
@@ -90,6 +88,9 @@
         opacity: 0.95;
         background: black;
         color: rgba(255, 255, 255, 1);
+        overflow-y: auto;
+        overflow-wrap: break-word;
+        overflow-x: hidden;
     }
 
     #button-container {
