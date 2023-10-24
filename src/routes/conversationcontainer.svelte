@@ -57,13 +57,16 @@
     } // end of reactive statement to update paddingBottom
   
     // Set flags indicating the conversation array contains either of the first or last message in the conversation
-      // Flags can then be use for various logic, e.g. to prevent the user from scrolling past the start or end of the conversation
-      // or to prevent operations for seeking out of bounds of the conversation
-      function updateEdgeFlags(fetchedMessages) {
-        hasReachedStart = fetchedMessages.some(msg => msg.block_id === "block_id_1");
-        hasReachedEnd = fetchedMessages.some(msg => msg.block_id === `block_id_${totalMessages}`);
-      }
-
+    // Flags can then be use for various logic, e.g. to prevent the user from scrolling past the start or end of the conversation
+    // or to prevent operations for seeking out of bounds of the conversation
+    function updateEdgeFlags(fetchedMessages) {
+      console.log(`updateEdgeFlags ran`);  // Debug line
+      hasReachedStart = fetchedMessages.some(msg => msg.block_id === "block_id_1"); 
+      console.log(fetchedMessages);  // Debug line
+      console.log(`hasReachedStart: ${hasReachedStart}`);  // Debug line
+      hasReachedEnd = fetchedMessages.some(msg => msg.block_id === `block_id_${num_user_llm_messages}`);
+      console.log(`hasReachedEnd: ${hasReachedEnd}`);  // Debug line
+    } // end of updateEdgeFlags function %% currently failing to update the flags correctly when user elastic scrolls in from prior message group
 
     function scrollToBottom() {
       if (isEndOfConversation && !isScrolling) {
@@ -169,7 +172,6 @@
           }
         }
       }; // end of observerCallback function
-
 
 
 
@@ -319,6 +321,8 @@ async function fetchConversationSlice(gripLocation, num_messages) {
     if (fetchedData && Array.isArray(fetchedData.message)) {
       conversation = fetchedData.message;
       updateEdgeFlags(fetchedData.message); // Update the edge flags
+      console.log(`Updated conversation slice: ${conversation}`);  // Debug line
+      console.log*(conversation);  // Debug line
     } else {
       console.warn("Fetched data is not in the expected format:", fetchedData);
       conversation = [];
@@ -363,9 +367,9 @@ async function fetchConversationPart(direction) {
   }
 
   
-  if(end => num_user_llm_messages) {
+  if(end >= num_user_llm_messages) {
     end = num_user_llm_messages;
-    start = end - 20;
+    start = end - totalMessagesToFetch;
   }
 
   //console.log(`end: ${end}`);  // Debug line
