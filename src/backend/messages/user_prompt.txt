@@ -1,3 +1,1 @@
-I'm sorry, I didn't mean to confuse you. I was just excitedly happy. It was in that context that I then said:
-
-Awesome!!!!!!! I'm loving this interface. I'm so happy about it right now!  Anyway, I don't need anything right now. I'm heading to bed. Have a good night.
+I am now testing my code which resets the interface prompt box after sending the prompt to you.

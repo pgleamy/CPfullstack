@@ -39,6 +39,8 @@
         });
       messageText = '';
       setInLocalStorage('unsentPrompt', '');
+
+      quillInstance.setText(messageText);
     }
     
     onMount(() => {
@@ -164,9 +166,9 @@
         height: 39px;
         width: 24px;
         padding: 0px;
-        border: 11px dotted rgba(0,0,0,1);
+        border: 11px dotted rgb(0, 3, 23);
         border-radius: 40px;
-        background-color: rgba(83, 202, 56, 0.542);
+        background-color: rgba(82, 227, 50, 0.542);
         display: flex;
         align-items: right;
         justify-content: right;
@@ -180,22 +182,25 @@
         background-color: transparent;
         cursor: not-allowed;
         pointer-events: none;
-        border: 11px dotted rgba(0,0,0,0);
+        border: 11px dotted rgba(10, 21, 98, 0);
     }
 
     #button-container button:not(:disabled):hover {
-        background-color: #00FF00;
+        background-color: #04e004;
+        transition: background-color 0.05s ease-in-out 0.05s;
     }
 
     #button-container button:not(:disabled):active {
         background-color: #4673b7;
         opacity: 1;
+        transition: background-color 0.05s ease-in-out 0.05s;
     }
 
     #button-container button:focus {
         outline: none;
         box-shadow: 0 0 0 2px #5ea7ff;
         background-color: rgba(46, 129, 41, 1);
+        transition: background-color 0.2s ease-in-out 0.2s;
 
     }
 
