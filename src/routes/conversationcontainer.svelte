@@ -344,7 +344,7 @@ let lastFetchedUpMessages = null; // Initialize the variable to store the last f
 async function fetchConversationPart(direction) {
 
   //console.log("fetchConversationPart()");  // Debug line
-  const totalMessagesToFetch = 5; // Number of messages to fetch
+  const totalMessagesToFetch = 10; // Number of messages to fetch
   let start, end;
 
   if (direction === "UP") {
@@ -392,24 +392,11 @@ async function fetchConversationPart(direction) {
           //console.log(`beforeScrollTop: ${beforeScrollTop}`);  // Debug line
           //console.log(`beforeContainerHeight: ${beforeContainerHeight}`);  // Debug line
 
-
-
-
-
-
-
           // CONDITIONALLY add new messages to the start of the conversation array
           if (!hasReachedStart) {
             conversation = [...fetchedData.message, ...conversation];
             console.log(`Duplicate Start. Did not prepend.`);  // Debug line
           } 
-
-
-
-
-
-
-
 
           //console.log("Current conversation:", conversation);  // Debug line
              
@@ -443,22 +430,11 @@ async function fetchConversationPart(direction) {
 
           // If the messages are not the same, append them to the conversation array
           
-
-
-
-
-
             if (!hasReachedEnd) {
               conversation = [...conversation, ...fetchedData.message]; // Update for reactivity
               console.log(`Duplicate End. Did not append.`);  // Debug line
             }
-          
-          
-          
-          
-          
-          
-          
+
             // Update the last fetched messages
             lastFetchedDownMessages = fetchedData.message;
           

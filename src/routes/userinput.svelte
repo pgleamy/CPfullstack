@@ -116,13 +116,13 @@
         height: 190px; 
         background: black;
         opacity: 0.18;
-        color: rgba(255, 255, 255, 0.18);
+        color: rgba(255, 255, 255, 0.05);
         padding: 0px;
         padding-left: 0px;
         font-size: 14.5px;
         margin: 0px;
         border-radius: 17px;
-        border: 2px solid #593d04;
+        border: 2px solid #593d0474;
         overflow-y: auto;
         overflow-wrap: break-word;
         overflow-x: hidden;

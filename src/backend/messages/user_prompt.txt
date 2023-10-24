@@ -1,1 +1,13 @@
-I am now testing my code which resets the interface prompt box after sending the prompt to you.
+The user experience of user my application user input area:
+
+This editor is always 9 lines tall, but will auto-hide if you click out of it or use the custom scroll controls. 
+
+If you want to read the conversation and see your draft prompt at the same time, just scroll the conversation with the scroll wheel after clicking on the editor.
+
+The "send" button is always visible, so you don't need to click on the prompt area to send your prompt if the prompt area is hidden.
+
+The editor is hidden to a shadow of itself if the user click out of it or uses the custom scrolling controls (ie, not the mouse wheel). This allows a full top to bottom review experience of the conversation history, because the header also auto hides.
+
+The prompt area (editor) has Undo and Redo. To undo, use Crtl-z. To redo, use Crtl-y. 
+
+What do you think of this?
