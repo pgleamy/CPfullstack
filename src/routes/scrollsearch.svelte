@@ -226,7 +226,7 @@
 
 // Elastic grip control logic
 let isDraggingElasticGrip = false;
-const MAX_DRAG_DISTANCE = 170; // 2 inches in pixels (this may need adjustment based on your screen DPI)
+const MAX_DRAG_DISTANCE = 100; // roughly 1 inch in pixels (this may need adjustment based on your screen DPI)
 const MIN_SPEED = 0; // The starting speed multiplier
 const MAX_SPEED = 4.0; // Maximum speed multiplier, this can be adjusted to control the rate of scrolling
 let dragDirection = null; // 'up' or 'down' or 'null'
