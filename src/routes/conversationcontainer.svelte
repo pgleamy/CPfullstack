@@ -1,4 +1,5 @@
 <script>
+
     import UserInput from './userinput.svelte';
 
     import UserInputSent from './userinputsent.svelte';
@@ -30,38 +31,20 @@
     let containerHeightDifference; // difference between beforeContainerHeight and afterContainerHeight
     let newScrollTop; // new scrollTop after accounting for the difference between before and after scrollTop and containerHeight
 
-
-
     let lastScrollTop = 0;
     let isScrolling = false;
     $: if (targetMessage != totalMessages) { isScrolling = false } // Reactive statement to reset isScrolling when not at the bottom of the conversation
-
-
-
-
-    /*
-    // Reactive state management for fine scrolling scroll adjustments in fetchConversationPart function
-    let initialBeforeScrollTop = null; 
-    let initialGripLocation = gripLocation;  // Initialize with the current gripLocation value
-    // Reactive statement to monitor gripLocation
-    $: {
-      // Logic to reset initialBeforeScrollTop when gripLocation changes
-      if (initialBeforeScrollTop !== null && gripLocation !== initialGripLocation) {
-        initialBeforeScrollTop = null;
-      }
-      initialGripLocation = gripLocation;  // Update initialGripPosition to the new value
-    }
-    */
 
     
     $: targetMessage = $scrollStore.targetMessage; // Reactive assignment
     $: totalMessages = $scrollStore.totalMessages; // Reactive assignment
 
-    // paddingBottom connects the top of user input to the bottom of last message as user types and then scrolls to bottom
+    // paddingBottom connects the top of user input to the bottom of last message for when the user scrolls to bottom
     let paddingBottom = '';  // Declare a variable to hold the padding-bottom value
     // Create a reactive statement to update paddingBottom whenever userInputHeight changes
     $: {
       if (isEndOfConversation) {
+          setInLocalStorage('userInputComponentHeight', 190); // fixed height because component has fixed height
           paddingBottom = `padding-bottom: ${$scrollStore.userInputComponentHeight}px;`;
           // scroll to bottom of conversation container so the send button is always visible
           scrollToBottom();
@@ -69,7 +52,6 @@
           paddingBottom = '';
       }
     } // end of reactive statement to update paddingBottom
-
   
 
     function scrollToBottom() {
@@ -102,65 +84,7 @@
           //console.log(`isStartOfConversation: ${isStartOfConversation}`);
         }
       } // end of reactive statement to start/end of conversation 
-      
-    
 
-
-     
-/*
-
-    let hasResetEndScrollTrigger = false;  // Initialize a flag to keep track  
-    let endScrollTrigger = false;
-    let startScrollTrigger = false;
-
-
-    $: { 
-      if (endScrollTrigger) { 
-        console.log(`endScrollTrigger: ${endScrollTrigger}`);
-      }
-      if (!endScrollTrigger) { 
-        console.log(`!endScrollTrigger: ${endScrollTrigger}`);
-      }
-    }  
-
-
-    
-    $: {
-      if (isEndOfConversation && !endScrollTrigger) {
-        if (container) {
-          container.scrollTop = container.scrollHeight;
-          console.log(`1`);
-        }
-        tick().then(() => {
-          if (userInputComponent) {
-            container.scrollTop = container.scrollHeight;
-            console.log(`2`);
-          }
-        });
-        endScrollTrigger = true;  // Prevent further downward scrolling until flag is reset
-        console.log('3');
-        startScrollTrigger = false; // Reset the other flag
-      } else if (isStartOfConversation && !startScrollTrigger) {
-        if (container) {
-          container.scrollTop = 0;
-          console.log(`4`);
-        }
-        startScrollTrigger = true; // Prevent further upward scrolling until flag is reset
-        endScrollTrigger = false; // Reset the other flag
-        console.log(`5`);
-        //console.log(`endScrollTrigger: ${endScrollTrigger}`);
-      } else if (!hasResetEndScrollTrigger) {
-        // Reset both flags if neither condition is met
-        endScrollTrigger = false;
-        //console.log(`endScrollTrigger: ${endScrollTrigger}`);
-        startScrollTrigger = false;
-        hasResetEndScrollTrigger = true; // Prevent further resetting until flag is reset
-        //console.log(`hasResetEndScrollTrigger: ${hasResetEndScrollTrigger}`);
-        console.log(`6`);
-      }
-    } // end of reactive statement to position the view of the messages correctly when the user input component is displayed or when at top of conversation showing from very start
-    
-    */
 
     // Scrubbing grip control logic
     // gripLocation is a number between 0 and 1 that represents the position of the grip relative to the whole conversation
