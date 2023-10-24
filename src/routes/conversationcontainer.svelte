@@ -31,6 +31,9 @@
     let containerHeightDifference; // difference between beforeContainerHeight and afterContainerHeight
     let newScrollTop; // new scrollTop after accounting for the difference between before and after scrollTop and containerHeight
 
+    let hasReachedStart = false; // Initialize the flag for the start of the conversation
+    let hasReachedEnd = false; // Initialize the flag for the end of the conversation
+
     let lastScrollTop = 0;
     let isScrolling = false;
     $: if (targetMessage != totalMessages) { isScrolling = false } // Reactive statement to reset isScrolling when not at the bottom of the conversation
@@ -53,6 +56,14 @@
       }
     } // end of reactive statement to update paddingBottom
   
+    // Set flags indicating the conversation array contains either of the first or last message in the conversation
+      // Flags can then be use for various logic, e.g. to prevent the user from scrolling past the start or end of the conversation
+      // or to prevent operations for seeking out of bounds of the conversation
+      function updateEdgeFlags(fetchedMessages) {
+        hasReachedStart = fetchedMessages.some(msg => msg.block_id === "block_id_1");
+        hasReachedEnd = fetchedMessages.some(msg => msg.block_id === `block_id_${totalMessages}`);
+      }
+
 
     function scrollToBottom() {
       if (isEndOfConversation && !isScrolling) {
@@ -70,9 +81,7 @@
     } // end of scrollToBottom function
 
 
-
-
-    // Start/End of conversation logic to display the user input component only after the last message in the entire conversation history
+    // Start/End of conversation flags
     // AND to position the view of the messages correctly when the user input component is displayed or when at top of conversation showing from very start
     let isEndOfConversation = false;  // Initialize to false
     let isStartOfConversation = false; // Initialize to true
@@ -139,6 +148,34 @@
       // Callback function to be executed when the top or bottom observer elements are intersecting
       // due to the user fine scrolling with the elastic grip element up or down respectively
       const observerCallback = async (entries, observer) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            const dragSpeedUpDown = parseFloat(localStorage.getItem('dragSpeedUpDown')) || 0;
+            const direction = Math.sign(dragSpeedUpDown);  // 1 for down, -1 for up
+
+            if (direction > 0) {
+              if (hasReachedEnd) {
+                console.log("At End of Conversation");  // Debug line
+                return;  // Skip the fetch operation
+              }
+              await fetchConversationPart("DOWN");
+            } else if (direction < 0) {
+              if (hasReachedStart) {
+                console.log("At Start of Conversation");  // Debug line
+                return;  // Skip the fetch operation
+              }
+              await fetchConversationPart("UP");
+            }
+          }
+        }
+      }; // end of observerCallback function
+
+
+
+
+
+      /*
+      const observerCallback = async (entries, observer) => {
 
         for (const entry of entries) {
           if (entry.isIntersecting) {
@@ -157,6 +194,7 @@
           }
         }
       }; // end of observerCallback function
+      */
 
       //const observer = new IntersectionObserver(observerCallback, observerOptions);
       observer = new IntersectionObserver(observerCallback, observerOptions); // initialized globally above
@@ -183,9 +221,6 @@
       observ.observe(contain, { childList: true, subtree: true, attributes: true, characterData: true });
 
 
-
-
-
       // Event listener to control scrollBottom function when at end of entire conversation
       contain.addEventListener("scroll", function() {
       let st = contain.scrollTop;
@@ -202,10 +237,6 @@
         lastScrollTop = st <= 0 ? 0 : st;
         //console.log(`last bit ran`);
       }, false);
-
-
-
-
 
 
   }); // end of onMount
@@ -287,7 +318,7 @@ async function fetchConversationSlice(gripLocation, num_messages) {
 
     if (fetchedData && Array.isArray(fetchedData.message)) {
       conversation = fetchedData.message;
-
+      updateEdgeFlags(fetchedData.message); // Update the edge flags
     } else {
       console.warn("Fetched data is not in the expected format:", fetchedData);
       conversation = [];
@@ -346,6 +377,9 @@ async function fetchConversationPart(direction) {
       const fetchedData = await invoke('fetch_conversation_history', { params: {start, end} });
   
       if (fetchedData && Array.isArray(fetchedData.message)) {
+
+        updateEdgeFlags(fetchedData.message); // Update the edge flags
+
         if (direction === "UP") {
 
           beforeScrollTop = container.scrollTop; // Measure the scroll position before modifying the array
