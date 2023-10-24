@@ -60,12 +60,12 @@
     // Flags can then be use for various logic, e.g. to prevent the user from scrolling past the start or end of the conversation
     // or to prevent operations for seeking out of bounds of the conversation
     function updateEdgeFlags(fetchedMessages) {
-      console.log(`updateEdgeFlags ran`);  // Debug line
+      //console.log(`updateEdgeFlags ran`);  // Debug line
       hasReachedStart = fetchedMessages.some(msg => msg.block_id === "block_id_1"); 
-      console.log(fetchedMessages);  // Debug line
-      console.log(`hasReachedStart: ${hasReachedStart}`);  // Debug line
+      //console.log(fetchedMessages);  // Debug line
+      //console.log(`hasReachedStart: ${hasReachedStart}`);  // Debug line
       hasReachedEnd = fetchedMessages.some(msg => msg.block_id === `block_id_${num_user_llm_messages}`);
-      console.log(`hasReachedEnd: ${hasReachedEnd}`);  // Debug line
+      //console.log(`hasReachedEnd: ${hasReachedEnd}`);  // Debug line
     } // end of updateEdgeFlags function %% currently failing to update the flags correctly when user elastic scrolls in from prior message group
 
     function scrollToBottom() {
@@ -158,13 +158,13 @@
 
             if (direction > 0) {
               if (hasReachedEnd) {
-                console.log("At End of Conversation");  // Debug line
+                console.log("At END of Conversation");  // Debug line
                 return;  // Skip the fetch operation
               }
               await fetchConversationPart("DOWN");
             } else if (direction < 0) {
               if (hasReachedStart) {
-                console.log("At Start of Conversation");  // Debug line
+                console.log("At START of Conversation");  // Debug line
                 return;  // Skip the fetch operation
               }
               await fetchConversationPart("UP");
@@ -321,8 +321,8 @@ async function fetchConversationSlice(gripLocation, num_messages) {
     if (fetchedData && Array.isArray(fetchedData.message)) {
       conversation = fetchedData.message;
       updateEdgeFlags(fetchedData.message); // Update the edge flags
-      console.log(`Updated conversation slice: ${conversation}`);  // Debug line
-      console.log*(conversation);  // Debug line
+      //console.log(`Updated conversation slice: ${conversation}`);  // Debug line
+      //console.log*(conversation);  // Debug line
     } else {
       console.warn("Fetched data is not in the expected format:", fetchedData);
       conversation = [];
@@ -392,8 +392,24 @@ async function fetchConversationPart(direction) {
           //console.log(`beforeScrollTop: ${beforeScrollTop}`);  // Debug line
           //console.log(`beforeContainerHeight: ${beforeContainerHeight}`);  // Debug line
 
-          // Add new messages to the start of the conversation array
-          conversation = [...fetchedData.message, ...conversation];
+
+
+
+
+
+
+          // CONDITIONALLY add new messages to the start of the conversation array
+          if (!hasReachedStart) {
+            conversation = [...fetchedData.message, ...conversation];
+            console.log(`Duplicate Start. Did not prepend.`);  // Debug line
+          } 
+
+
+
+
+
+
+
 
           //console.log("Current conversation:", conversation);  // Debug line
              
@@ -427,8 +443,22 @@ async function fetchConversationPart(direction) {
 
           // If the messages are not the same, append them to the conversation array
           
-            conversation = [...conversation, ...fetchedData.message]; // Update for reactivity
 
+
+
+
+
+            if (!hasReachedEnd) {
+              conversation = [...conversation, ...fetchedData.message]; // Update for reactivity
+              console.log(`Duplicate End. Did not append.`);  // Debug line
+            }
+          
+          
+          
+          
+          
+          
+          
             // Update the last fetched messages
             lastFetchedDownMessages = fetchedData.message;
           
