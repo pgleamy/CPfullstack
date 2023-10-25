@@ -65,7 +65,7 @@
 
     resetElasticGripToNeutral();
 
-    setInitialGripPosition();
+    setInitialGripPosition(); // restore grip position from local storage
 
     let gripAtBottom = get('gripPosition');
     if (gripAtBottom > 0) {
@@ -87,6 +87,7 @@
   } // End of startDrag()
 
   function stopDrag(e) {
+    if (isElasticDragging) return; // If elastic drag is active, exit
     isDragging = false;
     gripColor = "#00C040";
     document.body.style.userSelect = "auto";
@@ -98,6 +99,7 @@
   function drag(e) {
 
     if (isDragging) {
+      if (isElasticDragging) return; // If elastic drag is active, exit
       e.preventDefault();
       const container = document.getElementById("custom-scrollbar");
       const rect = container.getBoundingClientRect();
@@ -243,7 +245,7 @@ let deltaY = null; // This will store the delta Y position of the mouse
 let initialDragY;  // Y-coordinate of where the drag started
 
   function startElasticDrag(event) {
-      //if (isDragging) return; // If normal drag is active, exit
+      if (isDragging) return; // If normal drag is active, exit
       isElasticDragging = true;
       startY = event.clientY;  // Store the initial Y position of the mouse
       window.addEventListener('mousemove', elasticDrag); // Listen to mousemove on the window
@@ -252,6 +254,7 @@ let initialDragY;  // Y-coordinate of where the drag started
   } // End of startElasticDrag()
 
   function stopElasticDrag(event) {
+      if (isDragging) return; // If normal drag is active, exit
       isElasticDragging = false;
       startY = null;  // Reset the initial Y position
       window.removeEventListener('mousemove', elasticDrag); // Remove the mousemove listener from the window
@@ -272,6 +275,8 @@ let initialDragY;  // Y-coordinate of where the drag started
   } // End of stopElasticDrag()
 
   function elasticDrag(e) {
+
+      if (isDragging) return; // If normal drag is active, exit
       
       e.stopPropagation();
 

@@ -136,7 +136,7 @@
 
       // start a simple debugging timer
       //const startTime = Date.now();
-      fetchConversationSlice(gripLocation, num_messages); 
+      fetchConversationSlice(gripLocation, num_messages); // places the conversation back to the last known position
       //const endTime = Date.now();
       //const elapsed = endTime - startTime;
 
@@ -158,13 +158,13 @@
 
             if (direction > 0) {
               if (hasReachedEnd) {
-                console.log("At END of Conversation");  // Debug line
+                //console.log("At END of Conversation");  // Debug line
                 return;  // Skip the fetch operation
               }
               await fetchConversationPart("DOWN");
             } else if (direction < 0) {
               if (hasReachedStart) {
-                console.log("At START of Conversation");  // Debug line
+                //console.log("At START of Conversation");  // Debug line
                 return;  // Skip the fetch operation
               }
               await fetchConversationPart("UP");
@@ -173,30 +173,6 @@
         }
       }; // end of observerCallback function
 
-
-
-
-      /*
-      const observerCallback = async (entries, observer) => {
-
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            const dragSpeedUpDown = parseFloat(localStorage.getItem('dragSpeedUpDown')) || 0;
-            const direction = Math.sign(dragSpeedUpDown);  // 1 for down, -1 for up
-
-            //console.log(`direction: ${direction}`);  // Debug line
-
-            if (direction > 0) {
-              //console.log('Triggered later messages...');
-              await fetchConversationPart("DOWN");
-            } else if (direction < 0) {
-              //console.log('Triggered earlier messages...');
-              await fetchConversationPart("UP");
-            }
-          }
-        }
-      }; // end of observerCallback function
-      */
 
       //const observer = new IntersectionObserver(observerCallback, observerOptions);
       observer = new IntersectionObserver(observerCallback, observerOptions); // initialized globally above
@@ -243,10 +219,12 @@
 
   }); // end of onMount
 
+
   onDestroy(() => {
     //container.removeEventListener('scroll', handleScroll);
   });
 
+  
   // Non-reactive function to return the container pixel height
   async function getContainerHeight() {
       const contain = document.getElementById('clip-container');
