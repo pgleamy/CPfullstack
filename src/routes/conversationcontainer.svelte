@@ -144,7 +144,7 @@
 
       const observerOptions = {
         root: container,
-        rootMargin: '200px', // how early to start fetching the next part of the conversation
+        rootMargin: '10px', // how early to start fetching the next part of the conversation
         threshold: 0
       };
 
@@ -373,7 +373,7 @@ async function fetchConversationPart(direction) {
           // CONDITIONALLY add new messages to the start of the conversation array
           if (!hasReachedStart) {
             conversation = [...fetchedData.message, ...conversation];
-            console.log(`Duplicate Start. Did not prepend.`);  // Debug line
+            //console.log(`Duplicate Start. Did not prepend.`);  // Debug line
           } 
 
           //console.log("Current conversation:", conversation);  // Debug line
@@ -410,7 +410,7 @@ async function fetchConversationPart(direction) {
           
             if (!hasReachedEnd) {
               conversation = [...conversation, ...fetchedData.message]; // Update for reactivity
-              console.log(`Duplicate End. Did not append.`);  // Debug line
+              //console.log(`Duplicate End. Did not append.`);  // Debug line
             }
 
             // Update the last fetched messages
@@ -476,7 +476,7 @@ function handleScroll() {
 <div id="clip-container" bind:this={container} class="parent-container">
   <div id="conversation-container">
 
-    <div bind:this={topObserverElement} id="top-observer"></div>
+    <div bind:this={topObserverElement} id="top-observer" ></div>
 
     {#each conversation as entry, index}
       <div class="{index === conversation.length - 1 ? 'last-message-class' : ''}" 
@@ -491,7 +491,7 @@ function handleScroll() {
           {/if}
       </div>
     {/each}
-    <div bind:this={bottomObserverElement} id="bottom-observer"></div>
+    <div bind:this={bottomObserverElement} id="bottom-observer" ></div>
   </div> <!-- End of conversation-container -->
 </div> <!-- End of clip-container -->
 

@@ -67,7 +67,7 @@ const load = () => {
     unsentPrompt: get('unsentPrompt') || "", // The unsent prompt contents
 
     unsentPromptHeight: parseInt(get('unsentPromptHeight')) || 0, // Height of the unsent prompt component elements in pixels
- 
+
     // variables for the persistent scroll restoration feature
     block_idDisplayedInMiddleOfDOM: get('block_idDisplayedInMiddleOfDom') || "", // The message currently displayed in the middle of the DOM
     startRestore: get('startRestore') || "", // The start block_id of the restore range
@@ -101,8 +101,9 @@ export const scrollStore = writable({
   ...load()
 });
 
-// Subscribe to the Svelte store (scrollStore) to save any changes to Local Storage
+// Subscribe to the Svelte store (scrollStore) to save any changes to Local Storage on any changes to the store variables
 const unsubscribe = scrollStore.subscribe(currentSettings => {
+  // save all settings to Local Storage
   save(currentSettings);
 });
 
@@ -124,5 +125,5 @@ export {
   get,
   remove,
   load,
-  save
+  save,
 };
