@@ -55,7 +55,7 @@
       renderedStartOffset = relativeOffsets[0];
       // Logic to determine the height of the last item in pixels
       const lastItemHeight = /* your logic here */;
-      renderedEndOffset = relativeOffsets[itemCount - 1] + itemHeights[itemCount - 1];
+      renderedEndOffset = relativeOffsets[itemCount - 1] + lastItemHeight;
       // Very detailed console log that creates a table showing the values of all of the current conversation[] items labelled and stacked vertically
       let tableData = [];
       for (let i = 0; i < itemCount; i++) {
@@ -71,7 +71,7 @@
         
     }); // End of conversation[] subscribe
   
-    
+
     onMount(() => {
       return () => {
         // Cleanup
