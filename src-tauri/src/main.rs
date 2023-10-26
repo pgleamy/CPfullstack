@@ -1,5 +1,13 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+// Supports single instance plugin
+use tauri:: {Manager};
+#[derive(Clone, serde::Serialize)]
+struct Payload {
+  args: Vec<String>,
+  cwd: String,
+} // end single instance plugin support
+
 mod backend_commands;
 use backend_commands::send_prompt;
 
@@ -134,9 +142,16 @@ fn main() -> PyResult<()> {
 
     tauri::Builder::default()
 
+        .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| { // limits ChatPerfect to a single running instance See: https://github.com/tauri-apps/plugins-workspace/tree/v1/plugins/single-instance
+            println!("{}, {argv:?}, {cwd}", app.package_info().name);
+
+            app.emit_all("single-instance", Payload { args: argv, cwd }).unwrap();
+        }))
         .invoke_handler(tauri::generate_handler![store_openai_key, get_openai_key, send_prompt, fetch_conversation_history, get_num_messages, get_total_llm_user_messages])
-        .plugin(tauri_plugin_window_state::Builder::default().build()) // persist Window state plugin
-        .plugin(tauri_plugin_printer::init()) // printer access plugin
+        .plugin(tauri_plugin_window_state::Builder::default().build()) // persist Window state plugin See: https://github.com/tauri-apps/plugins-workspace/tree/v1/plugins/window-state
+        .plugin(tauri_plugin_printer::init()) // printer access plugin See: https://crates.io/crates/tauri-plugin-printer/versions version 0.5.2
+        .plugin(tauri_plugin_fs_watch::init()) // file system watch plugin See: https://github.com/tauri-apps/plugins-workspace/tree/v1/plugins/fs-watch
+        .plugin(tauri_plugin_sql::Builder::default().build()) // sqlite access plugin See: https://github.com/tauri-apps/plugins-workspace/tree/v1/plugins/sql
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 
