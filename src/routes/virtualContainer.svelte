@@ -1,7 +1,17 @@
 <script>
     import { onMount } from 'svelte';
     import { conversation } from './conversationcontainer.svelte';
-    import { scrollStore, get, setInLocalStorage, totalMessages, targetMessage, targetMessagesPixelHeight, gripPosition, dragSpeedUpDown } from '$lib/scrollStore.js'; 
+    import { 
+        scrollStore, 
+        get, 
+        setInLocalStorage, 
+        totalMessages, 
+        targetMessage, 
+        targetMessagesPixelHeight, 
+        gripPosition, 
+        dragSpeedUpDown, 
+        messageHeight 
+    } from '$lib/scrollStore.js'; 
   
     const fixedOffset = 5000000;
     let itemCount = 0; // Number of items in the conversation[]
@@ -15,7 +25,6 @@
         scrollingDirection = $dragSpeedUpDown < 0 ? 'UP' : 'DOWN';
         console.log('scrollingDirection', scrollingDirection);
     }
-
 
     // conversation[] subscription
     // Initialize and monitor the conversation array from conversationcontainer.svelte
@@ -33,29 +42,16 @@
   
       // Logic to trim messages based on itemCount and scrollingDirection
       if (itemCount > 3) {
-        let messagesToTrim = 0;
-
-        // If scrolling DOWN, trim the earliest messages
-        if (scrollingDirection === "DOWN") {
-          messagesToTrim = messageCounts.shift();
-          conversation.update(oldMessages => oldMessages.slice(messagesToTrim));
-          relativeOffsets.shift();
-        }
-        
-        // If scrolling UP, trim the latest messages
-        if (scrollingDirection === "UP") {
-          messagesToTrim = messageCounts.pop();
-          conversation.update(oldMessages => oldMessages.slice(0, -messagesToTrim));
-          relativeOffsets.pop();
-        }
-        
-        itemCount--;
+        trimArrays(scrollingDirection);
       }
 
+      // Calculate renderedStartOffset and renderedEndOffset then output to console log
+      // a report of the current state of the conversation[] array as a table
       renderedStartOffset = relativeOffsets[0];
-      // Logic to determine the height of the last item in pixels
-      const lastItemHeight = /* your logic here */;
+      let storedHeight = updateLastItemHeight(); 
+      let lastItemHeight = storedHeight ? storedHeight : 0;
       renderedEndOffset = relativeOffsets[itemCount - 1] + lastItemHeight;
+
       // Very detailed console log that creates a table showing the values of all of the current conversation[] items labelled and stacked vertically
       let tableData = [];
       for (let i = 0; i < itemCount; i++) {
@@ -70,6 +66,51 @@
       console.log(`Start Offset: ${renderedStartOffset}, End Offset: ${renderedEndOffset}`);
         
     }); // End of conversation[] subscribe
+
+
+
+    // Obtains the pixel height of the last item in the conversation[] array
+    function updateLastItemHeight() {
+        let lastItemHeight = 0;
+        try {
+            const storedHeight = get('messageHeight'); 
+            lastItemHeight = storedHeight ? storedHeight : 0;
+        } catch (error) {
+            console.log('Failed to retrieve messageHeight from local storage: ', error);
+        }
+
+        // Based on the scrolling direction, either append or prepend to itemHeights[]
+        if (scrollingDirection === 'DOWN') {
+            itemHeights.push(lastItemHeight);
+        } else if (scrollingDirection === 'UP') {
+            itemHeights.unshift(lastItemHeight);
+        }
+    }
+
+
+
+    function trimArrays(direction) {
+        let messagesToTrim = 0;
+        
+        if (direction === 'DOWN') {
+            messagesToTrim = messageCounts.shift();
+            conversation.update(oldMessages => oldMessages.slice(messagesToTrim));
+            relativeOffsets.shift();
+            itemHeights.shift();
+        }
+        
+        if (direction === 'UP') {
+            messagesToTrim = messageCounts.pop();
+            conversation.update(oldMessages => oldMessages.slice(0, -messagesToTrim));
+            relativeOffsets.pop();
+            itemHeights.pop();
+        }
+        
+        itemCount--;
+    }
+
+
+
   
 
     onMount(() => {
