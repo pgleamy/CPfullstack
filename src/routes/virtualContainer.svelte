@@ -10,7 +10,8 @@
         targetMessagesPixelHeight, 
         gripPosition, 
         dragSpeedUpDown, 
-        messageHeight 
+        messageHeight, // add to local storage
+        fetchedMessageCount  // add to local storage
     } from '$lib/scrollStore.js'; 
   
     const fixedOffset = 5000000;
@@ -36,8 +37,9 @@
       
       // Your existing code for determining new messages and updating arrays
       itemCount++;
-      messageCounts.push(10); // Assuming it's a part
-      const newRelativeOffset = /* logic to calculate new offset based on added messages */;
+      const fetchedMessageCount = get('fetchedMessageCount') || 0; // Retrieve the number of fetched messages from local storage
+      messageCounts.push(fetchedMessageCount); // number of messages fetches as reported in local storage
+      const newRelativeOffset = 0/* logic to calculate new offset based on added messages */;
       relativeOffsets.push(newRelativeOffset);
   
       // Logic to trim messages based on itemCount and scrollingDirection
