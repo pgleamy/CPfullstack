@@ -246,7 +246,6 @@ let initialDragY;  // Y-coordinate of where the drag started
   function startElasticDrag(event) {
       if (isDragging) return; // If normal drag is active, exit
       isElasticDragging = true;
-      setInLocalStorage('scrollObserversVisible', true) // Show scroll observers while elastic grip is being dragged
       startY = event.clientY;  // Store the initial Y position of the mouse
       window.addEventListener('mousemove', elasticDrag); // Listen to mousemove on the window
       window.addEventListener('mouseup', stopElasticDrag);  // Listen to mouseup on the window
@@ -256,7 +255,6 @@ let initialDragY;  // Y-coordinate of where the drag started
   function stopElasticDrag(event) {
       if (isDragging) return; // If normal drag is active, exit
       isElasticDragging = false;
-      setInLocalStorage('scrollObserversVisible', false) // Hide scroll observers when elastic grip is released
       startY = null;  // Reset the initial Y position
       window.removeEventListener('mousemove', elasticDrag); // Remove the mousemove listener from the window
       window.removeEventListener('mouseup', stopElasticDrag);  // Remove the mouseup listener from the window

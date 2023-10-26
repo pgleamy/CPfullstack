@@ -135,8 +135,6 @@ fn main() -> PyResult<()> {
     tauri::Builder::default()
 
         .invoke_handler(tauri::generate_handler![store_openai_key, get_openai_key, send_prompt, fetch_conversation_history, get_num_messages, get_total_llm_user_messages])
-        .plugin(tauri_plugin_window_state::Builder::default().build()) // persist Window state plugin
-        .plugin(tauri_plugin_printer::init()) // printer access plugin
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 

@@ -6,8 +6,9 @@
 	import { onMount } from 'svelte';
 	import { loadSettings, updateSettings } from '$lib/settings.js';
 	// reactive state management for scrollsearch component
-    import { scrollStore, setInLocalStorage, get } from '$lib/scrollStore.js'; 
+    import {scrollStore} from '$lib/scrollStore.js'; 
 	import { activePage } from '$lib/headerchange.js';
+
 
 	let hideHeader = false;
 
@@ -37,7 +38,7 @@
 	$: logo = $settings.Gender === 'Argus' ? 'src/lib/images/Argus_logo_clear.png' : 'src/lib/images/Iris_logo_clear.png';
 	$: name = $settings.Gender === 'Argus' ? 'Argus' : 'Iris';
 	$: roleClass = $settings.Role === 'Write' ? 'write' : $settings.Role === 'Code' ? 'code' : 'talk';
-
+	
 </script>
 
 <header class:hide={hideHeader} class={$activePage === 'chatPage' ? 'bg-black' : 'bg-transparent'}> <!-- Add the transition directive here -->

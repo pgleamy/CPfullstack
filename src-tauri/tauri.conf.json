@@ -53,13 +53,14 @@
     "windows": [
       {
         "fullscreen": false,
-        "height": 768,
+        "width": 750,
+        "height": 850,
         "resizable": true,
-        "title": "ChatPerfect",
-        "width": 1024,
-        "minHeight": 600,
-        "minWidth": 800, 
-        "decorations": true
+        "title": "ChatPerfect (0.9 beta)",
+        "minWidth": 650,
+        "minHeight": 650,
+        "decorations": true,
+        "visible": false
       }
     ]
   }
