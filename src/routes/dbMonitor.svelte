@@ -1,4 +1,5 @@
-// pseudocode
+// pseudocode monitors all events in a database and displays them as a vertical sparkline in the interface
+
 <script>
     
     import { onMount } from 'svelte';
