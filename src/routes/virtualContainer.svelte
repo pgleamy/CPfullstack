@@ -10,8 +10,8 @@
         targetMessagesPixelHeight, 
         gripPosition, 
         dragSpeedUpDown, 
-        messageHeight, // add to local storage
-        fetchedMessageCount  // add to local storage
+        messagesItemHeight, 
+        fetchedMessageCount  
     } from '$lib/scrollStore.js'; 
   
     const fixedOffset = 5000000;

@@ -39,23 +39,21 @@ const remove = (key) => {
 const load = () => {
 
   return {
-
     gripPosition: parseFloat(get('gripPosition')) || 0,
-
     downArrow: {
       isVisible: get('downArrow_isVisible') !== null ? JSON.parse(get('downArrow_isVisible')) : false
     },
-    //upArrow: {
-      //isVisible: get('upArrow_isVisible') !== null ? JSON.parse(get('upArrow_isVisible')) : false
-    //},
-    //searchModal: {
-      //isOpen: get('searchModal_isOpen') !== null ? JSON.parse(get('searchModal_isOpen')) : false,
-      //query: get('searchModal_query') || "",
-    //},
-    //markingSystem: {
-      //hits: get('markingSystem_hits') !== null ? JSON.parse(get('markingSystem_hits')) : [],
-      //consolidatedHits: get('markingSystem_consolidatedHits') !== null ? JSON.parse(get('markingSystem_consolidatedHits')) : [],
-    //},
+    upArrow: {
+      isVisible: get('upArrow_isVisible') !== null ? JSON.parse(get('upArrow_isVisible')) : false
+    },
+    searchModal: {
+      isOpen: get('searchModal_isOpen') !== null ? JSON.parse(get('searchModal_isOpen')) : false,
+      query: get('searchModal_query') || "",
+    },
+    markingSystem: {
+      hits: get('markingSystem_hits') !== null ? JSON.parse(get('markingSystem_hits')) : [],
+      consolidatedHits: get('markingSystem_consolidatedHits') !== null ? JSON.parse(get('markingSystem_consolidatedHits')) : [],
+    },
     totalMessages: parseInt(get('totalMessages')) || 0,
 
     targetMessage: parseInt(get('targetMessage')) || 0, // The target message of the fetchConversationSlice function
@@ -68,17 +66,14 @@ const load = () => {
 
     unsentPrompt: get('unsentPrompt') || "", // The unsent prompt contents
 
-    //unsentPromptHeight: parseInt(get('unsentPromptHeight')) || 0, // Height of the unsent prompt component elements in pixels
+    unsentPromptHeight: parseInt(get('unsentPromptHeight')) || 0, // Height of the unsent prompt component elements in pixels
 
     // variables for the persistent scroll restoration feature
-    //block_idDisplayedInMiddleOfDOM: get('block_idDisplayedInMiddleOfDom') || "", // The message currently displayed in the middle of the DOM
-    //startRestore: get('startRestore') || "", // The start block_id of the restore range
-    //endRestore: get('endRestore') || "", // The end block_id of the restore range
-    //targetMessagesPixelHeightRestore: parseInt(get('targetMessagesPixelHeightRestore')) || 0, // The target messages pixel height restoring into
-    //scrollTopRestore: parseInt(get('scrollTopRestore')) || 0, // Calculated ScrollTop value to restore to
-
-    fetchedMessageCount: parseInt(get('fetchedMessageCount')) || 0, // The number of individual messages fetched from the server in one item group
-    messagesItemHeight: parseInt(get('messagesItemHeight')) || 0, // The height of the fetched item group of messages in pixels
+    block_idDisplayedInMiddleOfDOM: get('block_idDisplayedInMiddleOfDom') || "", // The message currently displayed in the middle of the DOM
+    startRestore: get('startRestore') || "", // The start block_id of the restore range
+    endRestore: get('endRestore') || "", // The end block_id of the restore range
+    targetMessagesPixelHeightRestore: parseInt(get('targetMessagesPixelHeightRestore')) || 0, // The target messages pixel height restoring into
+    scrollTopRestore: parseInt(get('scrollTopRestore')) || 0, // Calculated ScrollTop value to restore to
 
   };
 };

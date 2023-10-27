@@ -15,6 +15,8 @@
     let num_user_llm_messages = 0; // total number of user and llm messages in the conversation
     let container; // reference to the conversation container element    
 
+    const userInputFixedHeight = 190; // fixed height of the user input component. This is to push up the last message at end of conversation to be visible above the user input component
+
      // Infinite scroll observers
     let topObserverElement;
     let bottomObserverElement;
@@ -46,8 +48,7 @@
     // Create a reactive statement to update paddingBottom whenever userInputHeight changes
     $: {
       if (isEndOfConversation) {
-          setInLocalStorage('userInputComponentHeight', 190); // fixed height because component has fixed height
-          paddingBottom = `padding-bottom: ${$scrollStore.userInputComponentHeight}px;`;
+          paddingBottom = `padding-bottom: ${userInputFixedHeight}px;`;
           // scroll to bottom of conversation container so the send button is always visible
           scrollToBottom();
       } else {
