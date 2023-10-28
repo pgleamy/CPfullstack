@@ -1,18 +1,19 @@
 <script>
     import { onMount } from 'svelte';
-    import { conversation } from './conversationcontainer.svelte';
     import { 
         scrollStore, 
         get, 
         setInLocalStorage, 
-        totalMessages, 
-        targetMessage, 
-        targetMessagesPixelHeight, 
-        gripPosition, 
-        dragSpeedUpDown, 
-        messagesItemHeight, 
-        fetchedMessageCount  
+        
     } from '$lib/scrollStore.js'; 
+
+    // Local variable to hold the conversation
+    let conversation = [];
+    // Reactive statement to update conversation when conversationArray changes
+    $: {
+      conversation = JSON.parse(JSON.stringify(conversationArray));
+      console.log('conversation:', conversation);
+    }
   
     const fixedOffset = 5000000;
     const massiveContainerHeight = '10000000px';

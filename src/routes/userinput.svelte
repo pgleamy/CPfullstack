@@ -128,7 +128,7 @@ Quill.register(CodeBlockWithTitle);
     
     /* The Quill editor when focussed */
     #editor-container:focus-visible {
-        width: calc(100vw - 67px);
+        width: calc(100vw - 50px);
         position: fixed;
         bottom: 4px;
         max-height: 400px; /* 180px */
@@ -139,7 +139,7 @@ Quill.register(CodeBlockWithTitle);
         padding: 0px;
         padding-left: 0px;
         margin: 0px;
-        border-radius: 20px;
+        border-radius: 10px;
         border: 2px solid #593d04;
         overflow-y: auto;
         overflow-x: hidden;
@@ -150,18 +150,18 @@ Quill.register(CodeBlockWithTitle);
     }   
 
     #editor {
-        
-        width: calc(100vw - 67px);
+        width: calc(100vw - 59px);
         position: static;
         height: 300px; 
         background: black;
         opacity: 0.18;
         color: rgba(255, 255, 255, 0.05);
-        padding: 0px;
         padding-left: 0px;
-        
+        padding-right: 0px;
+        padding-bottom: 22px;
+        padding-right: 0px;
         margin: 0px;
-        border-radius: 17px;
+        border-radius: 10px;
         border: 2px solid #593d0474;
         overflow-y: auto;
         overflow-wrap: break-word;
@@ -171,14 +171,14 @@ Quill.register(CodeBlockWithTitle);
         scroll-behavior: smooth;
         scrollbar-width: thin;
         scrollbar-color: #1d24a1;
-        transition: opacity 0.2s ease, color 0.2s ease;
+        transition: all opacity 0.2s ease, color 0.2s ease;
 
         
     }   
 
     /* The Quill editor when it's focused */
     #editor:focus-within {
-        border:2px solid rgba(2, 92, 2, 1);
+        border:2px solid rgb(2, 71, 2);
         box-shadow: none;
         outline: none;
         opacity: 0.95;
@@ -186,7 +186,7 @@ Quill.register(CodeBlockWithTitle);
         color: rgba(255, 255, 255, 1);
         overflow-y: auto;
         overflow-x: hidden;
-        transition: opacity 0.2s ease, color 0.2s ease;
+        transition: all opacity 0.2s ease, color 0.2s ease;
     }
 
     #button-container {
@@ -196,18 +196,18 @@ Quill.register(CodeBlockWithTitle);
         justify-content: right;
         align-items: right;
         position: fixed;
-        bottom: 45px;
-        right: 64px;
+        bottom: 20px;
+        right: 58px;
         background-color: transparent;
     }
 
     #button-container button {
-        height: 39px;
-        width: 24px;
+        height: 17px;
+        width: calc(100vw - 70px);
         padding: 0px;
-        border: 11px dotted rgb(0, 3, 23);
+        border: 2px dotted rgb(10, 128, 28); /* 2px dotted rgb(0, 3, 23); */
         border-radius: 40px;
-        background-color: rgba(82, 227, 50, 0.542);
+        background-color: transparent; /*rgba(36, 98, 22, 0.542);*/
         display: flex;
         align-items: right;
         justify-content: right;
@@ -225,7 +225,8 @@ Quill.register(CodeBlockWithTitle);
     }
 
     #button-container button:not(:disabled):hover {
-        background-color: #04e004;
+        background-color: #01ac01;
+        border: 2px dotted rgb(0, 0, 0);
         transition: background-color 0.05s ease-in-out 0.05s;
     }
 

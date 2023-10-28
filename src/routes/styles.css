@@ -110,7 +110,7 @@ button:focus:not(:focus-visible) {
   }
   
   ::-webkit-scrollbar-thumb {
-	background: rgba(2, 113, 123, 0.3);  /* color of the thumb */
+	background: rgba(2, 134, 146, 0.3);  /* color of the thumb */
 	border-radius: 10px;
 	border: 3px solid transparent;  /* invisible border */
   	background-clip: content-box;  /* so the background doesn't extend into the border */
@@ -139,8 +139,8 @@ button:focus:not(:focus-visible) {
 	background-color: rgba(0, 53, 58, 0.3)!important;
 	margin-left: 7px !important;
 	padding-left: 10px !important;
-	Margin-right:14px !important;
-	padding-right: 10px !important;
+	Margin-right:24px !important;
+	padding-right:5px !important;
 	Margin-top: 14px !important;
 	Margin-bottom:14px !important;
 	border-radius:9px !important;

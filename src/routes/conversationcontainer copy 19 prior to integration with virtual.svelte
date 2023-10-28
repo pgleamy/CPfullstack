@@ -1,7 +1,6 @@
 <script>
 
     import UserInput from './userinput.svelte';
-    import virtualContainer from './virtualContainer.svelte';
 
     import UserInputSent from './userinputsent.svelte';
     import LLMResponse from './llmresponse.svelte';
@@ -10,8 +9,6 @@
     import { onMount, onDestroy } from 'svelte';
     import { invoke } from "@tauri-apps/api/tauri";
     import { tick } from 'svelte';
-
-    
 
     let conversation = []; // conversation history slice as requested from the backend
     let num_messages = 0; // total number of user, llm and bright_memory messages in the conversation
@@ -282,9 +279,6 @@ async function fetchConversationSlice(gripLocation, num_messages) {
 
     const fetchedData = await invoke('fetch_conversation_history', { params: {start, end} });
     //console.log("Fetched conversation slice:", fetchedData);  // Debug line
-    
-  
-
 
     // Additional logic to handle initial scroll position if grip at top or bottom
     if (gripLocation === 0 && container) {
@@ -304,13 +298,6 @@ async function fetchConversationSlice(gripLocation, num_messages) {
 
     if (fetchedData && Array.isArray(fetchedData.message)) {
       conversation = fetchedData.message;
-
-
-
-      // save to local storage conversationArray
-      localStorage.setItem('conversationArray', JSON.stringify(conversation));
-
-
       updateEdgeFlags(fetchedData.message); // Update the edge flags
       //console.log(`Updated conversation slice: ${conversation}`);  // Debug line
       //console.log*(conversation);  // Debug line
@@ -370,10 +357,7 @@ async function fetchConversationPart(direction) {
 
     try {
       const fetchedData = await invoke('fetch_conversation_history', { params: {start, end} });
-
-      // save to local storage conversationArray
-      localStorage.setItem('conversationArray', JSON.stringify(fetchedData.message));
-
+  
       if (fetchedData && Array.isArray(fetchedData.message)) {
 
         updateEdgeFlags(fetchedData.message); // Update the edge flags
@@ -389,10 +373,6 @@ async function fetchConversationPart(direction) {
           // CONDITIONALLY add new messages to the start of the conversation array
           if (!hasReachedStart) {
             conversation = [...fetchedData.message, ...conversation];
-
-            // save to local storage conversationArray
-            localStorage.setItem('conversationArray', JSON.stringify(conversation));
-
             //console.log(`Duplicate Start. Did not prepend.`);  // Debug line
           } 
 
@@ -431,10 +411,6 @@ async function fetchConversationPart(direction) {
             if (!hasReachedEnd) {
               conversation = [...conversation, ...fetchedData.message]; // Update for reactivity
               //console.log(`Duplicate End. Did not append.`);  // Debug line
-
-              // save to local storage conversationArray
-              localStorage.setItem('conversationArray', JSON.stringify(conversation));
-
             }
 
             // Update the last fetched messages
