@@ -98,8 +98,6 @@ button:focus:not(:focus-visible) {
 }
 
 
-
-
 /* Webkit browsers */
 ::-webkit-scrollbar {
 	width: 13px; /* width of the entire scrollbar */

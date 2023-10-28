@@ -5,14 +5,7 @@
     import 'quill/dist/quill.snow.css';
  
     import hljs from 'highlight.js';
-    import 'highlight.js/styles/github-dark.css';
-
-
-
-
-
-
-
+    import 'highlight.js/styles/an-old-hope.css';
    
 
 let BlockEmbed = Quill.import('blots/block/embed');
@@ -34,24 +27,6 @@ CodeBlockWithTitle.tagName = 'DIV';
 CodeBlockWithTitle.className = 'ql-code-block-with-title';
 
 Quill.register(CodeBlockWithTitle);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     // Quill editor options
     let options = {
@@ -156,7 +131,7 @@ Quill.register(CodeBlockWithTitle);
         width: calc(100vw - 67px);
         position: fixed;
         bottom: 4px;
-        max-height: 300px; /* 180px */
+        max-height: 400px; /* 180px */
         min-height: 20px;
         background: black;
         opacity: 0.8;
@@ -178,7 +153,7 @@ Quill.register(CodeBlockWithTitle);
         
         width: calc(100vw - 67px);
         position: static;
-        height: 190px; 
+        height: 300px; 
         background: black;
         opacity: 0.18;
         color: rgba(255, 255, 255, 0.05);
