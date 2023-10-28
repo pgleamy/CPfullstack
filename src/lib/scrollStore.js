@@ -67,6 +67,7 @@ const load = () => {
     targetMessagesPixelHeight: parseInt(get('targetMessagesPixelHeight')) || 0, // Height of the conversation-container contents in pixels
 
     unsentPrompt: get('unsentPrompt') || "", // The unsent prompt contents
+    unsentPromptQUILL: get('unsentPromptQUILL') || "", // The unsent prompt contents
 
     //unsentPromptHeight: parseInt(get('unsentPromptHeight')) || 0, // Height of the unsent prompt component elements in pixels
 

@@ -2,26 +2,87 @@
     import { onMount, onDestroy } from 'svelte';
     import { setInLocalStorage } from '$lib/scrollStore.js';
     import Quill from 'quill'; 
+    import 'quill/dist/quill.snow.css';
+ 
+    import hljs from 'highlight.js';
+    import 'highlight.js/styles/github-dark.css';
+
+
+
+
+
+
+
+   
+
+let BlockEmbed = Quill.import('blots/block/embed');
+
+class CodeBlockWithTitle extends BlockEmbed {
+  static create(value) {
+    let node = super.create(value);
+    node.dataset.title = value.title;
+    return node;
+  }
+
+  static value(domNode) {
+    return { title: domNode.dataset.title };
+  }
+}
+
+CodeBlockWithTitle.blotName = 'codeBlockWithTitle';
+CodeBlockWithTitle.tagName = 'DIV';
+CodeBlockWithTitle.className = 'ql-code-block-with-title';
+
+Quill.register(CodeBlockWithTitle);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // Quill editor options
     let options = {
       modules: {
         toolbar: false,
         clipboard: {},
+        syntax: {
+            highlight: text => hljs.highlightAuto(text).value,
+        },
         keyboard: {
-          bindings: {}
+            bindings: {
+                codeBlock: {
+                    key: 'S',  // S
+                    ctrlKey: true,  // This makes it a Ctrl+S shortcut
+                    handler: function(range) {
+                        const format = this.quill.getFormat(range);
+                        this.quill.format('code-block', !format['code-block']);
+                    }
+                }
+            }
         },
         history: {
           delay: 2000,
           maxStack: 100,
           userOnly: true
-        }
+        },        
       },
       theme: 'snow',
-        
     };
   
-    let messageText = 'test';
+    let messageText = '';
     let username = 'Human(s)';
     let quillInstance;
     let disabled = true;
@@ -29,6 +90,8 @@
     let content = { html: "", text: "" };
     
     import { invoke } from '@tauri-apps/api/tauri';
+
+
     function sendMessage() {
       invoke('send_prompt', { messageText })
         .then(() => {
@@ -43,50 +106,52 @@
       quillInstance.setText(messageText);
     }
     
+    
     onMount(() => {
-        // Initialize messageText from local storage
-        messageText = localStorage.getItem('unsentPrompt') || '';   
 
-        // Initialize Quill instance
+        messageText = localStorage.getItem('unsentPrompt') || '';    
+  
         quillInstance = new Quill('#editor', options);
 
-        // Set the Quill editor text from local storage
-        quillInstance.setText(messageText);
+       // Load saved Delta if any
+        const savedDeltaString = localStorage.getItem('unsentPromptQUILL');
+        if (savedDeltaString) {
+            const savedDelta = JSON.parse(savedDeltaString);
+            quillInstance.setContents(savedDelta);
+        }
 
-        // Listen for text changes in Quill editor
-        quillInstance.on('text-change', async function() {
-            // Wait for Quill to finish its internal update
-            await new Promise(r => setTimeout(r, 0));
+        quillInstance.on('text-change', function() {
+           messageText = quillInstance.getText().trim();
+           setInLocalStorage('unsentPrompt', messageText);
 
-            // Update messageText and local storage
-            messageText = quillInstance.getText().trim();
-            setInLocalStorage('unsentPrompt', messageText);
-        });
-
-    });
+           const currentDelta = quillInstance.getContents();
+           const deltaString = JSON.stringify(currentDelta);
+           setInLocalStorage('unsentPromptQUILL', deltaString);
+        }); 
+    
+    }); // End of onMount()
     
 </script>
 
+    <svelte:head>
+	    <script href="highlight.js"></script>
+    </svelte:head>
 
     <main>
         <div id="editor-container">            
-            <div id="editor" spellcheck="false"></div>
+            <div id="editor"></div>
         </div>
 
         <div id="button-container">
             <button on:click={sendMessage} {disabled}></button> 
         </div>
     </main>
-    <svelte:head>
-	    <link href="src\lib\quill.snow.css" rel="stylesheet"> 
-    </svelte:head>
+    
+
 
 <style>
-
     
-
-    
-    /* The Quill editor when not focussed */
+    /* The Quill editor when focussed */
     #editor-container:focus-visible {
         width: calc(100vw - 67px);
         position: fixed;
@@ -94,7 +159,7 @@
         max-height: 300px; /* 180px */
         min-height: 20px;
         background: black;
-        opacity: 0.7;
+        opacity: 0.8;
         color: rgba(255, 255, 255, 0.1);
         padding: 0px;
         padding-left: 0px;
@@ -119,7 +184,7 @@
         color: rgba(255, 255, 255, 0.05);
         padding: 0px;
         padding-left: 0px;
-        font-size: 14.5px;
+        
         margin: 0px;
         border-radius: 17px;
         border: 2px solid #593d0474;
@@ -133,7 +198,6 @@
         scrollbar-color: #1d24a1;
         transition: opacity 0.2s ease, color 0.2s ease;
 
-        font-family: var(--font-body); /* Futura from styles.css */
         
     }   
 
@@ -203,15 +267,6 @@
         transition: background-color 0.2s ease-in-out 0.2s;
 
     }
-
-
-
-    /* Style the scrollbar container */
-    #editor::-webkit-scrollbar {
-        width: 12px;
-    }
-
-
-
+    
 
 </style>

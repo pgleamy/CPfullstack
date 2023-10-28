@@ -15,7 +15,7 @@
     let num_user_llm_messages = 0; // total number of user and llm messages in the conversation
     let container; // reference to the conversation container element    
 
-    const userInputFixedHeight = 190; // fixed height of the user input component. This is to push up the last message at end of conversation to be visible above the user input component
+    const userInputFixedHeight = 190; // fixed height of the user input component. Used to push up the last message at end to be visible above the user input component area
 
      // Infinite scroll observers
     let topObserverElement;
@@ -522,6 +522,8 @@ function handleScroll() {
 
       overflow: hidden; /* hides default scrolling bars */
 
+      scroll-behavior: smooth;
+
     }
 
     #clip-container {
@@ -537,6 +539,8 @@ function handleScroll() {
     height: 100%;
     overflow-y: auto; /* Makes it scrollable */
     background-color: transparent;
+
+    
    
   }
 
