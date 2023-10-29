@@ -191,7 +191,7 @@
             opacity: 1;  
             z-index: -1;  
             background-position: 90px -55px;
-            animation: fadeOut 5s cubic-bezier(1, -0.47, 0.73, 1.24) forwards !important;
+            animation: fadeOut 2s cubic-bezier(1, 1, 0.73, 1.24) forwards !important;
         }
 
         .contentWrapper.Argus::before {
@@ -208,7 +208,7 @@
             opacity: 1;  
             z-index: -1;  
             background-position: 90px -55px;
-            animation: fadeOut 5s cubic-bezier(1, -0.47, 0.73, 1.24) forwards !important;
+            animation: fadeOut 2s cubic-bezier(1, 1, 0.73, 1.24) forwards !important;
         }
         
 
@@ -233,7 +233,7 @@
             opacity: 1;  
         }     
         100% {
-            opacity: 0; 
+            opacity: 0.01; 
         }
     }
 
