@@ -29,23 +29,20 @@
         $inputs[index] = value;
     }
 
+    // Places the lmm character's face dimly in the background, reactive to gender
     let gender = "";
     gender = get('Gender');
     let face = "";
     let styleString = "";
-
-
     function updateFace() {
-    if (gender === "Iris") {
-        console.log("I'm Iris. Who's there?");
-        return "url('src/lib/images/FEMALE.png')";
-    } else {
-        console.log("I'm Argus. Who's there?");
-        return "url('src/lib/images/MALE.png')";
+        if (gender === "Iris") {
+            console.log("I'm Iris. Who's there?");
+            return "url('src/lib/images/FEMALE.png')";
+        } else {
+            console.log("I'm Argus. Who's there?");
+            return "url('src/lib/images/MALE.png')";
+        }
     }
-}
-
-    
     $: {
         console.log("Current gender: ", gender);
         face = updateFace();
@@ -100,11 +97,9 @@
 
 
 
-<!-- Inject the style tag into the DOM -->
-
+<!-- Injects the correct reactive style tag into the DOM -->
+/* injects the character's face into the background dimly */
 {@html `<style>${styleString}</style>`}
-
-
 
 <div class="contentWrapper" id='flex'>
     
