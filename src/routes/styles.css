@@ -160,5 +160,5 @@ button:focus:not(:focus-visible) {
   /* fades out the entire contents of the user input Quill editor when not focused */
   .ql-snow .ql-editor:not(:focus-within) {
 	transition: all 0.2s ease-in-out !important;
-	opacity: 0 !important;
+	opacity: 0.05 !important;
   }

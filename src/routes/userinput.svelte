@@ -214,6 +214,7 @@ Quill.register(CodeBlockWithTitle);
         cursor: pointer;
         transition: background-color 0.05s ease-in-out 0.05s;
         position: absolute;
+        z-index: 9999;
     }
 
     #button-container button:disabled {
@@ -221,18 +222,21 @@ Quill.register(CodeBlockWithTitle);
         cursor: not-allowed;
         pointer-events: none;
         border: 11px dotted rgba(10, 21, 98, 0);
+        z-index: 9999;
     }
 
     #button-container button:not(:disabled):hover {
         background-color: #01ac01;
         border: 2px dotted rgb(0, 0, 0);
         transition: background-color 0.05s ease-in-out 0.05s;
+        z-index: 9999;
     }
 
     #button-container button:not(:disabled):active {
         background-color: #4673b7;
         opacity: 1;
         transition: background-color 0.05s ease-in-out 0.05s;
+        z-index: 9999;
     }
 
     #button-container button:focus {
@@ -240,7 +244,7 @@ Quill.register(CodeBlockWithTitle);
         box-shadow: 0 0 0 2px #5ea7ff;
         background-color: rgba(46, 129, 41, 1);
         transition: background-color 0.2s ease-in-out 0.2s;
-
+        z-index: 9999;
     }
     
 
