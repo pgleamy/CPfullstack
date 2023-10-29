@@ -5,6 +5,7 @@
     import { fade } from "svelte/transition";
     import ScrollSearch from './scrollsearch.svelte';
     import { activePage } from '$lib/headerchange.js';
+    import { get } from '$lib/scrollStore.js';
     $activePage = 'chatPage';
 
     let CurrentPage; // Reference to the current page component
@@ -28,9 +29,85 @@
         $inputs[index] = value;
     }
 
+    let gender = "";
+    gender = get('Gender');
+    let face = "";
+    let styleString = "";
+
+
+    function updateFace() {
+    if (gender === "Iris") {
+        console.log("I'm Iris. Who's there?");
+        return "url('src/lib/images/FEMALE.png')";
+    } else {
+        console.log("I'm Argus. Who's there?");
+        return "url('src/lib/images/MALE.png')";
+    }
+}
+
+    
+    $: {
+        console.log("Current gender: ", gender);
+        face = updateFace();
+        if (gender === "Iris") {
+            console.log("I'm Iris. Who's there?");
+            face = "url('src/lib/images/FEMALE.png')";
+            console.log("face: ", face);
+            styleString = `
+        .contentWrapper::before {
+            background-image: ${face};
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-size: 100% 100%; /* Cover the entire element */
+            background-repeat: no-repeat;  /* Do not repeat the image */
+            background-position: center;  /* Center the image */
+            opacity: .01;  /* 0.002 Set opacity as needed */
+            z-index: -1;  /* Place it behind the content */
+            background-position: 50px -90px;
+        }
+        `;
+        console.log("styleString: ", styleString);  // Log the style string
+        } else if (gender !== "Iris") {
+            console.log("I'm Argus. Who's there?");
+            face = "url('src/lib/images/MALE.png')";
+            console.log("face: ", face);
+            styleString = `
+        .contentWrapper::before {
+            background-image: ${face};
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-size: 100% 100%; /* Cover the entire element */
+            background-repeat: no-repeat;  /* Do not repeat the image */
+            background-position: center;  /* Center the image */
+            opacity: .006;  /* 0.002 Set opacity as needed */
+            z-index: -1;  /* Place it behind the content */
+            background-position: 90px -55px;
+        }
+        `;
+        console.log("styleString: ", styleString);  // Log the style string
+        }
+    }
+
 </script>
 
+
+
+<!-- Inject the style tag into the DOM -->
+
+{@html `<style>${styleString}</style>`}
+
+
+
 <div class="contentWrapper" id='flex'>
+    
     <section class="chatWindow">
         <div transition:fade="{{ duration: 100, delay: 30 }}">
             <ConversationContainer />
@@ -43,12 +120,25 @@
 </div>
 
 <style>
+    /*
     .contentWrapper {
         justify-content: flex-start;
         overflow: auto;
         height: 100vh;
         flex-grow: 1;
     }
+    */
+
+    .contentWrapper {
+        position: relative;  /* Set position to relative for the pseudo-element */
+        justify-content: flex-start;
+        overflow: auto;
+        height: 100vh;
+        flex-grow: 1;
+    }
+    
+
+
     .chatWindow {
         flex-grow: 1;
     }

@@ -26,7 +26,7 @@
     let renderedEndOffset = 0; // Offset of the END of the last rendered item in the conversation[]
     let scrollingDirection = null;
     $: { 
-        scrollingDirection = $dragSpeedUpDown < 0 ? 'UP' : 'DOWN';
+        scrollingDirection = $get('dragSpeedUppDown') < 0 ? 'UP' : 'DOWN';
         console.log('scrollingDirection', scrollingDirection);
     }
 

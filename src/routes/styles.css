@@ -23,9 +23,9 @@ body {
 	background-color: var(--color-bg-1);
 	background-size: cover;
 	background-image: radial-gradient(
-			50% 50% at 50% 50%,
-			rgba(0, 0, 0, 0.75) 0%,
-			rgba(0, 0, 0, 0) 100%
+			50% 50% at 50% 80%,
+			rgba(0, 0, 0, 0.8) 0%,
+			rgba(0, 0, 0, 0.5) 100%
 		),
 		linear-gradient(180deg, var(--color-bg-0) 30%, var(--color-bg-1) 70%, var(--color-bg-2) 100%);
 }
@@ -160,5 +160,5 @@ button:focus:not(:focus-visible) {
   /* fades out the entire contents of the user input Quill editor when not focused */
   .ql-snow .ql-editor:not(:focus-within) {
 	transition: all 0.2s ease-in-out !important;
-	opacity: 0 !important;
+	opacity: 0.05 !important;
   }
