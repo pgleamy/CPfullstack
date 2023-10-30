@@ -5,13 +5,12 @@
 
     import UserInputSent from './userinputsent.svelte';
     import LLMResponse from './llmresponse.svelte';
+
     // reactive state management for scrollsearch component
     import {scrollStore, get, setInLocalStorage, updateScrollSettings} from '$lib/scrollStore.js';
     import { onMount, onDestroy } from 'svelte';
     import { invoke } from "@tauri-apps/api/tauri";
     import { tick } from 'svelte';
-
-    
 
     let conversation = []; // conversation history slice as requested from the backend
     let num_messages = 0; // total number of user, llm and bright_memory messages in the conversation
@@ -282,9 +281,6 @@ async function fetchConversationSlice(gripLocation, num_messages) {
 
     const fetchedData = await invoke('fetch_conversation_history', { params: {start, end} });
     //console.log("Fetched conversation slice:", fetchedData);  // Debug line
-    
-  
-
 
     // Additional logic to handle initial scroll position if grip at top or bottom
     if (gripLocation === 0 && container) {
@@ -306,10 +302,8 @@ async function fetchConversationSlice(gripLocation, num_messages) {
       conversation = fetchedData.message;
 
 
-
       // save to local storage conversationArray
       localStorage.setItem('conversationArray', JSON.stringify(conversation));
-
 
       updateEdgeFlags(fetchedData.message); // Update the edge flags
       //console.log(`Updated conversation slice: ${conversation}`);  // Debug line
@@ -457,7 +451,6 @@ async function fetchConversationPart(direction) {
 } // end of fetchConversationPart function
 
 
-
 // debounce function to prevent excessive calls to fetchConversationSlice
 function debounce(func, wait) {
   let timeout;
@@ -487,12 +480,56 @@ function throttle(func, limit) {
 }
 const throttledFetch = throttle(fetchConversationSlice, 90);
 
-/*
-// Manipulation of gripLocation(local)/gripPosition(scrollStore) based on mouse scroll wheel events
-function handleScroll() {
+
+// Track the message displayed in the very middle of user's viewable area
+function findMiddleVisibleMessage() {
+  if (!container) {
+    return null;
+  }
   
+  const messages = container.querySelectorAll('.message-class');
+  const middle = container.scrollTop + container.clientHeight / 2;
+
+  let closestMessageIndex = null;
+  let closestDistance = Infinity;
+
+  for (let i = 0; i < messages.length; i++) {
+    const rect = messages[i].getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+    const messageMiddle = rect.top - containerRect.top + container.scrollTop + rect.height / 2;
+    
+    const distanceToMiddle = Math.abs(middle - messageMiddle);
+
+    if (distanceToMiddle < closestDistance) {
+      closestDistance = distanceToMiddle;
+      closestMessageIndex = i + 1; // add one to line up properly at start/end of conversation
+    }
+  }
+  return closestMessageIndex; // Returns the index of the message closest to the middle
 }
-*/
+$: {
+  if (container) {
+    const middleVisibleMessageIndex = findMiddleVisibleMessage();
+    if (middleVisibleMessageIndex !== null) {
+      //setInLocalStorage('middleVisibleMessageIndex', middleVisibleMessageIndex);
+      
+      // Access the block_id of the middle visible message
+      const middleVisibleMessage = conversation[middleVisibleMessageIndex];
+      const middleVisibleBlockId = middleVisibleMessage ? middleVisibleMessage.block_id : null;
+      
+      // Do something with middleVisibleBlockId, for example, save it to local storage
+      if (middleVisibleBlockId !== null) {
+          // Extract the numeric part from the block_id
+          const blockIdNumber = middleVisibleBlockId.split('_').pop();
+          const totalMessages = num_user_llm_messages;
+
+          // const gripPosition = 1 - (blockIdNumber / totalMessages) ;
+          // Store only the numeric part in local storage
+          setInLocalStorage('middleVisibleBlockId', blockIdNumber);
+      }
+    }
+  }
+}
 
 </script>
 
@@ -503,7 +540,7 @@ function handleScroll() {
     <div bind:this={topObserverElement} id="top-observer" ></div>
 
     {#each conversation as entry, index}
-      <div class="{index === conversation.length - 1 ? 'last-message-class' : ''}" 
+      <div class="{index === conversation.length - 1 ? 'last-message-class' : 'message-class'}" 
       style="{index === conversation.length - 1 ? paddingBottom : ''} width: 100%;" 
       >
           {#if entry.source === 'user' || entry.source === 'llm'}

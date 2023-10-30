@@ -133,7 +133,6 @@
     const upperBound = container.clientHeight - radius - bottomPadding;
     const lowerBound = radius + 19;
     const range = upperBound - lowerBound;
-
     const duration = 400; // Duration in milliseconds
     const steps = 100; // Number of animation steps
     const stepDuration = duration / steps; // Duration of each step

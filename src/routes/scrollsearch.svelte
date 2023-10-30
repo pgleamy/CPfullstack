@@ -75,6 +75,7 @@
     
   }); // End of onMount()
 
+
   function startDrag(e) {
     if (isElasticDragging) return; // If elastic drag is active, exit
     isDragging = true;
@@ -95,6 +96,7 @@
     window.removeEventListener('mouseup', stopDrag);
   } // End of stopDrag()
 
+  
   function drag(e) {
 
     if (isDragging) {
@@ -126,7 +128,8 @@
           downArrowIsVisible = true;
         }
       }
-  } // End of drag()
+  } // End of drag(e)
+  
   
   function handleDownArrowClick() {
     
@@ -176,8 +179,8 @@
 
     animateGrip(); // Initial call to start the animation
   }  // End of handleDownArrowClick()
-
   
+
   function handleUpArrowClick() {
     console.log("Up arrow clicked");
   }
