@@ -23,11 +23,11 @@ body {
 	background-color: var(--color-bg-1);
 	background-size: cover;
 	background-image: radial-gradient(
-			50% 50% at 50% 80%,
-			rgba(0, 0, 0, 0.8) 0%,
-			rgba(0, 0, 0, 0.5) 100%
+			50% 50% at 50% 50%,
+			rgba(0, 0, 0, 0.3) 0%,
+			rgba(0, 0, 0, 0.4) 100%
 		),
-		linear-gradient(180deg, var(--color-bg-0) 30%, var(--color-bg-1) 70%, var(--color-bg-2) 100%);
+		linear-gradient(110deg, var(--color-bg-0) 30%, var(--color-bg-1) 70%, var(--color-bg-2) 100%);
 }
 
 h1,

@@ -10,54 +10,6 @@
 
     let CurrentPage; // Reference to the current page component
 
-
-
-
-    import { onMount } from 'svelte';
-    
-    onMount(() => {
-
-        /*
-  const element = document.querySelector('.contentWrapper');
-    // Log the element to the console
-    console.log(element);
-  
-  if (element) {
-    console.log(element);
-    element.addEventListener('animationstart', function(event) {
-      if (event.animationName === 'fadeOut') {
-        console.log('FadeOut animation started');
-      }
-    });
-    
-    element.addEventListener('animationend', function(event) {
-      if (event.animationName === 'fadeOut') {
-        console.log('FadeOut animation ended');
-      }
-    });
-  } else {
-    console.log('Element not found');
-  }
-  */
-  
-  restartAnimation();
-});
-
-
-
-
-  let animate = true;
-  function restartAnimation() {
-    console.log('Restarting animation');
-    animate = true;
-    // Force reflow to reset the animation
-    document.querySelector('.contentWrapper').offsetWidth;
-    animate = true;
-  }
-
-
-
-
     // Function to switch to a new page with fade transition
     function switchPage(pageComponent) {
         CurrentPage = pageComponent; // Update to the new page component
@@ -77,23 +29,23 @@
         $inputs[index] = value;
     }
 
-    // Places the lmm character's face dimly in the background, reactive to gender
+    // Places the lmm character's face dimly in the background, reactive to gender, fades out after 7 seconds
     let gender = "";
     gender = get('Gender');
     let face = "";
     let styleString = "";
-    let fadeOut = 4000;
+    let fadeOut = 7000;
     function updateFace() {
         if (gender === "Iris") {
-            console.log("I'm Iris. Who's there?");
+            //console.log("I'm Iris. Who's there?");
             return "url('src/lib/images/FEMALE.png')";
         } else {
-            console.log("I'm Argus. Who's there?");
+            //console.log("I'm Argus. Who's there?");
             return "url('src/lib/images/MALE.png')";
         }
     }
     $: {
-        console.log("Current gender: ", gender);
+        //console.log("Current gender: ", gender);
         face = updateFace();
         if (gender === "Iris") {
             //console.log("I'm Iris. Who's there?");
@@ -117,7 +69,7 @@
             animation: fadeOut ${fadeOut / 1000}s cubic-bezier(1, -0.47, 0.73, 1.24) forwards !important;
         }
         `;
-        console.log("styleString: ", styleString);  // Log the style string
+        //console.log("styleString: ", styleString);  // Log the style string
         } else if (gender === "Argus") {
             //console.log("I'm Argus. Who's there?");
             face = "url('src/lib/images/MALE.png')";
@@ -147,7 +99,6 @@
 </script>
 
 
-
 <!-- Injects the correct character's face style tag into the DOM -->
 {@html `<style>${styleString}</style>`}
  <!-- For testing purposes only   <button on:click={restartAnimation} >Restart Animation</button>     -->
@@ -164,8 +115,9 @@
 
 </div>
 
-<style>
 
+
+<style>
 
     .contentWrapper {
         position: relative;  /* Set position to relative for the pseudo-element */
@@ -175,44 +127,39 @@
         flex-grow: 1;
     }
 
-
-    
     .contentWrapper.Iris::before {
-            background-image: url('src/lib/images/FEMALE.png');
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-size: 100% 100%;
-            background-repeat: no-repeat;  
-            background-position: center;  
-            opacity: 1;  
-            z-index: -1;  
-            background-position: 90px -55px;
-            animation: fadeOut 2s cubic-bezier(1, 1, 0.73, 1.24) forwards !important;
-        }
+        background-image: url('src/lib/images/FEMALE.png');
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-size: 100% 100%;
+        background-repeat: no-repeat;  
+        background-position: center;  
+        opacity: 1;  
+        z-index: -1;  
+        background-position: 90px -55px;
+        animation: fadeOut 7s cubic-bezier(1, 1, 0.73, 1.24) forwards !important;
+    }
 
-        .contentWrapper.Argus::before {
-            background-image: url('src/lib/images/MALE.png');
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-size: 100% 100%;
-            background-repeat: no-repeat;  
-            background-position: center;  
-            opacity: 1;  
-            z-index: -1;  
-            background-position: 90px -55px;
-            animation: fadeOut 2s cubic-bezier(1, 1, 0.73, 1.24) forwards !important;
-        }
-        
-
-
+    .contentWrapper.Argus::before {
+        background-image: url('src/lib/images/MALE.png');
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-size: 100% 100%;
+        background-repeat: no-repeat;  
+        background-position: center;  
+        opacity: 1;  
+        z-index: -1;  
+        background-position: 90px -55px;
+        animation: fadeOut 7s cubic-bezier(1, 1, 0.73, 1.24) forwards !important;
+    }
     
     .chatWindow {
         flex-grow: 1;
@@ -227,7 +174,6 @@
         display: flex;
     }
 
-
     @keyframes fadeOut {
         0% {
             opacity: 1;  
@@ -236,14 +182,6 @@
             opacity: 0.01; 
         }
     }
-
-
-    /*
-    button {
-        z-index: 
-        position: relative; 
-    }
-    */
 
 </style>
 
