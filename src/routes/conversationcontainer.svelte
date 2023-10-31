@@ -129,7 +129,7 @@
       num_messages = await invoke('get_num_messages');
       setInLocalStorage('totalMessages', num_messages);
 
-    //console.log("Current number of all user, llm and bright_memory messages: " + num_messages);
+      //console.log("Current number of all user, llm and bright_memory messages: " + num_messages);
 
       num_user_llm_messages = await invoke('get_total_llm_user_messages');
       //console.log("Current number of all user, llm and bright_memory messages: " + num_messages);
@@ -219,12 +219,39 @@
       }, false);
 
 
+
+
+
+
+      // Add the mouse wheel event listener
+      container.addEventListener('wheel', handleWheelScroll);
+
+
+
+
+
+
   }); // end of onMount
 
 
   onDestroy(() => {
     //container.removeEventListener('scroll', handleScroll);
+    //container.removeEventListener('wheel', handleWheelScroll);
   });
+
+
+
+
+  function handleWheelScroll(event) {
+  const direction = event.deltaY > 0 ? "DOWN" : "UP";
+
+  if ((direction === "UP" && !hasReachedStart) || (direction === "DOWN" && !hasReachedEnd)) {
+    fetchConversationPart(direction);
+  }
+}
+
+
+
 
   
   // Non-reactive function to return the container pixel height
