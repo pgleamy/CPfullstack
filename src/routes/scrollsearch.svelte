@@ -115,6 +115,7 @@
       // Set gripY to gripYCalculated
       gripY = gripYCalculated;
       setInLocalStorage('gripYCalculated', gripYCalculated);
+      setInLocalStorage('gripPositionCalculated', gripPositionCalculated);
     }
   }
 
@@ -137,7 +138,7 @@
     gripY = container.clientHeight - radius - bottomPadding;
     
     // Load saved gripPosition from local storage
-    const savedGripPosition = get('gripPosition');
+    const savedGripPosition = get('gripPositionCalculated');
     
     if (savedGripPosition !== null) {
       // Calculate gripY based on saved gripPosition
@@ -240,8 +241,8 @@
     const lowerBound = radius + 19;
     const range = upperBound - lowerBound;
 
-    const duration = 400; // Duration in milliseconds
-    const steps = 100; // Number of animation steps
+    const duration = 100; // Duration in milliseconds
+    const steps = 50; // Number of animation steps
     const stepDuration = duration / steps; // Duration of each step
     let currentStep = 0;
 
