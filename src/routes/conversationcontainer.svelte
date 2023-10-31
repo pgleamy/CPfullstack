@@ -45,6 +45,10 @@
     $: targetMessage = $scrollStore.targetMessage; // Reactive assignment
     $: totalMessages = $scrollStore.totalMessages; // Reactive assignment
 
+    // used by the mouse wheel event listener to determine the direction of the scroll and execution limiting
+    let shouldFetchUp = false;
+    let shouldFetchDown = false;
+
     // paddingBottom connects the top of user input to the bottom of last message for when the user scrolls to bottom
     let paddingBottom = '';  // Declare a variable to hold the padding-bottom value
     // Create a reactive statement to update paddingBottom whenever userInputHeight changes
@@ -152,6 +156,71 @@
 
       // Callback function to be executed when the top or bottom observer elements are intersecting
       // due to the user fine scrolling with the elastic grip element up or down respectively
+
+
+
+
+const observerCallback = async (entries, observer) => {
+  for (const entry of entries) {
+    if (entry.isIntersecting) {
+      if (entry.target.id === 'top-observer') {
+        shouldFetchUp = true;
+      } else if (entry.target.id === 'bottom-observer') {
+        shouldFetchDown = true;
+      }
+      
+      const dragSpeedUpDown = parseFloat(localStorage.getItem('dragSpeedUpDown')) || 0;
+      const direction = Math.sign(dragSpeedUpDown);  // 1 for down, -1 for up
+
+      if (direction > 0 && shouldFetchDown) {
+        if (hasReachedEnd) {
+          return;  // Skip the fetch operation
+        }
+        await fetchConversationPart("DOWN");
+        shouldFetchDown = false; // Reset the flag
+      } else if (direction < 0 && shouldFetchUp) {
+        if (hasReachedStart) {
+          return;  // Skip the fetch operation
+        }
+        await fetchConversationPart("UP");
+        shouldFetchUp = false; // Reset the flag
+      }
+    }
+  }
+};
+
+
+
+
+
+
+      /* // SECOND VERSION
+      const observerCallback = async (entries, observer) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          const dragSpeedUpDown = parseFloat(localStorage.getItem('dragSpeedUpDown')) || 0;
+          const direction = lastWheelDirection ? lastWheelDirection : Math.sign(dragSpeedUpDown);  // Use wheel direction if available
+
+          lastWheelDirection = null;  // Reset the wheel direction
+
+          if (direction === "DOWN" || direction > 0) {
+            if (hasReachedEnd) {
+              return;  // Skip the fetch operation
+            }
+            await fetchConversationPart("DOWN");
+          } else if (direction === "UP" || direction < 0) {
+            if (hasReachedStart) {
+              return;  // Skip the fetch operation
+            }
+            await fetchConversationPart("UP");
+          }
+        }
+      }
+    };
+    */
+ 
+
+      /* // OLDER VERSION
       const observerCallback = async (entries, observer) => {
         for (const entry of entries) {
           if (entry.isIntersecting) {
@@ -174,6 +243,7 @@
           }
         }
       }; // end of observerCallback function
+      */
 
 
       //const observer = new IntersectionObserver(observerCallback, observerOptions);
@@ -242,6 +312,23 @@
 
 
 
+  
+function handleWheelScroll(event) {
+  const direction = event.deltaY > 0 ? "DOWN" : "UP";
+
+  if (direction === "UP" && shouldFetchUp && !hasReachedStart) {
+    fetchConversationPart(direction);
+    shouldFetchUp = false; // Reset the flag after fetching
+  } else if (direction === "DOWN" && shouldFetchDown && !hasReachedEnd) {
+    fetchConversationPart(direction);
+    shouldFetchDown = false; // Reset the flag after fetching
+  }
+}
+
+
+
+  /* // OLDER VERSION
+  let lastWheelDirection = null;  // "UP" or "DOWN"
   function handleWheelScroll(event) {
   const direction = event.deltaY > 0 ? "DOWN" : "UP";
 
@@ -249,6 +336,7 @@
     fetchConversationPart(direction);
   }
 }
+*/
 
 
 
@@ -362,8 +450,8 @@ async function fetchConversationPart(direction) {
   if (direction === "UP") {
     const firstBlockIdNum = parseInt(conversation[0].block_id.split("_").pop(), 10);
 
-    //console.log('Fetching earlier messages...');
-    //console.log(`firstBlockIdNum: ${firstBlockIdNum}`);  // Debug line
+    console.log('Fetching earlier messages...');
+    console.log(`firstBlockIdNum: ${firstBlockIdNum}`);  // Debug line
 
     start = Math.max((firstBlockIdNum - 1) - totalMessagesToFetch, 0);
     end = firstBlockIdNum - 1;
@@ -371,13 +459,12 @@ async function fetchConversationPart(direction) {
   } else if (direction === "DOWN") {
     const lastBlockIdNum = parseInt(conversation[conversation.length - 1].block_id.split("_").pop(), 10);
 
-    //console.log('Fetching later messages...');
-    //console.log(`lastBlockIdNum: ${lastBlockIdNum}`);  // Debug line
+    console.log('Fetching later messages...');
+    console.log(`lastBlockIdNum: ${lastBlockIdNum}`);  // Debug line
 
     start = lastBlockIdNum;
     end = Math.min(lastBlockIdNum + totalMessagesToFetch, num_user_llm_messages);
   }
-
   
   if(end >= num_user_llm_messages) {
     end = num_user_llm_messages;
