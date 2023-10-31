@@ -131,6 +131,7 @@
     setInLocalStorage('dragSpeedUpDown', 0);
   }
 
+
   function setInitialGripPosition() {
     const container = document.getElementById("custom-scrollbar");
     
@@ -146,6 +147,7 @@
       const upperBound = container.clientHeight - radius - bottomPadding;
       const rangeOfMotion = upperBound - lowerBound;
       
+      const savedGripY = get('gripYCalculated');
       gripY = upperBound - savedGripPosition * rangeOfMotion;
     
       // Update down arrow visibility based on saved grip position
