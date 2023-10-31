@@ -72,10 +72,10 @@
         background-size: 100% 100%;
         background-repeat: no-repeat;  
         background-position: center;  
-        opacity: 1;  
+        opacity: 10.0;  
         z-index: -1;  
         background-position: 90px -55px;
-        animation: fadeOut 7s cubic-bezier(1, 1, 0.01, 0.01) forwards !important;
+        animation: fadeOut 2.5s ease-in forwards !important;
     }
 
     .contentWrapper.Argus::before {
@@ -89,10 +89,10 @@
         background-size: 100% 100%;
         background-repeat: no-repeat;  
         background-position: center;  
-        opacity: 1;  
+        opacity: 10.0;  
         z-index: -1;  
         background-position: 90px -55px;
-        animation: fadeOut 7s cubic-bezier(1, 1, 0.01, 0.01) forwards !important;
+        animation: fadeOut 2.5s ease-in forwards !important;
     }
     
     .chatWindow {
@@ -110,7 +110,7 @@
 
     @keyframes fadeOut {
         0% {
-            opacity: 1;  
+            opacity: 10.0;  
         }     
         100% {
             opacity: 0.01; 
