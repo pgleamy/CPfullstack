@@ -101,14 +101,15 @@
 		object-fit: fill;
         padding-right: 56px;
         padding-top: 26px;	
-  		opacity: .9;
+  		opacity: 0.9;
 	}
 
 	nav {
 		display: flex;
 		justify-content: center;
         padding-left: 0px;
-		/* background: transparent;*/
+		background: transparent;
+		opacity: 1.0;
 	}
 
 	ul {
@@ -122,6 +123,7 @@
 		list-style: none;
 		/*background: var(--background);*/
 		background-size: contain;
+		opacity: 1;
 	}
 
 	li {

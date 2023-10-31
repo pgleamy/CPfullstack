@@ -4,8 +4,10 @@
   import { writable } from 'svelte/store';
   import { scrollStore, setInLocalStorage, get, load } from '$lib/scrollStore.js';
   import { createEventDispatcher } from 'svelte';
+  import { invoke } from '@tauri-apps/api/tauri';
 
   let isDragging = false;
+  let isJumpingToBottom = false;
   let gripY = 0; // Y-coordinate of the grip
   let gripColor = "#00C040"; // Default color for grip
   const radius = 10;
@@ -19,6 +21,40 @@
   let downArrowIsVisible = $scrollStore.downArrow.isVisible;  
   let gripPosition = $scrollStore.gripPosition;
 
+
+
+/*
+  // determine normalized gripY based on middleVisibleBlockId
+  let middleVisibleBlockId = $scrollStore.middleVisibleBlockId;
+  const numMessagesStore = writable(0);
+  
+  async function updateNumMessages() {
+    const num = await invoke('get_num_messages');
+    numMessagesStore.set(num);
+    setInLocalStorage('totalMessages', num);
+    console.log("num_messages", num);
+  }
+  $: {
+    const container = document.getElementById("custom-scrollbar");
+    if (container) {
+      updateNumMessages();
+    }
+  }
+  $: if ($numMessagesStore) {
+    // calculate gripPosition from middleVisibleBlockId
+    gripPosition = middleVisibleBlockId / $numMessagesStore;
+    console.log("gripPosition", gripPosition);
+    
+    // calculate gripY from gripPosition
+    const lowerBound = radius + 19;
+    const upperBound = container.clientHeight - radius - bottomPadding;
+    const rangeOfMotion = upperBound - lowerBound;
+    gripY = upperBound - gripPosition * rangeOfMotion;
+    console.log("gripY", gripY);
+  }
+
+*/
+
   let downArrow = { isVisible: false };
   let upArrow = { isVisible: false };
   let searchModal = { isOpen: false, query: "" };
@@ -29,6 +65,56 @@
     window.removeEventListener('resize', setInitialGripPosition);
     unsubscribe();  // Unsubscribe from the store
   });
+
+
+
+
+
+
+
+  // reactive declarations
+  let middleVisibleBlockId;  
+  const numMessagesStore = writable(0);
+  $: middleVisibleBlockId = $scrollStore.middleVisibleBlockId;
+
+  function updateGripMetrics() {
+    if(isDragging) return;
+    if(isJumpingToBottom) return;
+    const container = document.getElementById("custom-scrollbar");
+    let gripYCalculated = null; 
+    let gripPositionCalculated = null;
+    if (container) {
+      let num = get('totalMessages');
+      const lowerBound = radius + 19;
+      const upperBound = container.clientHeight - radius - bottomPadding;
+      const rangeOfMotion = upperBound - lowerBound;
+
+      // Calculate gripPosition
+      gripPositionCalculated = 1 - (middleVisibleBlockId / num);
+
+      // Calculate gripY
+      gripYCalculated = upperBound - gripPositionCalculated * rangeOfMotion;
+
+      // Normalize gripY to be between 0 and 1
+      const normalizedGripY = (gripYCalculated - lowerBound) / rangeOfMotion;
+
+      console.log("middleVisibleBlockId", middleVisibleBlockId);
+      console.log("gripPositionCalculated", gripPositionCalculated);
+      console.log("gripYCalculated", gripYCalculated);
+      //console.log("normalizedGripY", normalizedGripY);
+      //console.log("normalizedGripY plus gripPositionCalculated", normalizedGripY + gripPositionCalculated);
+
+      // Set gripY to gripYCalculated
+      gripY = gripYCalculated;
+      //setInLocalStorage('gripPosition', gripPositionCalculated);
+    }
+  }
+
+
+
+
+
+
 
 
   function resetElasticGripToNeutral() {
@@ -58,6 +144,7 @@
     } else {
       setInLocalStorage('downArrow_isVisible', false);
     }
+
   } // End of setInitialGripPosition()
 
   onMount(() => {
@@ -72,6 +159,7 @@
     }
 
     window.addEventListener('resize', setInitialGripPosition);
+
     
   }); // End of onMount()
 
@@ -133,6 +221,10 @@
   
   function handleDownArrowClick() {
     
+    isJumpingToBottom = true;
+
+    if (isJumpingToBottom) return; // If jumping to bottom is active, exit
+    
     const container = document.getElementById("custom-scrollbar");
     const upperBound = container.clientHeight - radius - bottomPadding;
     const lowerBound = radius + 19;
@@ -178,6 +270,8 @@
     };
 
     animateGrip(); // Initial call to start the animation
+
+    
   }  // End of handleDownArrowClick()
   
 
@@ -185,20 +279,27 @@
     console.log("Up arrow clicked");
   }
 
+
+  
   let prevState = null;
-  const unsubscribe = scrollStore.subscribe(currentState => {
-    if (prevState) {
-      for (const key in currentState) {
-        if (!deepEqual(currentState[key], prevState[key])) {
-          /* console.log(`Key ${key} changed`, {
-            from: prevState[key],
-            to: currentState[key]
-          }); */
+const unsubscribe = scrollStore.subscribe(currentState => {
+  if (prevState) {
+    for (const key in currentState) {
+      if (!deepEqual(currentState[key], prevState[key])) {
+        // Existing logic for changes in any key
+        
+        // Additional logic specifically for middleVisibleBlockId
+        if (key === 'middleVisibleBlockId') {
+          updateGripMetrics();
         }
       }
     }
-    prevState = JSON.parse(JSON.stringify(currentState));  // Deep clone
-  }); // End of scrollStore.subscribe()
+  }
+  prevState = JSON.parse(JSON.stringify(currentState));  // Deep clone
+}); // End of scrollStore.subscribe()
+ // End of scrollStore.subscribe()
+
+
 
   // Deep equality check
   function deepEqual(a, b) {
