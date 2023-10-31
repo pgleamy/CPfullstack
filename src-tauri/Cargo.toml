@@ -12,14 +12,14 @@ rust-version = "1.60"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
-tauri-build = { version = "1.4.0", features = [] }
+tauri-build = { version = "1.5.0", features = [] }
 
 [dependencies]
-serde_json = "1.0.105"
+serde_json = "1.0.108"
 serde = { version = "1.0", features = ["derive"] }
-tauri = { version = "1.4.0", features = [] }
+tauri = { version = "1.5.2", features = [] }
 syntect = "5.1.0"
-keyring = "0.10.0" #check for the latest version
+keyring = "0.10.4" #check for the latest version
 notify = "6.1.1" 
 rusqlite = "0.29.0" #check for the latest version 
 libsqlite3-sys = { version = "0.26.0", features = ["bundled"] }

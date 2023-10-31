@@ -21,40 +21,6 @@
   let downArrowIsVisible = $scrollStore.downArrow.isVisible;  
   let gripPosition = $scrollStore.gripPosition;
 
-
-
-/*
-  // determine normalized gripY based on middleVisibleBlockId
-  let middleVisibleBlockId = $scrollStore.middleVisibleBlockId;
-  const numMessagesStore = writable(0);
-  
-  async function updateNumMessages() {
-    const num = await invoke('get_num_messages');
-    numMessagesStore.set(num);
-    setInLocalStorage('totalMessages', num);
-    console.log("num_messages", num);
-  }
-  $: {
-    const container = document.getElementById("custom-scrollbar");
-    if (container) {
-      updateNumMessages();
-    }
-  }
-  $: if ($numMessagesStore) {
-    // calculate gripPosition from middleVisibleBlockId
-    gripPosition = middleVisibleBlockId / $numMessagesStore;
-    console.log("gripPosition", gripPosition);
-    
-    // calculate gripY from gripPosition
-    const lowerBound = radius + 19;
-    const upperBound = container.clientHeight - radius - bottomPadding;
-    const rangeOfMotion = upperBound - lowerBound;
-    gripY = upperBound - gripPosition * rangeOfMotion;
-    console.log("gripY", gripY);
-  }
-
-*/
-
   let downArrow = { isVisible: false };
   let upArrow = { isVisible: false };
   let searchModal = { isOpen: false, query: "" };
@@ -65,9 +31,6 @@
     window.removeEventListener('resize', setInitialGripPosition);
     unsubscribe();  // Unsubscribe from the store
   });
-
-
-
 
 
   // updateGroupMetrics()
@@ -102,19 +65,19 @@
       // Calculate gripY
       gripYCalculated = upperBound - gripPositionCalculated * rangeOfMotion;
 
-      // Normalize gripY to be between 0 and 1
+      // Various console logs for debugging
       //const normalizedGripY = (gripYCalculated - lowerBound) / rangeOfMotion;
-
       //console.log("middleVisibleBlockId", middleVisibleBlockId);
       //console.log("gripPositionCalculated", gripPositionCalculated);
-      console.log("gripYCalculated", gripYCalculated);
-      console.log("Ran updateGripMetrics()"); // gives us a nice execution count in the console
+      //console.log("gripYCalculated", gripYCalculated);
+      //console.log("Ran updateGripMetrics()"); // gives us a nice execution count in the console
       //console.log("normalizedGripY", normalizedGripY);
       //console.log("normalizedGripY plus gripPositionCalculated", normalizedGripY + gripPositionCalculated);
 
       // Set gripY to gripYCalculated
       gripY = gripYCalculated;
       setInLocalStorage('gripYCalculated', gripYCalculated);
+      // Set gripPosition to gripPositionCalculated
       setInLocalStorage('gripPositionCalculated', gripPositionCalculated);
     }
   }
@@ -467,9 +430,7 @@ let initialDragY;  // Y-coordinate of where the drag started
   } // End of updateDotsBrightness()
 
 
-
-
-// debounce function to prevent excessive calls to fetchConversationSlice
+// debounce function to prevent excessive calls to updateGroupMetrics and setInitialGripPosition
 function debounce(func, wait) {
   let timeout;
   return function(...args) {
@@ -480,8 +441,7 @@ function debounce(func, wait) {
     }, wait);
   };
 }
-
-// throttle function to prevent excessive calls to fetchConversationSlice
+// throttle function to prevent excessive calls to updateGroupMetrics and setInitialGripPosition
 function throttle(func, limit) {
     let inThrottle;
     return function() {
