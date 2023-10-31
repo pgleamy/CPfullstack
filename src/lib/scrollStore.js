@@ -83,6 +83,8 @@ const load = () => {
 
     middleVisibleBlockId: parseInt(get('middleVisibleBlockId')) || 0,
 
+    //gripYCalculated: parseFloat(get('gripYCalculated')) || 0,
+
     //conversationArray: get('conversationArray') !== null ? JSON.parse(get('conversationArray')) : [],
 
   };

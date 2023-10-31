@@ -70,14 +70,21 @@
 
 
 
+  // updateGroupMetrics()
+  // Produces metrics of the user's precise position in the conversation and the
+  // corresponding grip position
 
-
-  // reactive declarations
+  // Function related declarations
   let middleVisibleBlockId;  
   const numMessagesStore = writable(0);
+  let debounceTimer;
   $: middleVisibleBlockId = $scrollStore.middleVisibleBlockId;
+  const throttledAndDebouncedUpdateGripMetrics = throttle(debounce(updateGripMetrics, 200), 200);
+
 
   function updateGripMetrics() {
+    clearTimeout(debounceTimer);  // Clear any existing timer
+
     if(isDragging) return;
     if(isJumpingToBottom) return;
     const container = document.getElementById("custom-scrollbar");
@@ -96,17 +103,18 @@
       gripYCalculated = upperBound - gripPositionCalculated * rangeOfMotion;
 
       // Normalize gripY to be between 0 and 1
-      const normalizedGripY = (gripYCalculated - lowerBound) / rangeOfMotion;
+      //const normalizedGripY = (gripYCalculated - lowerBound) / rangeOfMotion;
 
-      console.log("middleVisibleBlockId", middleVisibleBlockId);
-      console.log("gripPositionCalculated", gripPositionCalculated);
+      //console.log("middleVisibleBlockId", middleVisibleBlockId);
+      //console.log("gripPositionCalculated", gripPositionCalculated);
       console.log("gripYCalculated", gripYCalculated);
+      console.log("Ran updateGripMetrics()"); // gives us a nice execution count in the console
       //console.log("normalizedGripY", normalizedGripY);
       //console.log("normalizedGripY plus gripPositionCalculated", normalizedGripY + gripPositionCalculated);
 
       // Set gripY to gripYCalculated
       gripY = gripYCalculated;
-      //setInLocalStorage('gripPosition', gripPositionCalculated);
+      setInLocalStorage('gripYCalculated', gripYCalculated);
     }
   }
 
@@ -221,10 +229,12 @@
   
   function handleDownArrowClick() {
     
+    console.log("isJumpingToBottom before:", isJumpingToBottom);
     isJumpingToBottom = true;
-
-    if (isJumpingToBottom) return; // If jumping to bottom is active, exit
+    console.log("isJumpingToBottom after:", isJumpingToBottom);
     
+
+    console.log("Down arrow clicked");
     const container = document.getElementById("custom-scrollbar");
     const upperBound = container.clientHeight - radius - bottomPadding;
     const lowerBound = radius + 19;
@@ -265,13 +275,13 @@
 
         downArrowIsVisible = false;
         setInLocalStorage('downArrow_isVisible', false);
-        
+     
       }
+      isJumpingToBottom = false; // Reset the flag  
     };
 
     animateGrip(); // Initial call to start the animation
 
-    
   }  // End of handleDownArrowClick()
   
 
@@ -290,7 +300,8 @@ const unsubscribe = scrollStore.subscribe(currentState => {
         
         // Additional logic specifically for middleVisibleBlockId
         if (key === 'middleVisibleBlockId') {
-          updateGripMetrics();
+          throttledAndDebouncedUpdateGripMetrics();
+          
         }
       }
     }
@@ -457,6 +468,41 @@ let initialDragY;  // Y-coordinate of where the drag started
           }
       }
   } // End of updateDotsBrightness()
+
+
+
+
+// debounce function to prevent excessive calls to fetchConversationSlice
+function debounce(func, wait) {
+  let timeout;
+  return function(...args) {
+    const context = this;
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      func.apply(context, args);
+    }, wait);
+  };
+}
+
+// throttle function to prevent excessive calls to fetchConversationSlice
+function throttle(func, limit) {
+    let inThrottle;
+    return function() {
+        const args = arguments;
+        const context = this;
+        if (!inThrottle) {
+            func.apply(context, args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+        }
+    }
+}
+
+
+
+
+
+
 
 </script>
 
