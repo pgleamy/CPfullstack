@@ -9,6 +9,8 @@
     $activePage = 'chatPage';
 
     let CurrentPage; // Reference to the current page component
+    let gender = "";
+    gender = get('Gender');
 
     // Function to switch to a new page with fade transition
     function switchPage(pageComponent) {
@@ -28,80 +30,12 @@
         }
         $inputs[index] = value;
     }
-
-    // Places the lmm character's face dimly in the background, reactive to gender, fades out after 7 seconds
-    let gender = "";
-    gender = get('Gender');
-    let face = "";
-    let styleString = "";
-    let fadeOut = 7000;
-    function updateFace() {
-        if (gender === "Iris") {
-            //console.log("I'm Iris. Who's there?");
-            return "url('src/lib/images/FEMALE.png')";
-        } else {
-            //console.log("I'm Argus. Who's there?");
-            return "url('src/lib/images/MALE.png')";
-        }
-    }
-    $: {
-        //console.log("Current gender: ", gender);
-        face = updateFace();
-        if (gender === "Iris") {
-            //console.log("I'm Iris. Who's there?");
-            face = "url('src/lib/images/FEMALE.png')";
-            //console.log("face: ", face);
-            styleString = `
-        .contentWrapper::before {
-            background-image: url('src/lib/images/FEMALE.png');
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-size: 100% 100%; /* Cover the entire element */
-            background-repeat: no-repeat;  /* Do not repeat the image */
-            background-position: center;  /* Center the image */
-            opacity: 1;   /* Initial opacity */
-            z-index: -1;  /* Place it behind the content */
-            background-position: 50px -90px;
-            animation: fadeOut ${fadeOut / 1000}s cubic-bezier(1, -0.47, 0.73, 1.24) forwards !important;
-        }
-        `;
-        //console.log("styleString: ", styleString);  // Log the style string
-        } else if (gender === "Argus") {
-            //console.log("I'm Argus. Who's there?");
-            face = "url('src/lib/images/MALE.png')";
-            //console.log("face: ", face);
-            styleString = `
-        .contentWrapper::before {
-            background-image: url('src/lib/images/MALE.png');
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-size: 100% 100%; /* Cover the entire element */
-            background-repeat: no-repeat;  /* Do not repeat the image */
-            background-position: center;  /* Center the image */
-            opacity: 1;   /* Initial opacity */
-            z-index: -1;  /* Place it behind the content */
-            background-position: 90px -55px;
-            animation: fadeOut ${fadeOut / 1000}s cubic-bezier(1, -0.47, 0.73, 1.24) forwards !important;
-        }
-        `;
-        //console.log("styleString: ", styleString);  // Log the style string
-        }
-    }
+    
 
 </script>
 
 
-<!-- Injects the correct character's face style tag into the DOM -->
-{@html `<style>${styleString}</style>`}
- <!-- For testing purposes only   <button on:click={restartAnimation} >Restart Animation</button>     -->
+
 <div class={`contentWrapper ${gender === 'Iris' ? 'Iris' : 'Argus'}`}  id='flex' >
 
     <section class="chatWindow">
@@ -141,7 +75,7 @@
         opacity: 1;  
         z-index: -1;  
         background-position: 90px -55px;
-        animation: fadeOut 7s cubic-bezier(1, 1, 0.73, 1.24) forwards !important;
+        animation: fadeOut 7s cubic-bezier(1, 1, 0.01, 0.01) forwards !important;
     }
 
     .contentWrapper.Argus::before {
@@ -158,7 +92,7 @@
         opacity: 1;  
         z-index: -1;  
         background-position: 90px -55px;
-        animation: fadeOut 7s cubic-bezier(1, 1, 0.73, 1.24) forwards !important;
+        animation: fadeOut 7s cubic-bezier(1, 1, 0.01, 0.01) forwards !important;
     }
     
     .chatWindow {
