@@ -189,12 +189,11 @@
   
   function handleDownArrowClick() {
     
-    console.log("isJumpingToBottom before:", isJumpingToBottom);
+    //console.log("isJumpingToBottom before:", isJumpingToBottom);
     isJumpingToBottom = true;
-    console.log("isJumpingToBottom after:", isJumpingToBottom);
+    //console.log("isJumpingToBottom after:", isJumpingToBottom);
     
-
-    console.log("Down arrow clicked");
+    //console.log("Down arrow clicked");
     const container = document.getElementById("custom-scrollbar");
     const upperBound = container.clientHeight - radius - bottomPadding;
     const lowerBound = radius + 19;
@@ -250,26 +249,23 @@
   }
 
 
-  
   let prevState = null;
-const unsubscribe = scrollStore.subscribe(currentState => {
-  if (prevState) {
-    for (const key in currentState) {
-      if (!deepEqual(currentState[key], prevState[key])) {
-        // Existing logic for changes in any key
-        
-        // Additional logic specifically for middleVisibleBlockId
-        if (key === 'middleVisibleBlockId') {
-          throttledAndDebouncedUpdateGripMetrics();
+  const unsubscribe = scrollStore.subscribe(currentState => {
+    if (prevState) {
+      for (const key in currentState) {
+        if (!deepEqual(currentState[key], prevState[key])) {
+          // Existing logic for changes in any key
           
+          // Additional logic specifically for middleVisibleBlockId
+          if (key === 'middleVisibleBlockId') {
+            throttledAndDebouncedUpdateGripMetrics();
+            
+          }
         }
       }
     }
-  }
-  prevState = JSON.parse(JSON.stringify(currentState));  // Deep clone
-}); // End of scrollStore.subscribe()
- // End of scrollStore.subscribe()
-
+    prevState = JSON.parse(JSON.stringify(currentState));  // Deep clone
+  }); // End of scrollStore.subscribe()
 
 
   // Deep equality check
@@ -454,12 +450,6 @@ function throttle(func, limit) {
         }
     }
 }
-
-
-
-
-
-
 
 </script>
 
