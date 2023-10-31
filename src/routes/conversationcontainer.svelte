@@ -312,7 +312,7 @@ const observerCallback = async (entries, observer) => {
 
 
 
-  
+
 function handleWheelScroll(event) {
   const direction = event.deltaY > 0 ? "DOWN" : "UP";
 
@@ -450,8 +450,8 @@ async function fetchConversationPart(direction) {
   if (direction === "UP") {
     const firstBlockIdNum = parseInt(conversation[0].block_id.split("_").pop(), 10);
 
-    console.log('Fetching earlier messages...');
-    console.log(`firstBlockIdNum: ${firstBlockIdNum}`);  // Debug line
+    //console.log('Fetching earlier messages...');
+    //console.log(`firstBlockIdNum: ${firstBlockIdNum}`);  // Debug line
 
     start = Math.max((firstBlockIdNum - 1) - totalMessagesToFetch, 0);
     end = firstBlockIdNum - 1;
@@ -459,8 +459,8 @@ async function fetchConversationPart(direction) {
   } else if (direction === "DOWN") {
     const lastBlockIdNum = parseInt(conversation[conversation.length - 1].block_id.split("_").pop(), 10);
 
-    console.log('Fetching later messages...');
-    console.log(`lastBlockIdNum: ${lastBlockIdNum}`);  // Debug line
+    //console.log('Fetching later messages...');
+    //console.log(`lastBlockIdNum: ${lastBlockIdNum}`);  // Debug line
 
     start = lastBlockIdNum;
     end = Math.min(lastBlockIdNum + totalMessagesToFetch, num_user_llm_messages);
