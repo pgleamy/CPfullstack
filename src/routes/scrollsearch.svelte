@@ -80,7 +80,7 @@
   let debounceTimer;
   $: middleVisibleBlockId = $scrollStore.middleVisibleBlockId;
   const throttledAndDebouncedUpdateGripMetrics = throttle(debounce(updateGripMetrics, 200), 200);
-
+  const throttledAndDebouncedSetInitialGripPosition = throttle(debounce(setInitialGripPosition, 200), 200);
 
   function updateGripMetrics() {
     clearTimeout(debounceTimer);  // Clear any existing timer
@@ -162,7 +162,7 @@
 
     resetElasticGripToNeutral();
 
-    setInitialGripPosition(); // restore grip position from local storage
+    throttledAndDebouncedSetInitialGripPosition(); // restore grip position from local storage
 
     let gripAtBottom = get('gripPosition');
     if (gripAtBottom > 0) {
