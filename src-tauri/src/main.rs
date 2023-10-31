@@ -1,7 +1,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 // Supports single instance plugin
-use tauri:: {Manager};
+use tauri:: Manager;
 #[derive(Clone, serde::Serialize)]
 struct Payload {
   args: Vec<String>,
@@ -11,8 +11,8 @@ struct Payload {
 mod backend_commands;
 use backend_commands::send_prompt;
 
-mod loadconversationhistory;
-use loadconversationhistory::{fetch_chat_history};
+mod load_conversation_history;
+use load_conversation_history::fetch_chat_history;
 
 use pyo3::prelude::*;
 use pyo3::types::PyList;
