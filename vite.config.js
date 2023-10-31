@@ -9,7 +9,7 @@ export default defineConfig({
 			// Replace this pattern with the appropriate pattern to match the directories or files you want to ignore
 			ignored: [ 
 				'C:/Users/Leamy/Desktop/ChatPerfect/src-tauri/users/**',
-				'C:/Users/Leamy/Desktop/ChatPerfect/src/backend/**',
+				//'C:/Users/Leamy/Desktop/ChatPerfect/src/backend/**',
 			],
 		},
 	},

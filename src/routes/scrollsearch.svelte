@@ -120,12 +120,6 @@
   }
 
 
-
-
-
-
-
-
   function resetElasticGripToNeutral() {
     // set dragspeed to 0
     setInLocalStorage('dragSpeedUpDown', 0);
