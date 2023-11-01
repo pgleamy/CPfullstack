@@ -153,7 +153,7 @@ Quill.register(CodeBlockWithTitle);
         position: static;
         height: 300px; 
         background: black;
-        opacity: 0.2;
+        opacity: 0.14  ;
         color: rgba(255, 255, 255, 0.05);
         padding-left: 0px;
         padding-right: 0px;

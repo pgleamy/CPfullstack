@@ -141,7 +141,8 @@
         font-size: 0.85em;
         justify-content: left;
         align-items: baseline;
-        color: rgb(254, 199, 169);
+        color: rgb(198,168,125);
+        color: rgb(110, 195, 225);
         padding-left: 3px;
         padding-bottom: 2px;
         -webkit-font-smoothing: antialiased;

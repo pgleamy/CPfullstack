@@ -116,6 +116,7 @@
         justify-content: left;
         align-items: baseline;
         color: rgb(110, 195, 225);
+        color: rgb(198,168,125);
         padding-left: 3px;
         padding-bottom: 0px;
         -webkit-font-smoothing: antialiased;
