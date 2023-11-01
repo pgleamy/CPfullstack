@@ -48,7 +48,7 @@
   <div id="wrapper">
     <div id="message-input" role="textbox" tabindex="0" on:keydown={handleLeftRightArrows}>
       <div id="title" contenteditable="false">
-        <span>.:. humans .:. <span class={roleClass}>{llm_role}</span></span>
+        <span><span class="dots1">.:.</span> humans <span class="dots2">.:.</span> <span class={roleClass}>{llm_role}</span></span>
         <span id="timestamp"> - {timestamp} </span>
       </div>
       <textarea bind:this={textArea} readonly name="message">{text}</textarea>  <!-- it is read-only -->
@@ -57,6 +57,17 @@
   
  
 <style>
+
+
+    .dots1 {
+    font-size: 16.5px;
+    font-weight: 900;
+    }
+    .dots2 {
+    font-size: 14px;
+    font-weight: 900;
+    }
+
 
     #wrapper {
         width: 100%;
