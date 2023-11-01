@@ -296,8 +296,7 @@ const observerCallback = async (entries, observer) => {
       // Add the mouse wheel event listener
       container.addEventListener('wheel', handleWheelScroll);
 
-      // Add the keydown event listener
-      container.addEventListener('keydown', handleArrowKeyScroll);
+
 
 
 
@@ -309,42 +308,6 @@ const observerCallback = async (entries, observer) => {
     //container.removeEventListener('scroll', handleScroll);
     //container.removeEventListener('wheel', handleWheelScroll);
   });
-
-
-
-
-
-// This function will contain the logic to be executed when UP or DOWN arrow keys are pressed.
-async function handleArrowKeyScroll(event) {
-  // Determine the direction based on the key pressed
-  let direction = null;
-  if (event.key === "ArrowUp") {
-    direction = "UP";
-  } else if (event.key === "ArrowDown") {
-    direction = "DOWN";
-  }
-
-  // If neither UP nor DOWN arrow keys were pressed, exit the function
-  if (!direction) return;
-
-  // From here on, you can replicate the logic you have for handling scroll events,
-  // but adapted for the arrow keys. For example:
-
-  if (direction === "DOWN" && shouldFetchDown && !hasReachedEnd) {
-    if (hasReachedEnd) {
-      return;  // Skip the fetch operation
-    }
-    await fetchConversationPart("DOWN");
-    shouldFetchDown = false; // Reset the flag after fetching
-  } else if (direction === "UP" && shouldFetchUp && !hasReachedStart) {
-    if (hasReachedStart) {
-      return;  // Skip the fetch operation
-    }
-    await fetchConversationPart("UP");
-    shouldFetchUp = false; // Reset the flag after fetching
-  }
-}
-
 
 
 
