@@ -88,7 +88,7 @@ function handleOpenAiKeyChange(event) {
 
 
 
-	$: backgroundImage = set.Gender === 'Argus' ? '../src/lib/images/ArgusSprint.jpg' : '../src/lib/images/IrisSprint.jpg';
+	$: backgroundImage = set.Gender === 'Argus' ? 'src/lib/images/Argus.png' : 'src/lib/images/Iris.png';
 
   </script>
   
@@ -242,10 +242,11 @@ function handleOpenAiKeyChange(event) {
   width: 100%;
   height: 100%;
   z-index: 0;  /* Ensures the background stays behind the content */
-  opacity: 0.35;  /* Set your desired opacity level */
+  opacity: 0.7;  /* Set your desired opacity level */
   background-size: cover;
   background-position: top;
   transition: background-image 0.8s ease-in-out;
+  
 }
 
   .halo-text {
