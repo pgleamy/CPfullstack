@@ -68,7 +68,7 @@
 <div id="wrapper">
     <div id="message-input" role="textbox" tabindex="0" on:keydown={handleLeftRightArrows}>
         <div id="title" contenteditable="false">
-            <span>{llm_name} <span class={roleClass}>{llm_role}</span></span>
+            <span>oOo {llm_name} oOo <span class={roleClass}>{llm_role}</span></span>
             <span id="timestamp"> - {formattedTimestamp} </span>
         </div>
         <textarea bind:this={textArea} readonly on:input={resizeTextarea} name="OpenAIKey">{text}</textarea>  

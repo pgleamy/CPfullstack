@@ -7,10 +7,11 @@
     let textArea;  
     export let timestamp; // will hold the timestamp
     export let source; // will hold the source of the message
-    export let llm_name; // will hold the llm name
-    export let llm_role; // will hold the llm role
-    export let status; // will hold the status of the message
-    export let block_id; // will hold the block id
+    export let llm_name = get('Gender'); // will hold the llm name
+    export let llm_role = get('Role') ; // will hold the llm role
+    export let status = "Not Set"; // will hold the status of the message
+    export let block_id_number = get('totalMessages') // it is last message, so get the number
+    export let block_id = `block_id_${block_id_number}`; // format it as "block_id_#""
     
     
     let roleClass;
@@ -47,10 +48,10 @@
   <div id="wrapper">
     <div id="message-input" role="textbox" tabindex="0" on:keydown={handleLeftRightArrows}>
       <div id="title" contenteditable="false">
-        <span>{user_name} <span class={roleClass}>{llm_role}</span></span>
+        <span>.:. humans .:. <span class={roleClass}>{llm_role}</span></span>
         <span id="timestamp"> - {timestamp} </span>
       </div>
-      <textarea bind:this={textArea} readonly name="OpenAIKey">{text}</textarea>  <!-- Make it read-only -->
+      <textarea bind:this={textArea} readonly name="message">{text}</textarea>  <!-- it is read-only -->
     </div>
   </div>
   
