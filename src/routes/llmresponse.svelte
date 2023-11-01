@@ -68,7 +68,7 @@
 <div id="wrapper">
     <div id="message-input" role="textbox" tabindex="0" on:keydown={handleLeftRightArrows}>
         <div id="title" contenteditable="false">
-            <span>oOo {llm_name} oOo <span class={roleClass}>{llm_role}</span></span>
+            <span><span class="circle1">o</span><span class="circle2">O</span><span class="circle3">o</span> {llm_name} <span class="circle4">o</span><span class="circle5">O</span><span class="circle6">o</span> <span class={roleClass}>{llm_role}</span></span>
             <span id="timestamp"> - {formattedTimestamp} </span>
         </div>
         <textarea bind:this={textArea} readonly on:input={resizeTextarea} name="OpenAIKey">{text}</textarea>  
@@ -176,6 +176,37 @@
         text-transform: lowercase;
         -webkit-font-smoothing: antialiased;
     }
+
+
+
+    .circle1 {
+  font-size: 6px;
+  font-weight: 900;
+}
+
+.circle2 {
+  font-size: 10.5px;
+  font-weight: 900;
+}
+
+.circle3 {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.circle4 {
+  font-size: 14.5px;
+}
+
+.circle5 {
+  font-size: 7.5px;
+}
+
+.circle6 {
+  font-size: 6px;
+  font-weight: 900;
+}
+
 
 
 </style> 

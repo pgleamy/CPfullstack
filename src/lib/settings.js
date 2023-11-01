@@ -23,9 +23,9 @@ const loadSettings = () => {
   return {
     Gender: getSetting('Gender') || "Iris", // Default value
     Role: getSetting('Role') || "Write", // Default value
-    CodingModel: getSetting('CodingModel') || "GPT3.5", // Default value
-    WritingModel: getSetting('WritingModel') || "GPT3.5", // Default value
-    TalkingModel: getSetting('TalkingModel') || "GPT3.5", // Default value
+    CodingModel: getSetting('CodingModel') || "GPT4.0", // Default value
+    WritingModel: getSetting('WritingModel') || "GPT4.0", // Default value
+    TalkingModel: getSetting('TalkingModel') || "GPT4.0", // Default value
   };
 };
 

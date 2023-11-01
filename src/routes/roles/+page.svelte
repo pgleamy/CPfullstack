@@ -118,16 +118,7 @@ function handleOpenAiKeyChange(event) {
 			  </div>
 		  </li>
 
-		  <li>
-			  <div class="column1"><label for="role">Role 🛠️ </label></div>
-			  <div class="column2">
-				<select bind:value={set.Role} on:change={(e) => handleSettingChange(e, 'Role')} id="role">
-					<option>Code</option>
-					<option>Write</option>
-					<option>Talk</option>
-				</select>
-		</div>
-		  </li>
+
 
 		  <li>
 			  <div class="column1"><label for="codingmodel">Coding 💻</label></div>

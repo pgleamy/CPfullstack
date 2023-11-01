@@ -88,6 +88,8 @@ const load = () => {
     
     //conversationArray: get('conversationArray') !== null ? JSON.parse(get('conversationArray')) : [],
 
+    Role: get('Role') || "Write",
+
   };
 };
 

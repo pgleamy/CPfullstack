@@ -74,7 +74,7 @@
         background-position: center;  
         opacity: 10.0;  
         z-index: -1;  
-        background-position: 90px -55px;
+        background-position: 70px -55px;
         animation: fadeOut 2.5s ease-in forwards !important;
     }
 
@@ -91,7 +91,7 @@
         background-position: center;  
         opacity: 10.0;  
         z-index: -1;  
-        background-position: 90px -55px;
+        background-position: 70px -55px;
         animation: fadeOut 2.5s ease-in forwards !important;
     }
     
