@@ -62,7 +62,7 @@
     }
 
     .contentWrapper.Iris::before {
-        background-image: url('src/lib/images/FEMALE.png');
+        background-image: url('src/lib/images/FEMALE-hr.png');
         content: "";
         position: absolute;
         top: 0;
@@ -79,7 +79,7 @@
     }
 
     .contentWrapper.Argus::before {
-        background-image: url('src/lib/images/MALE.png');
+        background-image: url('src/lib/images/MALEhr.png');
         content: "";
         position: absolute;
         top: 0;
