@@ -289,17 +289,11 @@ const observerCallback = async (entries, observer) => {
       }, false);
 
 
-
-
-
-
       // Add the mouse wheel event listener
       container.addEventListener('wheel', handleWheelScroll);
 
-      // Add the keydown event listener
+      // Add the keydown event listener for the UP and DOWN arrow keys
       container.addEventListener('keydown', handleArrowKeyScroll);
-
-
 
 
   }); // end of onMount
@@ -344,10 +338,6 @@ async function handleArrowKeyScroll(event) {
     shouldFetchUp = false; // Reset the flag after fetching
   }
 }
-
-
-
-
 
 
 function handleWheelScroll(event) {
