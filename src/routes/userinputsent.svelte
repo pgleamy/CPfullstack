@@ -1,5 +1,6 @@
 <script>
     import { onMount, onDestroy } from 'svelte';
+    import { get } from '$lib/scrollStore.js'
 
     export let user_name; // will hold the user name
     export let text = ''; // text from the message 
@@ -10,7 +11,7 @@
     export let llm_role; // will hold the llm role
     export let status; // will hold the status of the message
     export let block_id; // will hold the block id
-    let formattedTimestamp = formatTimestamp(timestamp);
+    
     
     let roleClass;
     $: roleClass = llm_role;
@@ -19,33 +20,6 @@
         textArea.style.height = 'auto';
         textArea.style.height = (textArea.scrollHeight) + 'px';
     }
-
-
-
-    
-
-    function formatTimestamp(isoTimestamp) {
-
-        // Pre-compute month names to avoid using toLocaleString
-        const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        const date = new Date(isoTimestamp);
-        
-        const year = date.getFullYear();
-        const month = MONTH_NAMES[date.getMonth()];  // Use pre-computed array
-        const day = date.getDate();
-        
-        let hour = date.getHours();
-        const minute = date.getMinutes();
-        
-        // Directly calculate 12-hour format and AM/PM
-        const ampm = hour >= 12 ? 'pm' : 'am';
-        hour = (hour % 12) || 12;  // Convert to 12-hour format and handle the '0' case
-
-        return `${month} ${day}, ${year}, ${hour}:${String(minute).padStart(2, '0')} ${ampm}`;
-    }
-
-
-
 
 
     onMount(() => {
@@ -74,7 +48,7 @@
     <div id="message-input" role="textbox" tabindex="0" on:keydown={handleLeftRightArrows}>
       <div id="title" contenteditable="false">
         <span>{user_name} <span class={roleClass}>{llm_role}</span></span>
-        <span id="timestamp"> - {formattedTimestamp} </span>
+        <span id="timestamp"> - {timestamp} </span>
       </div>
       <textarea bind:this={textArea} readonly name="OpenAIKey">{text}</textarea>  <!-- Make it read-only -->
     </div>
@@ -105,22 +79,22 @@
     }
 
     #message-input textarea {
-    padding: 8px;
-    padding-bottom: 2px;
-    border: rgb(82, 112, 143) 0px solid;
-    border-radius: 5px;
-    background-color: transparent;
-    font-size: 14px;
-    line-height: 20px;
-    color: #ffffff;
-    resize: none;
-    overflow: hidden;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    min-height: 0px;
-    margin-right: 50px;
-    tab-size: 3;
-    -webkit-font-smoothing: antialiased;
+        padding: 8px;
+        padding-bottom: 2px;
+        border: rgb(82, 112, 143) 0px solid;
+        border-radius: 5px;
+        background-color: transparent;
+        font-size: 14px;
+        line-height: 20px;
+        color: #ffffff;
+        resize: none;
+        overflow: hidden;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        min-height: 0px;
+        margin-right: 50px;
+        tab-size: 3;
+        -webkit-font-smoothing: antialiased;
     }
 
     #message-input textarea::placeholder {

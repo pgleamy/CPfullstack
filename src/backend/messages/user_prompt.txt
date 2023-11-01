@@ -1,1 +1,9 @@
-Hi Argus, tell me a story about a blue bird
+There, I solved it. This is what the timestamp used to look like:
+
+2023-10-31 23:22:56.301
+
+and now it is:
+
+Oct 31, 2023, 11:43 49s pm
+
+This is the format I use in the UI, so the information is compact and quick to digest.

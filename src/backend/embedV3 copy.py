@@ -21,12 +21,43 @@ nlp = spacy.load("en_core_web_sm")
 
 # Returns a date/time stamp accurate to a 1000th of a second.
 ## Use: timestamp = timestamp()
+
+# old function
+#def timestamp():
+    # Get the current date and time
+#    now = datetime.now()
+    # Convert it to a string, including milliseconds
+ #   timestamp = now.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+ #   return timestamp
+ 
 def timestamp():
     # Get the current date and time
     now = datetime.now()
-    # Convert it to a string, including milliseconds
-    timestamp = now.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+
+    # Pre-compute month names
+    MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    
+    # Extract various components of the datetime object
+    year = now.year
+    month = MONTH_NAMES[now.month - 1]
+    day = now.day
+    hour = now.hour
+    minute = now.minute
+    second = now.second
+
+    # Determine AM or PM
+    ampm = "am" if hour < 12 else "pm"
+    
+    # Convert hour to 12-hour format
+    hour_12 = hour % 12
+    if hour_12 == 0:
+        hour_12 = 12
+
+    # Assemble the timestamp string
+    timestamp = f"{month} {day}, {year}, {hour_12}:{str(minute).zfill(2)} {str(second).zfill(2)}s {ampm}"
+    
     return timestamp
+
 
 """
 The add_to_index function takes as input an index filename, a text block, and an optional status flag, and adds the text to the 
