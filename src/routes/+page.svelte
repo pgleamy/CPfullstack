@@ -39,11 +39,11 @@
 <div class={`contentWrapper ${gender === 'Iris' ? 'Iris' : 'Argus'}`}  id='flex' >
 
     <section class="chatWindow">
-        <div transition:fade="{{ duration: 100, delay: 30 }}">  
+        <div transition:fade="{{ duration: 25, delay: 0 }}">  
             <ConversationContainer />
         </div>
     </section>
-    <div class="scrollSearchWrapper" transition:fade="{{ duration: 100, delay: 30 }}">
+    <div class="scrollSearchWrapper" transition:fade="{{ duration: 25, delay: 0 }}">
         <ScrollSearch />
     </div>
 
@@ -72,10 +72,10 @@
         background-size: 100% 100%;
         background-repeat: no-repeat;  
         background-position: center;  
-        opacity: 10.0;  
+        opacity: 0.4;  
         z-index: -1;  
         background-position: 70px -55px;
-        animation: fadeOut 2.5s ease-in forwards !important;
+        animation: fadeOut .4s ease-out forwards !important;
     }
 
     .contentWrapper.Argus::before {
@@ -89,10 +89,10 @@
         background-size: 100% 100%;
         background-repeat: no-repeat;  
         background-position: center;  
-        opacity: 10.0;  
+        opacity: 0.4;  
         z-index: -1;  
         background-position: 70px -55px;
-        animation: fadeOut 2.5s ease-in forwards !important;
+        animation: fadeOut .4s ease-out forwards !important;
     }
     
     .chatWindow {
@@ -110,10 +110,10 @@
 
     @keyframes fadeOut {
         0% {
-            opacity: 10.0;  
+            opacity: 0.5;  
         }     
         100% {
-            opacity: 0.01; 
+            opacity: 0.009; 
         }
     }
 

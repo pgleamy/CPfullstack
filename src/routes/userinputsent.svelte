@@ -60,12 +60,14 @@
 
 
     .dots1 {
-    font-size: 16.5px;
+    font-size: 11.5px;
     font-weight: 900;
+    color: rgb(155, 154, 153);
     }
     .dots2 {
-    font-size: 14px;
+    font-size: 9.5px;
     font-weight: 900;
+    color: rgb(155, 154, 153);
     }
 
 

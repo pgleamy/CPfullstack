@@ -180,31 +180,39 @@
 
 
     .circle1 {
-  font-size: 6px;
+  font-size: 4.5px;
   font-weight: 900;
+  color: rgb(155, 154, 153);
 }
 
 .circle2 {
-  font-size: 10.5px;
+  font-size: 7.5px;
   font-weight: 900;
+  color: rgb(155, 154, 153);
 }
 
 .circle3 {
-  font-size: 18px;
-  font-weight: 500;
+  font-size: 13px;
+  font-weight: 100;
+  color: rgb(155, 154, 153);
 }
 
 .circle4 {
-  font-size: 14.5px;
+  font-size: 10.5px;
+  font-weight: 100;
+  color: rgb(155, 154, 153);
 }
 
 .circle5 {
-  font-size: 7.5px;
+  font-size: 5.5px;
+  font-weight: 900;
+  color: rgb(155, 154, 153);
 }
 
 .circle6 {
-  font-size: 6px;
+  font-size: 4.5px;
   font-weight: 900;
+  color: rgb(155, 154, 153);
 }
 
 

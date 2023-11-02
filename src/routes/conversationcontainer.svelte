@@ -13,6 +13,12 @@
     import { tick } from 'svelte';
 
     let conversation = []; // conversation history slice as requested from the backend
+    let converstationArray = []; // conversation history copied from conversation[]
+
+    // Ensure local storage conversationArray always equals local conversation[]
+    $: conversationArray = conversation; // reactive assignment local conversationArray = local conversation
+    $: setInLocalStorage("conversationArray", JSON.stringify(conversationArray)); // reactive assignment local storage conversationArray = local conversationArray
+    // 
     let num_messages = 0; // total number of user, llm and bright_memory messages in the conversation
     let num_user_llm_messages = 0; // total number of user and llm messages in the conversation
     let container; // reference to the conversation container element    
@@ -378,8 +384,8 @@ function handleWheelScroll(event) {
 
 // Fetches a slice of the conversation history from the backend for the scrubbing grip element
 async function fetchConversationSlice(gripLocation, num_messages) {
-  const buffer = 10;
-  const totalMessagesToFetch = 20;
+  const buffer = 5;
+  const totalMessagesToFetch = 10;
   
   // Step 1: Calculate the target message based on gripLocation
   // Invert the gripLocation to align with the array indexing
@@ -443,10 +449,6 @@ async function fetchConversationSlice(gripLocation, num_messages) {
     if (fetchedData && Array.isArray(fetchedData.message)) {
       conversation = fetchedData.message;
 
-
-      // save to local storage conversationArray
-      localStorage.setItem('conversationArray', JSON.stringify(conversation));
-
       updateEdgeFlags(fetchedData.message); // Update the edge flags
       //console.log(`Updated conversation slice: ${conversation}`);  // Debug line
       //console.log*(conversation);  // Debug line
@@ -506,9 +508,6 @@ async function fetchConversationPart(direction) {
     try {
       const fetchedData = await invoke('fetch_conversation_history', { params: {start, end} });
 
-      // save to local storage conversationArray
-      localStorage.setItem('conversationArray', JSON.stringify(fetchedData.message));
-
       if (fetchedData && Array.isArray(fetchedData.message)) {
 
         updateEdgeFlags(fetchedData.message); // Update the edge flags
@@ -524,9 +523,6 @@ async function fetchConversationPart(direction) {
           // CONDITIONALLY add new messages to the start of the conversation array
           if (!hasReachedStart) {
             conversation = [...fetchedData.message, ...conversation];
-
-            // save to local storage conversationArray
-            localStorage.setItem('conversationArray', JSON.stringify(conversation));
 
             //console.log(`Duplicate Start. Did not prepend.`);  // Debug line
           } 
@@ -566,9 +562,6 @@ async function fetchConversationPart(direction) {
             if (!hasReachedEnd) {
               conversation = [...conversation, ...fetchedData.message]; // Update for reactivity
               //console.log(`Duplicate End. Did not append.`);  // Debug line
-
-              // save to local storage conversationArray
-              localStorage.setItem('conversationArray', JSON.stringify(conversation));
 
             }
 

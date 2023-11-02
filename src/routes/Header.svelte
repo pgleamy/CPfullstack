@@ -303,10 +303,10 @@
 
   #roleDropdown {
     position: absolute;
-	font-weight: 100;
-    top: 25px;
-    left: 20px;
-	color: rgb(104, 67, 32);
+	font-weight: 400;
+    top: 26px;
+    left: 6px;
+	color: rgb(161, 104, 52);
 	background: transparent;
 	border: none;
 	font-size: 1rem;
@@ -321,7 +321,7 @@
 
   #roleDropdown option {
 	background-color: black; /* Background color of the list of options */
-	color: rgb(238, 232, 225); /* Text color of the list of options */
+	color: rgb(211, 206, 200); /* Text color of the list of options */
 	border: none; /* Removes the default border around the dropdown list */
 	box-shadow: none;
 	border: none;
@@ -341,6 +341,7 @@
 
 #roleDropdown {
   border: none; /* Removes the border */
+  outline: none; /* Removes the outline when the element receives focus */
   /* other styles */
 }
 
@@ -348,7 +349,7 @@
 
 .plus {
   color: rgb(134, 180, 255);
-  font-size: 0.8em;
+  font-size: 1em;
   font-weight: bold; /* Update this */
   justify-content: right;
   padding-left: 7px;
@@ -356,7 +357,7 @@
 
 .minus {
   color: #77fc77;
-  font-size: 0.86em; /* bigger than plus so centered vertically */
+  font-size: 1.06em; /* bigger than plus so centered vertically */
   font-weight: bold; /* Update this */
   justify-content: right;
   padding-left: 0px;

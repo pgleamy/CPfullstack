@@ -96,7 +96,7 @@
     gripY = container.clientHeight - radius - bottomPadding;
     
     // Load saved gripPosition from local storage
-    const savedGripPosition = get('gripPositionCalculated');
+    const savedGripPosition = get('gripPosition');
     
     if (savedGripPosition !== null) {
       // Calculate gripY based on saved gripPosition
@@ -104,7 +104,6 @@
       const upperBound = container.clientHeight - radius - bottomPadding;
       const rangeOfMotion = upperBound - lowerBound;
       
-      const savedGripY = get('gripYCalculated');
       gripY = upperBound - savedGripPosition * rangeOfMotion;
     
       // Update down arrow visibility based on saved grip position
@@ -119,7 +118,7 @@
 
     resetElasticGripToNeutral();
 
-    throttledAndDebouncedSetInitialGripPosition(); // restore grip position from local storage
+    throttledAndDebouncedSetInitialGripPosition(); 
 
     let gripAtBottom = get('gripPosition');
     if (gripAtBottom > 0) {
