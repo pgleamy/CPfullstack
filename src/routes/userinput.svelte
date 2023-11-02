@@ -9,9 +9,9 @@
    
 
 let BlockEmbed = Quill.import('blots/block/embed');
-
 class CodeBlockWithTitle extends BlockEmbed {
   static create(value) {
+    console.log("hello");
     let node = super.create(value);
     node.dataset.title = value.title;
     return node;
@@ -21,7 +21,6 @@ class CodeBlockWithTitle extends BlockEmbed {
     return { title: domNode.dataset.title };
   }
 }
-
 CodeBlockWithTitle.blotName = 'codeBlockWithTitle';
 CodeBlockWithTitle.tagName = 'DIV';
 CodeBlockWithTitle.className = 'ql-code-block-with-title';
