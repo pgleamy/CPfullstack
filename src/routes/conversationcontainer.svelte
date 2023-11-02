@@ -384,8 +384,8 @@ function handleWheelScroll(event) {
 
 // Fetches a slice of the conversation history from the backend for the scrubbing grip element
 async function fetchConversationSlice(gripLocation, num_messages) {
-  const buffer = 5;
-  const totalMessagesToFetch = 10;
+  const buffer = 10;
+  const totalMessagesToFetch = 20;
   
   // Step 1: Calculate the target message based on gripLocation
   // Invert the gripLocation to align with the array indexing
