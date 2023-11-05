@@ -86,7 +86,7 @@ const load = () => {
     gripYCalculated: parseFloat(get('gripYCalculated')) || 0,
     gripPositionCalculated: parseFloat(get('gripPositionCalculated')) || 0,
     
-    //conversationArray: get('conversationArray') !== null ? JSON.parse(get('conversationArray')) : [],
+    //conversationArray: get('conversationArray') !== null ? JSON.parse(get('conversationArray')) : [[]],
 
     Role: get('Role') || "Write",
 

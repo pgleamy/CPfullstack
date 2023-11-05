@@ -8,61 +8,74 @@
 	// reactive state management for scrollsearch component
     import { scrollStore, setInLocalStorage, get } from '$lib/scrollStore.js'; 
 	import { activePage } from '$lib/headerchange.js';
+	import { invoke } from "@tauri-apps/api/tauri";
 
 	let hideHeader = false;
 
-	
-
-	const storedRole = get('Role');  // Fetch the role from local storage or default to 'Write'
   	let selectedRole = get('Role'); // Fetch the role from the scrollStore or default to storedRole
-
-
-
+	
 	// Subscribe to store changes and update roleClass and llm_role
 	$: llm_role = selectedRole;
 	$: roleClass = llm_role;
 
-
-
-
-	
 	$: {
-    	localStorage.setItem('Role', selectedRole);
-		
+    	localStorage.setItem('Role', selectedRole); // Update the local storage whenever user changes the role		
   	}
 
-
-
-
-
+	// EVENT to update the color of the dropdown when the user selects a new role
 	function updateSelectColor(event) {
 		const selectElement = event.target;
 		const selectedValue = selectElement.value;
 
 		switch (selectedValue) {
 			case 'Code':
-			selectElement.style.color = 'rgb(185, 65, 4)';
+			selectElement.style.color = 'rgb(249, 144, 92)';
 			break;
 			case 'Write':
-			selectElement.style.color = 'rgb(60, 131, 175)';
+			selectElement.style.color = 'rgb(100, 185, 238)';
 			break;
 			case 'Talk':
-			selectElement.style.color = 'rgb(83, 156, 30)';
+			selectElement.style.color = 'rgb(116, 216, 44)';
 			break;
 			default:
 			selectElement.style.color = 'initial'; // reset to default
 		}
+
+
+		invoke('write_role_to_file', { role: selectedRole })
+        .then(() => {
+            console.log('Role written to file successfully');
+        })
+        .catch((error) => {
+            console.error('Error writing role to file', error);
+        });
 	}
 
+	// FUNCTION to set the color of the dropdown when the header first loads
+	function setSelectColor() {
+	const selectElement = document.getElementById('roleDropdown'); // Get the select element by ID
+		if (!selectElement) return; // Guard clause in case the element is not found
 
+			console.log("Hello from setSelectColor");
 
-
+			switch (selectedRole) { // Use the reactive variable selectedRole directly
+				case 'Code':
+				selectElement.style.color = 'rgb(249, 144, 92)';
+				break;
+				case 'Write':
+				selectElement.style.color = 'rgb(100, 185, 238)';
+				break;
+				case 'Talk':
+				selectElement.style.color = 'rgb(116, 216, 44)';
+				break;
+				default:
+				selectElement.style.color = 'initial'; // reset to default color
+				break;
+		}
+	}
 
 	
 	onMount(() => {
-
-
-		
 
   		const initialSettings = loadSettings();
   		updateSettings(initialSettings);
@@ -70,6 +83,7 @@
       		hideHeader = true;
     	}, 1000);
 
+		// used to hide header when mouse is not over it's active area of 55px
 		const checkMousePosition = (e) => {
 		if (e.clientY < 55) {
 			hideHeader = false;
@@ -77,61 +91,34 @@
 				hideHeader = true;
 			}
     	};
-
     	window.addEventListener('mousemove', checkMousePosition);
 
-		return () => { // Cleanup
-		window.removeEventListener('mousemove', checkMousePosition);
-		};
-
-
-
-
-		// Get window dimensions
-		const windowHeight = window.innerHeight;
-		const windowWidth = window.innerWidth;
-
-		// Calculate the position
-		const topPos = windowHeight - 40 + "px";
-		const rightPos = windowWidth - 40 + "px";
-
-		// Update the position of the dropdown
-		const dropdown = document.getElementById('roleDropdown');
-		dropdown.style.top = topPos;
-		dropdown.style.right = rightPos;
-
-
-
-
+		// Set the color of the role dropdown when the header first loads
 		const selectElement = document.getElementById('roleDropdown');
-  		updateSelectColor({ target: selectElement })
+		const dropdown = document.getElementById('roleDropdown');
+		if (dropdown) {
+			// Ensuring that this runs after all synchronous code and rendering have completed
+			setTimeout(() => {
+				// Ensure the dropdown's value is set to the selected role
+				dropdown.value = selectedRole;
+				// Then apply the correct color at startup
+				setSelectColor();
+			
+			}, 0);
+		}
 
 	}); // end onMount
 	
+
 	$: logo = $settings.Gender === 'Argus' ? 'src/lib/images/Argus_logo_clear.png' : 'src/lib/images/Iris_logo_clear.png';
 	$: name = $settings.Gender === 'Argus' ? 'Argus' : 'Iris';
 	$: roleClass = $settings.Role === 'Write' ? 'write' : $settings.Role === 'Code' ? 'code' : 'talk';
 
-
-
-
 	let showOptions = false;
-  
-
-  function selectRole(role) {
-    selectedRole = role;
-    showOptions = false;
-  }
-
-
-
-
 
 </script>
 
 <header class:hide={hideHeader} class={$activePage === 'chatPage' ? 'bg-black' : 'bg-transparent'}> <!-- Add the transition directive here -->
-
-
 
 	<div class="corner">
 		<div>
@@ -150,8 +137,6 @@
 		</ul>
 	</nav>
 
-
-
 	<div id="wrapper">
 		<div id="message-input" role="textbox" tabindex="0">
 		  <div id="title" style="position: relative;">
@@ -164,8 +149,6 @@
 		  </div>
 		</div>
 	  </div>
-
-
 
 </header>
 
@@ -182,15 +165,15 @@
 	}
 
     .write {
-        color: rgb(60, 131, 175);
+        color: rgb(100, 185, 238);
     }
 
     .code {
-        color: rgb(185, 65, 4);
+        color: rgb(249, 144, 92);
     }
 
     .talk {
-        color: rgb(83, 156, 30);
+        color: rgb(116, 216, 44);
     }
 
 	.corner {
@@ -293,9 +276,6 @@
   }
 
 
-
-
-
   .custom-select {
     position: relative;
   }
@@ -306,7 +286,15 @@
 	font-weight: 400;
     top: 26px;
     left: 6px;
-	color: rgb(161, 104, 52);
+	background-color: transparent;
+	border: none;
+	font-size: 1rem;
+	text-align: center;
+	box-shadow: none;
+	line-height: 1.8;
+	padding: 0px;
+	font-size: .8em;  /* Update this */
+	font-weight: bold; /* Update this */
 	background: transparent;
 	border: none;
 	font-size: 1rem;
@@ -316,12 +304,13 @@
 	padding: 0px;
 	font-size: .8em;  /* Update this */
   	font-weight: bold; /* Update this */
-	  font-family: var(--font-mono)
+	font-family: var(--font-mono);
+	z-index: 2;
   }
 
   #roleDropdown option {
 	background-color: black; /* Background color of the list of options */
-	color: rgb(211, 206, 200); /* Text color of the list of options */
+	color: rgb(187, 245, 225); /* Text color of the list of options */
 	border: none; /* Removes the default border around the dropdown list */
 	box-shadow: none;
 	border: none;
@@ -336,15 +325,8 @@
 
   #roleDropdown:focus {
 	border: none;
-  outline: none; /* Removes the outline when the element receives focus */
-}
-
-#roleDropdown {
-  border: none; /* Removes the border */
-  outline: none; /* Removes the outline when the element receives focus */
-  /* other styles */
-}
-
+	outline: none; /* Removes the outline when the element receives focus */
+  }
 
 
 .plus {
@@ -362,7 +344,5 @@
   justify-content: right;
   padding-left: 0px;
 }
-
-
 
 </style>

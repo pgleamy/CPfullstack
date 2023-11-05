@@ -52,8 +52,11 @@ async def query_index(index_filename: str, query_text: str, top_k=2): # the numb
         if testing == 1:
             print("metadata_mapping: ", metadata_mapping)
 
+    #model = AutoModel.from_pretrained("intfloat/e5-large-v2")
+    #tokenizer = AutoTokenizer.from_pretrained("intfloat/e5-large-v2")
+    
     model = AutoModel.from_pretrained("intfloat/e5-large-v2")
-    tokenizer = AutoTokenizer.from_pretrained("intfloat/e5-large-v2")
+    tokenizer = AutoTokenizer.from_pretrained("BAAI/bge-large-en-v1.5")
     
     # breaks query_text into sentences and stores in results
     doc = nlp(query_text)

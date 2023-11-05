@@ -147,7 +147,7 @@ fn main() -> PyResult<()> {
 
             app.emit_all("single-instance", Payload { args: argv, cwd }).unwrap();
         }))
-        .invoke_handler(tauri::generate_handler![store_openai_key, get_openai_key, send_prompt, fetch_conversation_history, get_num_messages, get_total_llm_user_messages])
+        .invoke_handler(tauri::generate_handler![store_openai_key, get_openai_key, send_prompt, fetch_conversation_history, get_num_messages, get_total_llm_user_messages, write_role_to_file])
         .plugin(tauri_plugin_window_state::Builder::default().build()) // persist Window state plugin See: https://github.com/tauri-apps/plugins-workspace/tree/v1/plugins/window-state
         .plugin(tauri_plugin_printer::init()) // printer access plugin See: https://crates.io/crates/tauri-plugin-printer/versions version 0.5.2
         .plugin(tauri_plugin_fs_watch::init()) // file system watch plugin See: https://github.com/tauri-apps/plugins-workspace/tree/v1/plugins/fs-watch
@@ -236,6 +236,19 @@ fn fetch_conversation_history(params: FetchParams) -> tauri::Result<Reply> {
   Ok(Reply {
     message: slice.to_vec(),
   })
+}
+
+
+
+#[tauri::command]
+fn write_role_to_file(role: &str) -> Result<(), String> {
+    use std::fs::File;
+    use std::io::Write;
+
+    let path = "F:\\WindowsDesktop\\Users\\Leamy\\Desktop\\ChatPerfect\\src\\backend\\messages\\role.txt";
+    let mut file = File::create(path).map_err(|e| e.to_string())?;
+    file.write_all(role.as_bytes()).map_err(|e| e.to_string())?;
+    Ok(())
 }
 
 // Just clears the terminal screen :)

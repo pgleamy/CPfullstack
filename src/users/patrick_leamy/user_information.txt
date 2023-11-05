@@ -1,23 +1,19 @@
-THE USER is Patrick Leamy (person):
-ATTRIBUTES: 53 years old, married to Nadia Leamy, lives in Calgary, Alberta, has three children: Keira, Kaylen, and Devin
-RELATIONSHIP TO THE USER: Patrick Leamy is the user
+Person: Patrick Leamy:
+- B-day: April 4, 1970
+- Residence: Calgary, Alberta
+- Marital Status: Married to Nadia Leamy
+- Occupation: Computer programmer
+- Likes: Bike riding, dog walking, pepperoni pizza, hiking, diet coke, artificial intelligence programming, salads, carrots, peas, tomatoes, asparagus, hard science fiction
+- Dislikes: Very cold winter days, rap music, Brussel Sprouts, green beans, butternut squash, squishy vegetables
+- Preferences: Elon Musk over Bill Gates, cats over dogs, hot sauce over ketchup, pepperoni pizza over vegetarian
+- Skills: Computer programming, computer generated art, artificial intelligence
 
-NADIA LEAMY (person):
-ATTRIBUTES: 53 years old, birthday on July 26, 1970
-RELATIONSHIP TO THE USER: married to Patrick Leamy
-
-KEIRA LEAMY (person):
-ATTRIBUTES: 16 years old, birthday on January 9, 2003, enjoys Tai Kickboxing and attends classes twice a week
-RELATIONSHIP TO USER: daughter of Patrick and Nadia Leamy
-
-KAYLEN LEAMY (person):
-ATTRIBUTES: 22 years old, lives with his girlfriend Sammy in North Vancouver, British Columbia
-RELATIONSHIP TO USER: son of Patrick and Nadia Leamy
-
-DEVIN LEAMY (person):
-ATTRIBUTES: 20 years old, lives and works in New York, returning to the University of Waterloo on September 12, 2023, to continue his Computer Science degree
-RELATIONSHIP TO USER: son of Patrick and Nadia Leamy
-
-PNLEAMY HOLDINGS INC. (company):
-ATTRIBUTES: Incorporated in Alberta
-RELATIONSHIP TO USER: Patrick Leamy and Nadia Leamy are the sole equal shareholders
+Person: Nadia Leamy:
+- B-day: July 26, 1970
+- Residence: Calgary, Alberta
+- Marital Status: Married to Patrick Leamy
+- Occupation: Works for a conference company called CIS, focuses on the registration part of the planning
+- Vehicle: Van owned by Patrick and Nadia
+- Dietary Preference: Mostly Vegetarian, Exception: Eats Turkey on Thanksgiving
+- Cooking Preference: Simple meals
+- Recent Activity: Has a mostly flat tire (Nov 2 23'), Busy with work, often travels to the conferences she helps organize

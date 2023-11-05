@@ -114,8 +114,11 @@ async def add_to_index(index_filename: str, text: str, status: str = "NONE") -> 
         index.hnsw.efConstruction = 50
         metadata_mapping = {}
 
-    model = AutoModel.from_pretrained("intfloat/e5-large-v2")
-    tokenizer = AutoTokenizer.from_pretrained("intfloat/e5-large-v2")
+    #model = AutoModel.from_pretrained("intfloat/e5-large-v2")
+    #tokenizer = AutoTokenizer.from_pretrained("intfloat/e5-large-v2")
+    
+    model = AutoModel.from_pretrained("BAAI/bge-large-en-v1.5")
+    tokenizer = AutoTokenizer.from_pretrained("BAAI/bge-large-en-v1.5")
 
     # Define the window size and stride
     # increasing the overlap may allow for more accurate query results, but each vector will be 50% watered down, so perhaps not

@@ -5,20 +5,15 @@
 
     import UserInputSent from './userinputsent.svelte';
     import LLMResponse from './llmresponse.svelte';
-
-    // reactive state management for scrollsearch component
     import {scrollStore, get, setInLocalStorage, updateScrollSettings} from '$lib/scrollStore.js';
     import { onMount, onDestroy } from 'svelte';
     import { invoke } from "@tauri-apps/api/tauri";
     import { tick } from 'svelte';
 
+    // reactive state management for scrollsearch component
     let conversation = []; // conversation history slice as requested from the backend
     let converstationArray = []; // conversation history copied from conversation[]
 
-    // Ensure local storage conversationArray always equals local conversation[]
-    $: conversationArray = conversation; // reactive assignment local conversationArray = local conversation
-    $: setInLocalStorage("conversationArray", JSON.stringify(conversationArray)); // reactive assignment local storage conversationArray = local conversationArray
-    // 
     let num_messages = 0; // total number of user, llm and bright_memory messages in the conversation
     let num_user_llm_messages = 0; // total number of user and llm messages in the conversation
     let container; // reference to the conversation container element    
@@ -28,9 +23,10 @@
      // Infinite scroll observers
     let topObserverElement;
     let bottomObserverElement;
-    let userInputComponent; // Initialize the variable to bind the UserInput component
     let observer; // Initialize the observer variable for the infinite scroll logic
 
+    let userInputComponent; // Initialize the variable to bind the UserInput component
+  
     // UP scroll positioning calculation variables for infinite scroll logic in UP direction
     let beforeScrollTop; // original scrollTop
     let afterScrollTop; // new scrollTop
@@ -68,6 +64,7 @@
       }
     } // end of reactive statement to update paddingBottom
   
+
     // Set flags indicating the conversation array contains either of the first or last message in the conversation
     // Flags can then be use for various logic, e.g. to prevent the user from scrolling past the start or end of the conversation
     // or to prevent operations for seeking out of bounds of the conversation
@@ -148,7 +145,10 @@
 
       // start a simple debugging timer
       //const startTime = Date.now();
-      fetchConversationSlice(gripLocation, num_messages); // places the conversation back to the last known position
+
+      fetchConversationSlice(gripLocation, num_messages);
+     
+
       //const endTime = Date.now();
       //const elapsed = endTime - startTime;
 
@@ -371,9 +371,6 @@ function handleWheelScroll(event) {
 }
 */
 
-
-
-
   
   // Non-reactive function to return the container pixel height
   async function getContainerHeight() {
@@ -449,6 +446,9 @@ async function fetchConversationSlice(gripLocation, num_messages) {
     if (fetchedData && Array.isArray(fetchedData.message)) {
       conversation = fetchedData.message;
 
+      // save to local storage conversationArray
+      localStorage.setItem('conversationArray', JSON.stringify(fetchedData.message));
+
       updateEdgeFlags(fetchedData.message); // Update the edge flags
       //console.log(`Updated conversation slice: ${conversation}`);  // Debug line
       //console.log*(conversation);  // Debug line
@@ -508,6 +508,9 @@ async function fetchConversationPart(direction) {
     try {
       const fetchedData = await invoke('fetch_conversation_history', { params: {start, end} });
 
+      // save to local storage conversationArray
+      localStorage.setItem('conversationArray', JSON.stringify(fetchedData.message));
+
       if (fetchedData && Array.isArray(fetchedData.message)) {
 
         updateEdgeFlags(fetchedData.message); // Update the edge flags
@@ -523,6 +526,9 @@ async function fetchConversationPart(direction) {
           // CONDITIONALLY add new messages to the start of the conversation array
           if (!hasReachedStart) {
             conversation = [...fetchedData.message, ...conversation];
+
+            // save to local storage conversationArray
+            localStorage.setItem('conversationArray', JSON.stringify(fetchedData.message));
 
             //console.log(`Duplicate Start. Did not prepend.`);  // Debug line
           } 
@@ -562,6 +568,9 @@ async function fetchConversationPart(direction) {
             if (!hasReachedEnd) {
               conversation = [...conversation, ...fetchedData.message]; // Update for reactivity
               //console.log(`Duplicate End. Did not append.`);  // Debug line
+
+              // save to local storage conversationArray
+              localStorage.setItem('conversationArray', JSON.stringify(fetchedData.message));
 
             }
 
