@@ -36,11 +36,19 @@ executor = ThreadPoolExecutor()
 load_dotenv()
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
+# obtain application data directory
+appdata_dir = os.getenv('APPDATA')
+# Append "Chatperfect" to the application data directory
+appdata_dir = os.path.join(appdata_dir, "Chatperfect")
+
+
+
+
 # 128K context!!! added Nov 6 23'
 model = "gpt-4-1106-preview"
 
 def get_role_from_file():
-    file_path=os.path.join("..", "..", "src-tauri", "messages", "role.txt")
+    file_path=os.path.join(appdata_dir, "messages", "role.txt")
     try:
         with open(file_path, 'r') as file:
             return file.read().strip()  # Remove any additional whitespace
@@ -145,12 +153,12 @@ class ChatSession:
 
     async def get_user_input(self):
         while True:
-            new_modified_time = os.path.join("..", "..", "src-tauri", "messages", "user_prompt.txt")
+            new_modified_time = os.path.join(appdata_dir, "messages", "user_prompt.txt")
             
             if self.last_modified_time is None or new_modified_time > self.last_modified_time:
                 self.last_modified_time = new_modified_time
                 
-                with open(os.path.join("..", "..", "src-tauri", "messages", "user_prompt.txt"), "r") as f:
+                with open(os.path.join(appdata_dir, "messages", "user_prompt.txt"), "r") as f:
                     self.user_input = f.read().strip()
                 
                 # Calculate the hash of the new user input
@@ -182,7 +190,7 @@ class ChatSession:
         now = datetime.now()
         date_time = now.strftime("CURRENT DATE: %B %d, %Y. CURRENT TIME: %I:%M%p. ")
         
-        user_info_file = os.path.join("..", "..", "src-tauir", "messages", "user_information.txt")
+        user_info_file = os.path.join(appdata_dir, "messages", "user_information.txt")
         if os.path.isfile(user_info_file):
            async with aiofiles.open(user_info_file, 'r') as f:
                 user_info = await f.read()
@@ -219,14 +227,14 @@ class ChatSession:
             self.llm_response = ""
             
             # Clear the file before starting the stream
-            with open(os.path.join("..", "..", "src-tauri", "messages", "llm_response.txt"), 'w') as f:
+            with open(os.path.join(appdata_dir, "messages", "llm_response.txt"), 'w') as f:
                 f.write('')
             
             for chunk in response:
                 chunk_message = chunk['choices'][0]['delta'].get('content', '')
                 if chunk_message:
                     self.llm_response += chunk_message
-                    with open(os.path.join("..", "..", "src-tauri", "messages", "llm_response.txt"), 'a') as f:
+                    with open(os.path.join(appdata_dir, "messages", "llm_response.txt"), 'a') as f:
                         f.write(chunk_message)
         except Exception as e:
             # Handle the exception that occurred during the response streaming
@@ -268,7 +276,7 @@ class ChatSession:
             # This may include logging and other cleanup tasks
             print(f"{e}")
             # You could also log the error to a file if needed
-            with open(os.path.join("..", "..", "src-tauri", "messages", "llm_response.txt"), 'w') as f:
+            with open(os.path.join(appdata_dir, "messages", "llm_response.txt"), 'w') as f:
                 f.write(str(e))
             # Rethrow the exception to signal that we should restart
             raise e
@@ -281,13 +289,13 @@ class ChatSession:
         self.user_input = ""
         self.llm_response = ""
         # Initialization code that only needs to run once
-        database_directory = os.path.join("..", "..", "src-tauri", "messages", "database")
+        database_directory = os.path.join(appdata_dir, "messages", "database")
         await verify_create_database(database_directory)
         
-        chat_session_filepath = os.path.join("..", "..", "src-tauri", "messages", "current-chat-session.txt")
+        chat_session_filepath = os.path.join(appdata_dir, "messages", "current-chat-session.txt")
         chat_history_file = chat_session_filepath
         
-        index_filepath = os.path.join("..", "..", "src-tauri", "messages", "database", "index.faiss")
+        index_filepath = os.path.join(appdata_dir, "messages", "database", "index.faiss")
         index_filename = index_filepath
         
         chat_session = ChatSession(chat_history_file, index_filename)
@@ -319,13 +327,13 @@ async def main():
     ## MUST comment below out for UNIT TESTING   
     
     # Initialization code that only needs to run once
-    database_directory = os.path.join("..", "..", "src-tauri", "messages", "database")
+    database_directory = os.path.join(appdata_dir, "messages", "database")
     await verify_create_database(database_directory)
     
-    chat_session_filepath = os.path.join("..", "..", "src-tauri", "messages", "current-chat-session.txt")
+    chat_session_filepath = os.path.join(appdata_dir, "messages", "current-chat-session.txt")
     chat_history_file = chat_session_filepath
     
-    index_filepath = os.path.join("..", "..", "src-tauri", "messages", "database", "index.faiss")
+    index_filepath = os.path.join(appdata_dir, "messages", "database", "index.faiss")
     index_filename = index_filepath
     
     chat_session = ChatSession(chat_history_file, index_filename)

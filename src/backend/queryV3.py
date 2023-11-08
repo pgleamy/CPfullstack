@@ -13,8 +13,13 @@ import aiofiles
 ## DIAGNOSTICS. Set to 1 to run the testing print statements and 0 to not run them 
 testing = 0
 
+# obtain application data directory
+appdata_dir = os.getenv('APPDATA')
+# Append "Chatperfect" to the application data directory
+appdata_dir = os.path.join(appdata_dir, "Chatperfect")
+
 ## SQLite database path
-db_path = os.path.join(os.getcwd(), '..', 'users', 'messages', 'database', 'full_text_store.db')
+db_path = os.path.join(os.getcwd(), appdata_dir, 'messages', 'database', 'full_text_store.db')
 
 logging.set_verbosity_error()  # to only display error messages
 nlp = spacy.load("en_core_web_sm")

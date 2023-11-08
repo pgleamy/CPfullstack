@@ -2,7 +2,13 @@ import os
 import asyncio
 import aiofiles
 
-async def write_to_file(content, file_path = os.path.join('messages', 'llm-response.txt')):
+# obtain application data directory
+appdata_dir = os.getenv('APPDATA')
+# Append "Chatperfect" to the application data directory
+appdata_dir = os.path.join(appdata_dir, "Chatperfect")
+
+
+async def write_to_file(content, file_path = os.path.join(appdata_dir, 'messages', 'llm-response.txt')):
     """
     Writes the entire content to the specified file at once.
 
@@ -13,7 +19,7 @@ async def write_to_file(content, file_path = os.path.join('messages', 'llm-respo
         await file.write(content)
 
 # Asyncronously streamed file writing. The "content_generator" must be an asyncronous generator.
-async def stream_to_file(content_generator, file_path = os.path.join('messages', 'llm-response.txt')):
+async def stream_to_file(content_generator, file_path = os.path.join(appdata_dir, 'messages', 'llm-response.txt')):
     """
     Writes content to the specified file in real-time as it's generated.
 

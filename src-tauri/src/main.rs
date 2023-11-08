@@ -74,7 +74,7 @@ fn create_directory_structure<A: tauri::Assets>(ctx: &tauri::Context<A>) -> Resu
     let current_dir = env::current_dir().map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
 
     // Specify the filename where you want to save the directory paths
-    let file_path = current_dir.join("directory_paths.json");
+    let file_path = current_dir.join("..\\src\\lib\\directory_paths.json");
 
     // Convert the Vec<String> into JSON
     let json = serde_json::to_string(&directory_paths).map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;

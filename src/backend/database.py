@@ -1,8 +1,14 @@
 import os
 import aiosqlite
 
+# obtain application data directory
+appdata_dir = os.getenv('APPDATA')
+# Append "Chatperfect" to the application data directory
+appdata_dir = os.path.join(appdata_dir, "Chatperfect")
+
+
 async def verify_create_database(database_path: str):
-    db_dir = os.path.join("..", "..", "src-tauri", "messages", "database")
+    db_dir = os.path.join(appdata_dir, "messages", "database")
     db_name = 'full_text_store.db'
     db_path = os.path.join(db_dir, db_name)
     
