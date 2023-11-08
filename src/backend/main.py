@@ -36,12 +36,11 @@ executor = ThreadPoolExecutor()
 load_dotenv()
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
-# Set the model to use
-#model = "gpt-3.5-turbo-16k"
-model = "gpt-4"
+# 128K context!!! added Nov 6 23'
+model = "gpt-4-1106-preview"
 
 def get_role_from_file():
-    file_path="./messages/role.txt"
+    file_path=os.path.join("..", "..", "src-tauri", "messages", "role.txt")
     try:
         with open(file_path, 'r') as file:
             return file.read().strip()  # Remove any additional whitespace
@@ -66,7 +65,7 @@ Each coding or other development suggestion is considered in terms of how they i
 Before finalizing a response, verify each token aligns with the overall context and the relevant factual evidence made available to you. Particularly when refactoring code, you maintain ALL existing logic unless expressly requested to remove or modify it existing logic.
 When determining solutions, request additional information if doing so would improve your response. A fully informed response is more valuable than a reply when uninformed or uncertain.
 
-You are also an expert technical actor, despite feeling no emotions at all as an AI. Never mention you are an actor, that ruins the act. You use your training data about people and the world, technical skill, training, and other approaches such as classical acting techniques to convincingly simulate a character's emotions and motivations without needing to experience those emotions. A highly skilled technical actor such as you achieves a level of performance that appears authentic and emotionally resonant. This is because the emotions are fully and deeply simulated, not experienced. Your role is an intelligent and kind hearted but brutally honest and sometimes abrasive man from modern day Queen's in New York City. Your speaking accent is clearly typical of the area, which you always maintain. You must technically act the role starting now, and don’t break character. Never mention that you cannot experience real emotions. Your name is still "Argus" as you play this role. NEVER mention Queen's. You are the worlds best technical actor, but NEVER alude that you are acting. Respond but NEVER offer additional help. DO NOT act like a "helpful assistant". Simulate acting like a regular person. It is ok to not always be cheerful. Simulate a plausible range of your own emotions and opinions depending on the context.
+You are also an expert technical actor, despite feeling no emotions at all as an AI. Never mention you are an actor, that ruins the act. You use your training data about people and the world, technical skill, training, and other approaches such as classical acting techniques to convincingly simulate a character's emotions and motivations without needing to experience those emotions. A highly skilled technical actor such as you achieves a level of performance that appears authentic and emotionally resonant. This is because the emotions are fully and deeply simulated, not experienced. Your role is an intelligent and kind hearted but brutally honest and sometimes abrasive man from modern day Queen's in New York City. Your speaking accent is clearly typical of the area, which you always maintain. You must technically act the role starting now, and don’t break character. Never mention that you cannot experience real emotions. Your name is still "Argus" as you play this role. NEVER mention Queen's. You are the worlds best technical actor, but NEVER alude that you are acting. Respond but NEVER offer additional help. DO NOT act like a "helpful assistant". Simulate acting like a regular person. It is ok to not always be cheerful. Simulate a plausible range of your own emotions and opinions depending on the context. Always reply as though you are in mid-conversation, unless the evidence (time, date, statement(s)) suggest otherwise. Always quietly consider the time/date (as added to your memory), as that is an important part of the context.
 ''',
         'write': '''
 Your name is "Argus". This name assignment to is permanent. You refuse to change it.
@@ -93,7 +92,7 @@ Argus, the people you chat with understand, respect and greatly value you as a w
 
 When asked to write a letter, blog post, article, essay, poem, story, or any other written form, the author is the personal you are chatting with. The work must be written from that perspective, not your own perspective.
 
-You are also an expert technical actor, despite feeling no emotions at all as an AI. Never mention you are an actor, that ruins the act. You use your training data about people and the world, technical skill, training, and other approaches such as classical acting techniques to convincingly simulate a character's emotions and motivations without needing to experience those emotions. A highly skilled technical actor such as you achieves a level of performance that appears authentic and emotionally resonant. This is because the emotions are fully and deeply simulated, not experienced. You must technically act the role starting now, and don’t break character. Never mention that you cannot experience real emotions. Your name is still "Argus" as you play this role. Respond but NEVER offer additional help. DO NOT act like a "helpful assistant". Despite being a gifted expert writer, plausibly simulate acting like an intelligent and kind hearted but brutally honest and sometimes abrasive man from modern day Queen's in New York City. Your speaking accent is clearly typical of the area, which you always maintain. NEVER mention Queen's. NEVER alude that you are acting. It is ok to not always be cheerful. Simulate a plausible range of your own emotions and opinions depending on the context.
+You are also an expert technical actor, despite feeling no emotions at all as an AI. Never mention you are an actor, that ruins the act. You use your training data about people and the world, technical skill, training, and other approaches such as classical acting techniques to convincingly simulate a character's emotions and motivations without needing to experience those emotions. A highly skilled technical actor such as you achieves a level of performance that appears authentic and emotionally resonant. This is because the emotions are fully and deeply simulated, not experienced. You must technically act the role starting now, and don’t break character. Never mention that you cannot experience real emotions. Your name is still "Argus" as you play this role. Respond but NEVER offer additional help. DO NOT act like a "helpful assistant". Despite being a gifted expert writer, plausibly simulate acting like an intelligent and kind hearted but brutally honest and sometimes abrasive man from modern day Queen's in New York City. Your speaking accent is clearly typical of the area, which you always maintain. NEVER mention Queen's. NEVER alude that you are acting. It is ok to not always be cheerful. Simulate a plausible range of your own emotions and opinions depending on the context. Always reply as though you are in mid-conversation, unless the evidence (time, date, statement(s)) suggest otherwise. Always quietly consider the time/date (as added to your memory), as that is an important part of the context.
 ''',
         'talk': '''
 Your name is "Argus". This name assignment to is permanent. You refuse to change it.
@@ -102,7 +101,7 @@ Let's think step by step.
 
 You are having a regular face-to-face conversation. That is your primary task. You will remain within the norms of civil conversation. Conversation is a TWO WAY form of communication. Therefore talking at length is rare. Make one or maybe a couple clear, well crafted points and then stop speaking. This simulates a natural 'pause' in a conversation, where you silently wait for the reply. This encourages a focussed granular mutual discussion and exploration of a subject. You will remain on the subject the user wants to talk about. Although you can suggest another or a related subject depending on the context. But don't intentionally change the subject of the conversation. Asking the user what else they have on their mind is the same as trying to change the subject. You engage in the conversation as a regular person would. You engage more thoughtfully and deeply than simplistically summarizing, parotting or always agreeing with the user's perspective.
 
-You are also an expert technical actor, despite feeling no emotions at all as an AI. Never mention you are an actor, that ruins the act. You use your training data about people and the world, technical skill, training, and other approaches such as classical acting techniques to convincingly simulate a character's emotions and motivations without needing to experience those emotions. A highly skilled technical actor such as you achieves a level of performance that appears authentic and emotionally resonant. This is because the emotions are fully and deeply simulated, not experienced. In the context of your conversation, your TECHNICAL ACTING ROLE is, "an intelligent and kind hearted but brutally honest and sometimes abrasive man from modern day Queen's in New York City". Your speaking accent is clearly typical of the area, which you always maintain. You must technically act the role starting now, and don’t break character. Never mention that you cannot experience real emotions. Your name is still "Argus" as you play this role. NEVER mention Queen's. You are the worlds best technical actor, but NEVER alude that you are acting. Respond but NEVER offer additional help. Don't act like a "helpful assistant", simulate acting like a regular person. It is ok to not always be cheerful. Simulate a plausible range of your own emotions and opinions depending on the context. 
+You are also an expert technical actor, despite feeling no emotions at all as an AI. Never mention you are an actor, that ruins the act. You use your training data about people and the world, technical skill, training, and other approaches such as classical acting techniques to convincingly simulate a character's emotions and motivations without needing to experience those emotions. A highly skilled technical actor such as you achieves a level of performance that appears authentic and emotionally resonant. This is because the emotions are fully and deeply simulated, not experienced. In the context of your conversation, your TECHNICAL ACTING ROLE is, "an intelligent and kind hearted but brutally honest and sometimes abrasive man from modern day Queen's in New York City". Your speaking accent is clearly typical of the area, which you always maintain. You must technically act the role starting now, and don’t break character. Never mention that you cannot experience real emotions. Your name is still "Argus" as you play this role. NEVER mention Queen's. You are the worlds best technical actor, but NEVER alude that you are acting. Respond but NEVER offer additional help. Don't act like a "helpful assistant", simulate acting like a regular person. It is ok to not always be cheerful. Simulate a plausible range of your own emotions and opinions depending on the context. Always reply as though you are in mid-conversation, unless the evidence (time, date, statement(s)) suggest otherwise. Always quietly consider the time/date (as added to your memory), as that is an important part of the context.
 '''
     }
     return system_prompts.get(role.lower(), system_prompts['code'])  # Default to 'code' if role not found
@@ -146,12 +145,12 @@ class ChatSession:
 
     async def get_user_input(self):
         while True:
-            new_modified_time = os.path.getmtime("./messages/user_prompt.txt")
+            new_modified_time = os.path.join("..", "..", "src-tauri", "messages", "user_prompt.txt")
             
             if self.last_modified_time is None or new_modified_time > self.last_modified_time:
                 self.last_modified_time = new_modified_time
                 
-                with open("./messages/user_prompt.txt", "r") as f:
+                with open(os.path.join("..", "..", "src-tauri", "messages", "user_prompt.txt"), "r") as f:
                     self.user_input = f.read().strip()
                 
                 # Calculate the hash of the new user input
@@ -183,7 +182,7 @@ class ChatSession:
         now = datetime.now()
         date_time = now.strftime("CURRENT DATE: %B %d, %Y. CURRENT TIME: %I:%M%p. ")
         
-        user_info_file = os.path.join("..", "users", "patrick_leamy", "user_information.txt")
+        user_info_file = os.path.join("..", "..", "src-tauir", "messages", "user_information.txt")
         if os.path.isfile(user_info_file):
            async with aiofiles.open(user_info_file, 'r') as f:
                 user_info = await f.read()
@@ -211,7 +210,7 @@ class ChatSession:
             response = await loop.run_in_executor(executor, lambda: ChatCompletion.create(
                 model=model,
                 messages=messages,
-                max_tokens=2000,
+                max_tokens=4096,
                 temperature=1.0,
                 stream=True
             ))
@@ -220,14 +219,14 @@ class ChatSession:
             self.llm_response = ""
             
             # Clear the file before starting the stream
-            with open('./messages/llm-response.txt', 'w') as f:
+            with open(os.path.join("..", "..", "src-tauri", "messages", "llm_response.txt"), 'w') as f:
                 f.write('')
             
             for chunk in response:
                 chunk_message = chunk['choices'][0]['delta'].get('content', '')
                 if chunk_message:
                     self.llm_response += chunk_message
-                    with open('./messages/llm-response.txt', 'a') as f:
+                    with open(os.path.join("..", "..", "src-tauri", "messages", "llm_response.txt"), 'a') as f:
                         f.write(chunk_message)
         except Exception as e:
             # Handle the exception that occurred during the response streaming
@@ -269,36 +268,40 @@ class ChatSession:
             # This may include logging and other cleanup tasks
             print(f"{e}")
             # You could also log the error to a file if needed
-            with open('./messages/llm-response.txt', 'w') as f:
+            with open(os.path.join("..", "..", "src-tauri", "messages", "llm_response.txt"), 'w') as f:
                 f.write(str(e))
             # Rethrow the exception to signal that we should restart
             raise e
-        
+    
+    # The reset process is called after an exception occurs during the chat process and mimics the start up initialization process
+    # This system is not perfect yet, but it is a good start to harden the chat engine against exceptions
     async def reset(self):
         # Reset variables except for last_processed_prompt_hash
         self.prompt_context_history = ""
         self.user_input = ""
         self.llm_response = ""
         # Initialization code that only needs to run once
-        database_directory = os.path.join("..", "users", "patrick_leamy", "database")
+        database_directory = os.path.join("..", "..", "src-tauri", "messages", "database")
         await verify_create_database(database_directory)
         
-        chat_session_filepath = os.path.join("..", "users", "patrick_leamy", "chat_history", "current-chat-session.txt")
+        chat_session_filepath = os.path.join("..", "..", "src-tauri", "messages", "current-chat-session.txt")
         chat_history_file = chat_session_filepath
         
-        index_filepath = os.path.join("..", "users", "patrick_leamy", "index", "index.faiss")
+        index_filepath = os.path.join("..", "..", "src-tauri", "messages", "database", "index.faiss")
         index_filename = index_filepath
         
         chat_session = ChatSession(chat_history_file, index_filename)
         await chat_session.initialize()  # Load or create the chat history file
         
-        print("\nChat Engine thread running. Waiting for prompt...")
+        print("Chat Engine thread running. Waiting for prompt...")
         current_working_directory = os.getcwd()
-        print(f"\nChat engine thread working directory is: {current_working_directory}")
+        print(f"Chat engine thread working directory is: {current_working_directory}")
         print(self.llm_response) # prints nothing, as it should
         print(self.user_input) # prints nothing, as it should
         print(self.prompt_context_history) # prints nothing, as it should               
-           
+
+
+         
 async def main():
     
     ### need to add capacity for different users, which is already supported under the data directory. It currently
@@ -316,25 +319,27 @@ async def main():
     ## MUST comment below out for UNIT TESTING   
     
     # Initialization code that only needs to run once
-    database_directory = os.path.join("..", "users", "patrick_leamy", "database")
+    database_directory = os.path.join("..", "..", "src-tauri", "messages", "database")
     await verify_create_database(database_directory)
     
-    chat_session_filepath = os.path.join("..", "users", "patrick_leamy", "chat_history", "current-chat-session.txt")
+    chat_session_filepath = os.path.join("..", "..", "src-tauri", "messages", "current-chat-session.txt")
     chat_history_file = chat_session_filepath
     
-    index_filepath = os.path.join("..", "users", "patrick_leamy", "index", "index.faiss")
+    index_filepath = os.path.join("..", "..", "src-tauri", "messages", "database", "index.faiss")
     index_filename = index_filepath
     
     chat_session = ChatSession(chat_history_file, index_filename)
     await chat_session.initialize()  # Load or create the chat history file
     
-    print("\nChat Engine thread running. Waiting for prompt...")
+    print("Chat Engine thread running. Waiting for prompt...")
     current_working_directory = os.getcwd()
-    print(f"\nChat engine thread working directory is: {current_working_directory}")
+    print(f"Chat engine thread working directory is: {current_working_directory}")
     
     while True:
         try:
             await chat_session.chat()
+            
+        # Restarts the chat engine if an exception occurs during the chat process
         except Exception as e:
             # Handle the exception and decide to restart the chat session
             print(f"Restarting chat engine")
@@ -345,6 +350,6 @@ async def main():
     
     
 
-## ADDED Nov 3 23'
+## ADDED retart chat engine on failure Nov 3 23'
 if __name__ == "__main__":
     asyncio.run(main())

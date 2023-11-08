@@ -14,7 +14,7 @@ import aiofiles
 testing = 0
 
 ## SQLite database path
-db_path = os.path.join(os.getcwd(), '..', 'users', 'patrick_leamy', 'database', 'full_text_store.db')
+db_path = os.path.join(os.getcwd(), '..', 'users', 'messages', 'database', 'full_text_store.db')
 
 logging.set_verbosity_error()  # to only display error messages
 nlp = spacy.load("en_core_web_sm")
@@ -42,7 +42,7 @@ The function works as follows:
 Returns:
 list: A list of full texts corresponding to each block_id, sorted by similarity score from highest to lowest.
 """
-async def query_index(index_filename: str, query_text: str, top_k=2): # the number of nearest neighbors to return is = top_k
+async def query_index(index_filename: str, query_text: str, top_k=5): # the number of nearest neighbors to return is = top_k
     if not os.path.exists(index_filename):
         return
 
@@ -55,8 +55,9 @@ async def query_index(index_filename: str, query_text: str, top_k=2): # the numb
     #model = AutoModel.from_pretrained("intfloat/e5-large-v2")
     #tokenizer = AutoTokenizer.from_pretrained("intfloat/e5-large-v2")
     
-    model = AutoModel.from_pretrained("intfloat/e5-large-v2")
-    tokenizer = AutoTokenizer.from_pretrained("BAAI/bge-large-en-v1.5")
+    model = AutoModel.from_pretrained("../backend/models/bge-large-en-v1.5")
+    tokenizer = AutoTokenizer.from_pretrained("../backend/models/bge-large-en-v1.5")
+    model.eval()
     
     # breaks query_text into sentences and stores in results
     doc = nlp(query_text)
@@ -64,7 +65,7 @@ async def query_index(index_filename: str, query_text: str, top_k=2): # the numb
     relevant_vectors = []
 
     for sentence in sentences:
-        input_ids = tokenizer(sentence, return_tensors="pt", truncation=True, max_length=128)["input_ids"]
+        input_ids = tokenizer(sentence, return_tensors="pt", padding=True, truncation=True, max_length=128)["input_ids"]
 
         with torch.no_grad():
             outputs = model(input_ids)

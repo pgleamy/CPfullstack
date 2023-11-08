@@ -1,7 +1,8 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-// Supports single instance plugin
-use tauri:: Manager;
+// Supports single instance plugin PLUS local directory structure builder
+use tauri::Manager;
+
 #[derive(Clone, serde::Serialize)]
 struct Payload {
   args: Vec<String>,
@@ -22,6 +23,15 @@ use std::collections::HashMap;
 use std::time::SystemTime;
 use std::fs::{metadata, remove_file};
 
+
+
+
+use tauri::api::path::app_data_dir;
+use serde_json;
+use std::fs;
+use std::path::PathBuf;
+
+
 extern crate keyring;
 use keyring::Keyring;
 
@@ -36,16 +46,92 @@ lazy_static! {
     static ref NUM_MESSAGES: Mutex<usize> = Mutex::new(0);
 }
 
-/*old version that returns a string
-lazy_static! {
-    static ref CONVERSATION_HISTORY: Mutex<String> = Mutex::new(String::new());
+
+
+
+
+/// Creates a custom directory structure within the app's directory.
+/// Creates a custom directory structure within the app's directory and saves the paths to a JSON file.
+fn create_directory_structure<A: tauri::Assets>(ctx: &tauri::Context<A>) -> Result<Vec<String>, std::io::Error> {
+    let data_directory = app_data_dir(ctx.config()).expect("failed to get app data dir");
+    let custom_directories = vec![
+        data_directory.join("messages"),
+        data_directory.join("messages/database"),
+        data_directory.join("messages/docs_drop"),
+    ];
+
+    let mut directory_paths = Vec::new();
+
+    for dir in custom_directories.iter() {
+        if !dir.exists() {
+            fs::create_dir_all(dir)?;
+        }
+        println!("User data directory confirmed: {}", dir.to_string_lossy());
+        directory_paths.push(dir.to_str().unwrap_or_default().to_string());
+    }
+
+    // Obtain the current directory
+    let current_dir = env::current_dir().map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
+
+    // Specify the filename where you want to save the directory paths
+    let file_path = current_dir.join("directory_paths.json");
+
+    // Convert the Vec<String> into JSON
+    let json = serde_json::to_string(&directory_paths).map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
+
+    // Write the JSON to the file in the current directory
+    fs::write(file_path, json)?;
+
+    Ok(directory_paths)
+}
+
+
+
+
+
+
+
+
+
+
+/* 
+fn create_directory_structure<A: tauri::Assets>(ctx: &tauri::Context<A>) -> Result<Vec<String>, std::io::Error> {
+    let data_directory = app_data_dir(ctx.config()).expect("failed to get app data dir");
+    let custom_directories = vec![
+        data_directory.join("messages"),
+        data_directory.join("messages/database"),
+        data_directory.join("messages/docs_drop"),
+    ];
+
+    let mut directory_paths = Vec::new();
+
+    for dir in custom_directories {
+        if !dir.exists() {
+            fs::create_dir_all(&dir)?;
+        }
+        println!("User data directory confirmed: {}", dir.to_string_lossy());
+        directory_paths.push(dir.to_str().unwrap_or_default().to_string());
+    }
+
+    Ok(directory_paths)
 }
 */
+
 
 
 fn main() -> PyResult<()> {
 
     clear_screen(); // clears the terminal screen for a clean loading screen
+
+
+    // Use the current directory as the base path or specify another path
+    let ctx = tauri::generate_context!();
+    if let Err(e) = create_directory_structure(&ctx) {
+        eprintln!("Failed to create directory structure: {}", e);
+        println!("Application data store confirmed.");
+    }
+
+
     
     // Load the full conversation history from the database into a json string variable
     {
@@ -61,7 +147,7 @@ fn main() -> PyResult<()> {
     
     
     let current_dir = env::current_dir().unwrap();
-    println!("\nTauri/Svelte thread working directory is: {:?}", current_dir);
+    println!("Tauri/Svelte thread working directory is: {:?}", current_dir);
 
     // Start the Python backend thread
     let python_thread = thread::spawn(|| {
@@ -87,14 +173,14 @@ fn main() -> PyResult<()> {
     // Alerts the frontend that the llm response file has been updated with new information streamed into it
     let mut file_timestamps: HashMap<String, SystemTime> = HashMap::new();
     file_timestamps.insert(
-        "F:\\WindowsDesktop\\Users\\Leamy\\Desktop\\ChatPerfect\\src\\backend\\messages\\llm-response.txt".to_string(),
+        "..\\src\\users\\messages\\llm-response.txt".to_string(),
         SystemTime::now(),
     );
 
     // DB_CHANGED is the file that the backend creates when the database has been updated with a new entry.
     // This will trigger the backend to append the new entry to the chat_history json structure kept in memory
     let flag_files: Vec<String> = vec![
-        "F:\\WindowsDesktop\\Users\\Leamy\\Desktop\\ChatPerfect\\src\\users\\patrick_leamy\\database\\DB_CHANGED".to_string(),
+        "..\\src\\users\\messages\\database\\DB_CHANGED".to_string(),
     ];
 
     // The files monitored are the DB_CHANGE flag file and the llm-response.txt file
@@ -142,6 +228,8 @@ fn main() -> PyResult<()> {
 
     tauri::Builder::default()
 
+
+
         .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| { // limits ChatPerfect to a single running instance See: https://github.com/tauri-apps/plugins-workspace/tree/v1/plugins/single-instance
             println!("{}, {argv:?}, {cwd}", app.package_info().name);
 
@@ -165,7 +253,7 @@ fn main() -> PyResult<()> {
 use rusqlite::{Connection, Result};
 #[tauri::command]
 fn get_num_messages() -> Result<usize, String> {
-    let conn = Connection::open("F:\\WindowsDesktop\\Users\\Leamy\\Desktop\\ChatPerfect\\src\\users\\patrick_leamy\\database\\big.db").map_err(|e| e.to_string())?;
+    let conn = Connection::open("..\\src\\users\\messages\\database\\full_text_store.db").map_err(|e| e.to_string())?;
     
     //let mut stmt = conn.prepare("SELECT COUNT(*) FROM text_blocks").map_err(|e| e.to_string())?;
     let mut stmt = conn.prepare("SELECT COUNT(*) FROM text_blocks").map_err(|e| e.to_string())?;
@@ -180,7 +268,7 @@ fn get_num_messages() -> Result<usize, String> {
 // Counts ONLY messages from user and llm
 #[tauri::command]
 fn get_total_llm_user_messages() -> Result<usize, String> {
-    let conn = Connection::open("F:\\WindowsDesktop\\Users\\Leamy\\Desktop\\ChatPerfect\\src\\users\\patrick_leamy\\database\\big.db").map_err(|e| e.to_string())?;
+    let conn = Connection::open("..\\src\\users\\messages\\database\\full_text_store.db").map_err(|e| e.to_string())?;
 
     // Table name is 'text_blocks' and the relevant column is 'source'
     let mut stmt = conn.prepare("SELECT COUNT(*) FROM text_blocks WHERE source IN ('user', 'llm')").map_err(|e| e.to_string())?;
@@ -245,11 +333,13 @@ fn write_role_to_file(role: &str) -> Result<(), String> {
     use std::fs::File;
     use std::io::Write;
 
-    let path = "F:\\WindowsDesktop\\Users\\Leamy\\Desktop\\ChatPerfect\\src\\backend\\messages\\role.txt";
+    let path = "..\\src\\users\\messages\\role.txt";
     let mut file = File::create(path).map_err(|e| e.to_string())?;
     file.write_all(role.as_bytes()).map_err(|e| e.to_string())?;
     Ok(())
 }
+
+
 
 // Just clears the terminal screen :)
 use std::io::{self, Write};

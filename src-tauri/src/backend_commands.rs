@@ -21,6 +21,6 @@ impl From<CustomError> for InvokeError {
 // Saves the user's prompt to a file to be picked up by the Python backend code
 #[command]
 pub fn send_prompt(message_text: String) -> Result<(), CustomError> {
-    let path = Path::new("F:\\WindowsDesktop\\Users\\Leamy\\Desktop\\ChatPerfect\\src\\backend\\messages\\user_prompt.txt");
+    let path = Path::new("F:\\WindowsDesktop\\Users\\Leamy\\Desktop\\ChatPerfect\\src\\users\\messages\\user_prompt.txt");
     write(path, message_text).map_err(CustomError::from)
 }

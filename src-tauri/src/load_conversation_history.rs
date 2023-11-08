@@ -9,7 +9,7 @@ use std::error::Error;
 
 pub fn fetch_chat_history() -> Result<Vec<HashMap<String, String>>, Box<dyn Error>> {
     // Open the database file
-    let conn = Connection::open("F:\\WindowsDesktop\\Users\\Leamy\\Desktop\\ChatPerfect\\src\\users\\patrick_leamy\\database\\big.db")?;
+    let conn = Connection::open("..\\src\\users\\messages\\database\\full_text_store.db")?;
 
     // Prepare the SQL statement
     //let mut stmt = conn.prepare("SELECT * FROM text_blocks ORDER BY timestamp")?;
@@ -29,6 +29,7 @@ pub fn fetch_chat_history() -> Result<Vec<HashMap<String, String>>, Box<dyn Erro
         let llm_name: String = row.get(5)?;
         let llm_role: String = row.get(6)?;
         let user_name: String = row.get(7)?;
+        let message_num: u32 = row.get(8)?;
 
         let mut record = HashMap::new();
         record.insert("block_id".to_string(), block_id);
@@ -39,6 +40,7 @@ pub fn fetch_chat_history() -> Result<Vec<HashMap<String, String>>, Box<dyn Erro
         record.insert("llm_name".to_string(), llm_name);
         record.insert("llm_role".to_string(), llm_role);
         record.insert("user_name".to_string(), user_name);
+        record.insert("message_num".to_string(), message_num.to_string());
 
         Ok(record)
     })?;

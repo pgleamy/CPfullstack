@@ -86,8 +86,6 @@ function handleOpenAiKeyChange(event) {
     });
 }
 
-
-
 	$: backgroundImage = set.Gender === 'Argus' ? 'src/lib/images/Argus.png' : 'src/lib/images/Iris.png';
 
   </script>
@@ -103,6 +101,7 @@ function handleOpenAiKeyChange(event) {
 
   <div class="background-wrapper"> 
 	<div class="background" style="background-image: url({backgroundImage});"></div>
+
   <div class="settings-page">
 	  <h1 class="settings">Settings</h1>
   
@@ -117,8 +116,6 @@ function handleOpenAiKeyChange(event) {
 				</select>
 			  </div>
 		  </li>
-
-
 
 		  <li>
 			  <div class="column1"><label for="codingmodel">Coding 💻</label></div>
@@ -158,7 +155,6 @@ function handleOpenAiKeyChange(event) {
 			  </form>
 			</div>
 		  </li>
-
 	  </ul>
   </div>
   </div>
@@ -223,17 +219,17 @@ function handleOpenAiKeyChange(event) {
 	  }
 
 	  .background-wrapper {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1; /* Place it below other elements */
-    opacity: 1;
-    background-size: cover; /* Cover the entire div */
-    background-position: center; /* Center the image */
-	transition: background-image 0.8s ease-in-out;
-  }
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		z-index: 1; /* Place it below other elements */
+		opacity: 1;
+		background-size: cover; /* Cover the entire div */
+		background-position: center; /* Center the image */
+		transition: background-image 0.8s ease-in-out;
+	}
 
   .background {
   position: fixed;  /* Fixed or absolute based on your need */
@@ -249,7 +245,7 @@ function handleOpenAiKeyChange(event) {
   
 }
 
-  .halo-text {
+.halo-text {
   text-shadow: 
     0.8px 0 0 #9e0000, 
     -0.8px 0 0 #9e0000, 
