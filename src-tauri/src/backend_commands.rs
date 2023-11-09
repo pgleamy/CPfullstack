@@ -1,7 +1,9 @@
-use std::fs::write;
-use std::path::Path;
-use tauri::command;
+use std::fs::{self, write};
+use std::path::PathBuf;
 use tauri::InvokeError;
+use tauri::api::path::data_dir; 
+
+
 
 // Custom error type
 pub struct CustomError(std::io::Error);
@@ -18,9 +20,24 @@ impl From<CustomError> for InvokeError {
     }
 }
 
+impl From<serde_json::Error> for CustomError {
+    fn from(error: serde_json::Error) -> Self {
+        CustomError(std::io::Error::new(std::io::ErrorKind::Other, error.to_string()))
+    }
+}
+
 // Saves the user's prompt to a file to be picked up by the Python backend code
-#[command]
+#[tauri::command]
 pub fn send_prompt(message_text: String) -> Result<(), CustomError> {
-    let path = Path::new("F:\\WindowsDesktop\\Users\\Leamy\\Desktop\\ChatPerfect\\src\\users\\messages\\user_prompt.txt");
-    write(path, message_text).map_err(CustomError::from)
+    // Get the application directory of the Tauri application
+    let app_dir = data_dir().expect("failed to get app data dir");
+    //println!("app_dir: {:?}", app_dir);
+    // Append "Chatperfect" to the app directory path
+    let chatperfect_dir = app_dir.join("Chatperfect").join("messages").join("user_prompt.txt");
+    // Write the message text to the user_prompt.txt file
+    write(&chatperfect_dir, message_text)?;
+
+    println!("Prompt sent successfully.");
+
+    Ok(())
 }
