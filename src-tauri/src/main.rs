@@ -27,13 +27,15 @@ use std::fs::{metadata, remove_file};
 
 
 use tauri::api::path::app_data_dir;
-use serde_json;
+//use serde_json;
 use std::fs;
 use std::path::PathBuf;
 
 
+
 extern crate keyring;
 use keyring::Keyring;
+
 
 // global mutable variable 'CONVERSATION_HISTORY' to hold all chat messages in the database
 #[macro_use]
@@ -47,12 +49,18 @@ lazy_static! {
 }
 
 
-
-
-
 /// Creates a custom directory structure within the app's directory.
 /// Creates a custom directory structure within the app's directory and saves the paths to a JSON file.
-fn create_directory_structure<A: tauri::Assets>(ctx: &tauri::Context<A>) -> Result<Vec<String>, std::io::Error> {
+
+// Define a structure to hold the paths
+#[derive(Serialize, Deserialize)]
+struct DirectoryPaths {
+    messages_path: PathBuf,
+    database_path: PathBuf,
+    docs_drop_path: PathBuf,
+}
+
+fn create_directory_structure<A: tauri::Assets>(ctx: &tauri::Context<A>) -> Result<DirectoryPaths, std::io::Error> {
     let data_directory = app_data_dir(ctx.config()).expect("failed to get app data dir");
     let custom_directories = vec![
         data_directory.join("messages"),
@@ -66,7 +74,7 @@ fn create_directory_structure<A: tauri::Assets>(ctx: &tauri::Context<A>) -> Resu
         if !dir.exists() {
             fs::create_dir_all(dir)?;
         }
-        println!("User data directory confirmed: {}", dir.to_string_lossy());
+        //println!("User data directory confirmed: {}", dir.to_string_lossy());
         directory_paths.push(dir.to_str().unwrap_or_default().to_string());
     }
 
@@ -82,7 +90,23 @@ fn create_directory_structure<A: tauri::Assets>(ctx: &tauri::Context<A>) -> Resu
     // Write the JSON to the file in the current directory
     fs::write(file_path, json)?;
 
-    Ok(directory_paths)
+
+
+    let messages_path = data_directory.join("messages");
+    let database_path = messages_path.join("database");
+    let docs_drop_path = messages_path.join("docs_drop");
+
+    // Populate the DirectoryPaths struct
+    let path = DirectoryPaths {
+        messages_path,
+        database_path,
+        docs_drop_path,
+    };
+    //println!("Messages Path: {:?}", path.messages_path);
+    //println!("Database Path: {:?}", path.database_path);
+    //println!("Docs Drop Path: {:?}", path.docs_drop_path);
+
+    Ok(path)
 }
 
 
@@ -92,30 +116,37 @@ fn create_directory_structure<A: tauri::Assets>(ctx: &tauri::Context<A>) -> Resu
 
 
 
+use rusqlite::params;
+pub fn ensure_db_schema(database_path: &PathBuf) -> Result<(), rusqlite::Error> {
+    // Append the database file name to the path
+    let db_full_path = database_path.join("full_text_store.db");
+    // Convert PathBuf to a string representation
+    let db_full_path_str = db_full_path
+        .to_str()
+        .ok_or_else(|| rusqlite::Error::InvalidPath(database_path.clone()))?;   
 
+    let conn = Connection::open(db_full_path_str)?;
 
-/* 
-fn create_directory_structure<A: tauri::Assets>(ctx: &tauri::Context<A>) -> Result<Vec<String>, std::io::Error> {
-    let data_directory = app_data_dir(ctx.config()).expect("failed to get app data dir");
-    let custom_directories = vec![
-        data_directory.join("messages"),
-        data_directory.join("messages/database"),
-        data_directory.join("messages/docs_drop"),
-    ];
+    // This SQL statement will only create the table if it doesn't already exist
+    conn.execute(
+        "CREATE TABLE IF NOT EXISTS text_blocks (
+            block_id TEXT PRIMARY KEY,
+            text TEXT NOT NULL,
+            timestamp TEXT NOT NULL,
+            status TEXT NOT NULL, 
+            source TEXT NOT NULL,
+            llm_name TEXT NOT NULL,
+            llm_role TEXT NOT NULL, 
+            username TEXT NOT NULL,
+            message_num INTEGER NOT NULL
+        );",
+        params![],
+    )?;
 
-    let mut directory_paths = Vec::new();
-
-    for dir in custom_directories {
-        if !dir.exists() {
-            fs::create_dir_all(&dir)?;
-        }
-        println!("User data directory confirmed: {}", dir.to_string_lossy());
-        directory_paths.push(dir.to_str().unwrap_or_default().to_string());
-    }
-
-    Ok(directory_paths)
+    Ok(())
 }
-*/
+
+
 
 
 
@@ -126,28 +157,37 @@ fn main() -> PyResult<()> {
 
     // Use the current directory as the base path or specify another path
     let ctx = tauri::generate_context!();
-    if let Err(e) = create_directory_structure(&ctx) {
-        eprintln!("Failed to create directory structure: {}", e);
-        println!("Application data store confirmed.");
-    }
 
+    let mut messages_path = PathBuf::new();
+    let mut database_path = PathBuf::new();
+    let mut docs_drop_path = PathBuf::new();
 
-    
-    // Load the full conversation history from the database into a json string variable
-    {
-        let mut data = CONVERSATION_HISTORY.lock().unwrap();
-        match fetch_chat_history() {
-            Ok(fetched_data) => {
-                *data = fetched_data;
-                println!("Messages in conversation at startup: {}", data.len());  // Added line
-            },
-            Err(e) => println!("An error occurred while fetching chat history: {}", e),
+    let directory_structure_result = create_directory_structure(&ctx);
+
+    // Populate the variables with the paths
+    match directory_structure_result {
+        Ok(path) => {
+            // Now you can use dir_paths_struct in your main function
+            println!("Directory structure created/confirmed successfully.");
+
+            // Store the paths in the variables.
+            messages_path = path.messages_path;
+            database_path = path.database_path;
+            docs_drop_path = path.docs_drop_path;
+            
+            println!("Docs drop path initialized by not yet used: {:?}", docs_drop_path);
+        },
+        Err(e) => {
+            eprintln!("Failed to create or confirm existing user data directory structure: {}", e);
         }
     }
-    
-    
+
+   
     let current_dir = env::current_dir().unwrap();
     println!("Tauri/Svelte thread working directory is: {:?}", current_dir);
+
+
+    ensure_db_schema(&database_path).unwrap();
 
     // Start the Python backend thread
     let python_thread = thread::spawn(|| {
@@ -166,26 +206,28 @@ fn main() -> PyResult<()> {
         event_loop.getattr("run_until_complete").unwrap().call1((main_coroutine,)).unwrap();
     });
 
+
+
+
+
+
+
     //
     // Realtime file monitoring of the backend files to update the frontend
     //
 
     // Alerts the frontend that the llm response file has been updated with new information streamed into it
-    let mut file_timestamps: HashMap<String, SystemTime> = HashMap::new();
-    file_timestamps.insert(
-        "..\\src\\users\\messages\\llm-response.txt".to_string(),
-        SystemTime::now(),
-    );
+    let mut file_timestamps: HashMap<PathBuf, SystemTime> = HashMap::new();
+    let llm_response_file = messages_path.join("llm-response.txt"); // Use the messages_path from DirectoryPaths
+    file_timestamps.insert(llm_response_file, SystemTime::now());
 
     // DB_CHANGED is the file that the backend creates when the database has been updated with a new entry.
     // This will trigger the backend to append the new entry to the chat_history json structure kept in memory
-    let flag_files: Vec<String> = vec![
-        "..\\src\\users\\messages\\database\\DB_CHANGED".to_string(),
-    ];
+    let flag_files: Vec<PathBuf> = vec![database_path.join("DB_CHANGED")];
 
     // The files monitored are the DB_CHANGE flag file and the llm-response.txt file
     let monitor_thread = thread::spawn(move || {
-        println!("\nLLM message file monitoring thread started...");
+        println!("LLM message file monitoring thread started.");
         loop {
 
             // DB_CHANGED file monitoring changed flag
@@ -199,7 +241,7 @@ fn main() -> PyResult<()> {
 
                     // Delete the flag file to lower the flag
                     if let Err(e) = remove_file(file_path) {
-                        println!("Failed to remove flag file {}: {}", file_path, e);
+                        println!("Failed to remove flag file {}: {}", file_path.display(), e);
                     }
                 }
             }
@@ -214,10 +256,10 @@ fn main() -> PyResult<()> {
                                 // Your existing logic for handling llm-response.txt
                             }
                         } else {
-                            println!("Failed to get modified time for {}", file_path);
+                            println!("Failed to get modified time for {}", file_path.display());
                         }
                     }
-                    Err(e) => println!("Failed to get metadata for {}: {}", file_path, e),
+                    Err(e) => println!("Failed to get metadata for {}: {}", file_path.display(), e),
                 }
             }
 
@@ -252,8 +294,11 @@ fn main() -> PyResult<()> {
 // Counts ALL messages, including from user, llm and bright_memory
 use rusqlite::{Connection, Result};
 #[tauri::command]
-fn get_num_messages() -> Result<usize, String> {
-    let conn = Connection::open("..\\src\\users\\messages\\database\\full_text_store.db").map_err(|e| e.to_string())?;
+fn get_num_messages(database_path: PathBuf) -> Result<usize, String> {
+
+    let db_file = database_path.join("full_text_store.db");
+
+    let conn = Connection::open(db_file).map_err(|e| e.to_string())?;
     
     //let mut stmt = conn.prepare("SELECT COUNT(*) FROM text_blocks").map_err(|e| e.to_string())?;
     let mut stmt = conn.prepare("SELECT COUNT(*) FROM text_blocks").map_err(|e| e.to_string())?;
@@ -267,8 +312,10 @@ fn get_num_messages() -> Result<usize, String> {
 
 // Counts ONLY messages from user and llm
 #[tauri::command]
-fn get_total_llm_user_messages() -> Result<usize, String> {
-    let conn = Connection::open("..\\src\\users\\messages\\database\\full_text_store.db").map_err(|e| e.to_string())?;
+fn get_total_llm_user_messages(database_path: PathBuf) -> Result<usize, String> {
+
+    let db_file = database_path.join("full_text_store.db");
+    let conn = Connection::open(db_file).map_err(|e| e.to_string())?;
 
     // Table name is 'text_blocks' and the relevant column is 'source'
     let mut stmt = conn.prepare("SELECT COUNT(*) FROM text_blocks WHERE source IN ('user', 'llm')").map_err(|e| e.to_string())?;
@@ -329,12 +376,11 @@ fn fetch_conversation_history(params: FetchParams) -> tauri::Result<Reply> {
 
 
 #[tauri::command]
-fn write_role_to_file(role: &str) -> Result<(), String> {
+fn write_role_to_file(role: &str, messages_path: PathBuf) -> Result<(), String> {
     use std::fs::File;
     use std::io::Write;
-
-    let path = "..\\src\\users\\messages\\role.txt";
-    let mut file = File::create(path).map_err(|e| e.to_string())?;
+    let role_file_path = messages_path.join("role.txt");
+    let mut file = File::create(role_file_path).map_err(|e| e.to_string())?;
     file.write_all(role.as_bytes()).map_err(|e| e.to_string())?;
     Ok(())
 }

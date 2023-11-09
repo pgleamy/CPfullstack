@@ -5,17 +5,20 @@ extern crate serde_json;
 use rusqlite::{params, Connection, Result};
 use std::collections::HashMap;
 use std::error::Error;
+use std::path::PathBuf;
 
 
-pub fn fetch_chat_history() -> Result<Vec<HashMap<String, String>>, Box<dyn Error>> {
+pub fn fetch_chat_history(database_path: &PathBuf) -> Result<Vec<HashMap<String, String>>, Box<dyn Error>> {
+
+    // Append the database file name to the directory path
+    let db_file = database_path.join("full_text_store.db");
     // Open the database file
-    let conn = Connection::open("..\\src\\users\\messages\\database\\full_text_store.db")?;
+    let conn = Connection::open(db_file)?;
 
     // Prepare the SQL statement
     //let mut stmt = conn.prepare("SELECT * FROM text_blocks ORDER BY timestamp")?;
     // Prepare the SQL statement
     let mut stmt = conn.prepare("SELECT * FROM text_blocks ORDER BY timestamp")?;
-
 
     let mut results: Vec<HashMap<String, String>> = Vec::new();
 

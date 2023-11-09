@@ -327,8 +327,8 @@ async def main():
     ## MUST comment below out for UNIT TESTING   
     
     # Initialization code that only needs to run once
-    database_directory = os.path.join(appdata_dir, "messages", "database")
-    await verify_create_database(database_directory)
+    #database_directory = os.path.join(appdata_dir, "messages", "database")
+    #await verify_create_database(database_directory)
     
     chat_session_filepath = os.path.join(appdata_dir, "messages", "current-chat-session.txt")
     chat_history_file = chat_session_filepath
