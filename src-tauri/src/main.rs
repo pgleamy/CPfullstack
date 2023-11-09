@@ -48,10 +48,7 @@ lazy_static! {
     static ref NUM_MESSAGES: Mutex<usize> = Mutex::new(0);
 }
 
-
-/// Creates a custom directory structure within the app's directory.
 /// Creates a custom directory structure within the app's directory and saves the paths to a JSON file.
-
 // Define a structure to hold the paths
 #[derive(Serialize, Deserialize)]
 struct DirectoryPaths {
@@ -78,23 +75,19 @@ fn create_directory_structure<A: tauri::Assets>(ctx: &tauri::Context<A>) -> Resu
         directory_paths.push(dir.to_str().unwrap_or_default().to_string());
     }
 
-    // Obtain the current directory
-    let current_dir = env::current_dir().map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
 
-    // Specify the filename where you want to save the directory paths
-    let file_path = current_dir.join("..\\src\\lib\\directory_paths.json");
+    let messages_path = data_directory.join("messages");
+    let database_path = messages_path.join("database");
+    let docs_drop_path = messages_path.join("docs_drop");
+
+
+    let file_path = data_directory.join("directory_paths.json");
 
     // Convert the Vec<String> into JSON
     let json = serde_json::to_string(&directory_paths).map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
 
     // Write the JSON to the file in the current directory
     fs::write(file_path, json)?;
-
-
-
-    let messages_path = data_directory.join("messages");
-    let database_path = messages_path.join("database");
-    let docs_drop_path = messages_path.join("docs_drop");
 
     // Populate the DirectoryPaths struct
     let path = DirectoryPaths {
@@ -108,12 +101,6 @@ fn create_directory_structure<A: tauri::Assets>(ctx: &tauri::Context<A>) -> Resu
 
     Ok(path)
 }
-
-
-
-
-
-
 
 
 use rusqlite::params;
@@ -147,9 +134,6 @@ pub fn ensure_db_schema(database_path: &PathBuf) -> Result<(), rusqlite::Error> 
 }
 
 
-
-
-
 fn main() -> PyResult<()> {
 
     clear_screen(); // clears the terminal screen for a clean loading screen
@@ -175,7 +159,7 @@ fn main() -> PyResult<()> {
             database_path = path.database_path;
             docs_drop_path = path.docs_drop_path;
             
-            println!("Docs drop path initialized by not yet used: {:?}", docs_drop_path);
+            println!("Docs drop path initialized but not yet used: {:?}", docs_drop_path);
         },
         Err(e) => {
             eprintln!("Failed to create or confirm existing user data directory structure: {}", e);
@@ -205,10 +189,6 @@ fn main() -> PyResult<()> {
         let event_loop = asyncio.getattr("get_event_loop").unwrap().call0().unwrap();
         event_loop.getattr("run_until_complete").unwrap().call1((main_coroutine,)).unwrap();
     });
-
-
-
-
 
 
 

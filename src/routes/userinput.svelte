@@ -69,7 +69,7 @@ Quill.register(CodeBlockWithTitle);
     function sendMessage() {
       invoke('send_prompt', { messageText })
         .then(() => {
-          console.log('Message sent successfully:', messageText);
+          console.log('User\'s prompt sent successfully.');
         })
         .catch(error => {
           console.error('Failed to send message:', error);

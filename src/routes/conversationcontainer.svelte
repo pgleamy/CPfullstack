@@ -141,11 +141,11 @@
       num_messages = await invoke('get_num_messages', {databasePath: database_path});
       setInLocalStorage('totalMessages', num_messages);
 
-      //console.log("Current number of all user, llm and bright_memory messages: " + num_messages);
+      console.log("Current number of all user, llm and bright_memory messages: " + num_messages);
 
       num_user_llm_messages = await invoke('get_total_llm_user_messages', {databasePath: database_path});
       //console.log("Current number of all user, llm and bright_memory messages: " + num_messages);
-      //console.log("Current number of user and llm messages: " + num_user_llm_messages);
+      console.log("Current number of user and llm messages: " + num_user_llm_messages);
       //console.log("Current gripLocation: " + gripLocation);
 
       // start a simple debugging timer
@@ -153,7 +153,6 @@
 
       fetchConversationSlice(gripLocation, num_messages);
      
-
       //const endTime = Date.now();
       //const elapsed = endTime - startTime;
 
@@ -430,7 +429,7 @@ async function fetchConversationSlice(gripLocation, num_messages) {
     //console.log(`Initial gripLocation: ${gripLocation}, Initial num_messages: ${num_messages}`);
 
     const fetchedData = await invoke('fetch_conversation_history', { params: {start, end} });
-    //console.log("Fetched conversation slice:", fetchedData);  // Debug line
+    console.log("Fetched conversation slice:", fetchedData);  // Debug line
 
     // Additional logic to handle initial scroll position if grip at top or bottom
     if (gripLocation === 0 && container) {

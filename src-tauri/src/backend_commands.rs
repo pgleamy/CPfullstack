@@ -34,7 +34,5 @@ pub fn send_prompt(message_text: String) -> Result<(), CustomError> {
     // Write the message text to the user_prompt.txt file
     write(&chatperfect_dir, message_text)?;
 
-    println!("Prompt sent successfully.");
-
     Ok(())
 }

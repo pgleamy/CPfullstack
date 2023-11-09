@@ -48,7 +48,7 @@
 
 		invoke('write_role_to_file', { role: selectedRole, messagesPath: messages_path })
         .then(() => {
-            console.log('Role written to file successfully');
+            console.log("\"", selectedRole, '" role written to file successfully');
         })
         .catch((error) => {
             console.error('Error writing role to file', error);
