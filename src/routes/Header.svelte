@@ -10,6 +10,10 @@
 	import { activePage } from '$lib/headerchange.js';
 	import { invoke } from "@tauri-apps/api/tauri";
 
+	let messages_path = get('messages_path');
+    let database_path = get('database_path');
+    let docs_drop_path = get('docs_drop_path');
+
 	let hideHeader = false;
 
   	let selectedRole = get('Role'); // Fetch the role from the scrollStore or default to storedRole
@@ -42,7 +46,7 @@
 		}
 
 
-		invoke('write_role_to_file', { role: selectedRole })
+		invoke('write_role_to_file', { role: selectedRole, messagesPath: messages_path })
         .then(() => {
             console.log('Role written to file successfully');
         })
@@ -55,8 +59,6 @@
 	function setSelectColor() {
 	const selectElement = document.getElementById('roleDropdown'); // Get the select element by ID
 		if (!selectElement) return; // Guard clause in case the element is not found
-
-			console.log("Hello from setSelectColor");
 
 			switch (selectedRole) { // Use the reactive variable selectedRole directly
 				case 'Code':

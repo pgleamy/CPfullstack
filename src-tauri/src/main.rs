@@ -380,6 +380,7 @@ fn write_role_to_file(role: &str, messages_path: PathBuf) -> Result<(), String> 
     use std::fs::File;
     use std::io::Write;
     let role_file_path = messages_path.join("role.txt");
+    print!("Role file path: {:?}", role_file_path);
     let mut file = File::create(role_file_path).map_err(|e| e.to_string())?;
     file.write_all(role.as_bytes()).map_err(|e| e.to_string())?;
     Ok(())

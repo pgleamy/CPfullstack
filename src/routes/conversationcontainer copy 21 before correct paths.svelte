@@ -14,10 +14,6 @@
     let conversation = []; // conversation history slice as requested from the backend
     let converstationArray = []; // conversation history copied from conversation[]
 
-    let messages_path = get('messages_path');
-    let database_path = get('database_path');
-    let docs_drop_path = get('docs_drop_path');
-
     let num_messages = 0; // total number of user, llm and bright_memory messages in the conversation
     let num_user_llm_messages = 0; // total number of user and llm messages in the conversation
     let container; // reference to the conversation container element    
@@ -137,13 +133,12 @@
   onMount(async () => {
 
       // get the conversation history slice from the backend
-
-      num_messages = await invoke('get_num_messages', {databasePath: database_path});
+      num_messages = await invoke('get_num_messages');
       setInLocalStorage('totalMessages', num_messages);
 
       //console.log("Current number of all user, llm and bright_memory messages: " + num_messages);
 
-      num_user_llm_messages = await invoke('get_total_llm_user_messages', {databasePath: database_path});
+      num_user_llm_messages = await invoke('get_total_llm_user_messages');
       //console.log("Current number of all user, llm and bright_memory messages: " + num_messages);
       //console.log("Current number of user and llm messages: " + num_user_llm_messages);
       //console.log("Current gripLocation: " + gripLocation);
@@ -511,7 +506,7 @@ async function fetchConversationPart(direction) {
   if (start >= 0 && end <= num_user_llm_messages) {
 
     try {
-      const fetchedData = await invoke('fetch_conversation_history');
+      const fetchedData = await invoke('fetch_conversation_history', { params: {start, end} });
 
       // save to local storage conversationArray
       localStorage.setItem('conversationArray', JSON.stringify(fetchedData.message));

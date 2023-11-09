@@ -14,12 +14,14 @@
 
 
 	onMount(() => {
-		let path1, path2, path3;
+		let messages_path, database_path, docs_drop_path;
 
 		if (Array.isArray(directoryPaths) && directoryPaths.length === 3) {
-			[path1, path2, path3] = directoryPaths;
-			console.log("\n", directoryPaths.path1, "\n", directoryPaths.path2, "\n", directoryPaths.path3, "\n");
-			setInLocalStorage('path1', directoryPaths.path1);
+			[messages_path, database_path, docs_drop_path] = directoryPaths;
+			//console.log("\n", messages_path, "\n", database_path, "\n", docs_drop_path, "\n");
+			setInLocalStorage('messages_path', messages_path);
+			setInLocalStorage('database_path', database_path);
+			setInLocalStorage('docs_drop_path', docs_drop_path);
 		} else {
 			console.error("The JSON file does not contain exactly 3 directory paths.");
 		}
