@@ -53,6 +53,8 @@ pub fn fetch_chat_history(database_path: &PathBuf) -> Result<Vec<HashMap<String,
         results.push(row?);
     }
 
+    println!("Fetched chat history from database.");
+
     // Return results
     Ok(results)
 }

@@ -103,6 +103,7 @@ fn create_directory_structure<A: tauri::Assets>(ctx: &tauri::Context<A>) -> Resu
 }
 
 
+// If the DB file does not exist then create it and populate it with the correct schema
 use rusqlite::params;
 pub fn ensure_db_schema(database_path: &PathBuf) -> Result<(), rusqlite::Error> {
     // Append the database file name to the path
@@ -136,7 +137,7 @@ pub fn ensure_db_schema(database_path: &PathBuf) -> Result<(), rusqlite::Error> 
 
 fn main() -> PyResult<()> {
 
-    clear_screen(); // clears the terminal screen for a clean loading screen
+    //clear_screen(); // clears the terminal screen for a clean loading screen
 
 
     // Use the current directory as the base path or specify another path
@@ -165,13 +166,29 @@ fn main() -> PyResult<()> {
             eprintln!("Failed to create or confirm existing user data directory structure: {}", e);
         }
     }
-
    
     let current_dir = env::current_dir().unwrap();
     println!("Tauri/Svelte thread working directory is: {:?}", current_dir);
 
-
     ensure_db_schema(&database_path).unwrap();
+
+
+    // Load the full conversation history from the database into a json string variable
+    {
+        let mut data = CONVERSATION_HISTORY.lock().unwrap();
+        // print current database path
+        println!("Database path: {:?}", &database_path);
+        //let db_file_path = database_path.join("full_text_store.db");
+        //println!("Database file path: {:?}", &database_path);
+    
+        match fetch_chat_history(&database_path) {
+            Ok(fetched_data) => {
+                *data = fetched_data;
+                println!("Messages in conversation at startup: {}", data.len());
+            },
+            Err(e) => println!("An error occurred while fetching chat history: {}", e),
+        }
+    }
 
     // Start the Python backend thread
     let python_thread = thread::spawn(|| {
