@@ -1,3 +1,6 @@
+### This file is not used in the current version of the application. It is kept here for reference.
+### The Rust backend is used instead to verify/create the db if it does not exist.
+
 import os
 import aiosqlite
 

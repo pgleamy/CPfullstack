@@ -18,7 +18,7 @@ pub fn fetch_chat_history(database_path: &PathBuf) -> Result<Vec<HashMap<String,
     // Prepare the SQL statement
     //let mut stmt = conn.prepare("SELECT * FROM text_blocks ORDER BY timestamp")?;
     // Prepare the SQL statement
-    let mut stmt = conn.prepare("SELECT * FROM text_blocks ORDER BY timestamp")?;
+    let mut stmt = conn.prepare("SELECT * FROM text_blocks ORDER BY message_num")?;
 
     let mut results: Vec<HashMap<String, String>> = Vec::new();
 

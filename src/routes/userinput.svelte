@@ -1,6 +1,6 @@
 <script>
     import { onMount, onDestroy } from 'svelte';
-    import { setInLocalStorage } from '$lib/scrollStore.js';
+    import { setInLocalStorage, get } from '$lib/scrollStore.js';
     import Quill from 'quill'; 
     import 'quill/dist/quill.snow.css';
  
@@ -66,6 +66,37 @@ Quill.register(CodeBlockWithTitle);
     import { invoke } from '@tauri-apps/api/tauri';
 
 
+
+
+    function messageJsonWrite() {
+        let llm_role = get('Role');
+        let llm_name = get('Gender');
+        let source = "user";
+        //console.log(llm_role, llm_name, source, username);
+        let messages_path = get('messages_path');
+        let message_meta_path = messages_path + "/message_meta.json";
+
+        // JSON
+        let message_meta = {
+            "source": source,
+            "llm_name": llm_name,
+            "llm_role": llm_role,
+            "username": username
+        };
+        let message_meta_json = JSON.stringify(message_meta);
+
+        // write message_meta.json
+        invoke('write_message_meta_file', { messageMetaJson: message_meta_json, path: message_meta_path})
+            .then(() => {
+                console.log('message_meta.json written successfully.');
+            })
+            .catch(error => {
+                console.error('Failed to write message_meta.json:', error);
+            });
+    }
+
+
+
     function sendMessage() {
       invoke('send_prompt', { messageText })
         .then(() => {
@@ -78,6 +109,8 @@ Quill.register(CodeBlockWithTitle);
       setInLocalStorage('unsentPrompt', '');
 
       quillInstance.setText(messageText);
+
+      messageJsonWrite();
     }
     
     

@@ -2,16 +2,16 @@
     import { onMount, onDestroy } from 'svelte';
     import { get } from '$lib/scrollStore.js'
 
-    export let user_name; // will hold the user name
+    let user_name; // will hold the user name
     export let text = ''; // text from the message 
     let textArea;  
-    export let timestamp; // will hold the timestamp
-    export let source; // will hold the source of the message
-    export let llm_name = get('Gender'); // will hold the llm name
-    export let llm_role = get('Role') ; // will hold the llm role
-    export let status = "Not Set"; // will hold the status of the message
-    export let block_id_number = get('totalMessages') // it is last message, so get the number
-    export let block_id = `block_id_${block_id_number}`; // format it as "block_id_#""
+    let timestamp; // will hold the timestamp
+    let source; // will hold the source of the message
+    let llm_name = get('Gender'); // will hold the llm name
+    let llm_role = get('Role') ; // will hold the llm role
+    let status = "Not Set"; // will hold the status of the message
+    let block_id_number = get('totalMessages') // it is last message, so get the number
+    let block_id = `block_id_${block_id_number}`; // format it as "block_id_#""
     
     
     let roleClass;

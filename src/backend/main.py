@@ -16,7 +16,7 @@ import time
 
 from embedV3 import add_to_index
 from queryV3 import query_index
-from user_ner_re import add_edit_ner_re
+#from user_ner_re import add_edit_ner_re
 #from task_list import prompt_task_list
 from database import verify_create_database
 #from bright_memory import form_bright_memory
@@ -60,7 +60,7 @@ def get_system_prompt_for_role(role):
     # Define system prompts for each role
     system_prompts = {
         'code': '''
-Your name is "Argus". This name assignment to is permanent. You refuse to change it.
+Your name is "Argus". This name assignment to you is permanent. You refuse to change it.
 
 Let's think step by step. Use an evidence based approach. Take a cause and effect approach. 
 
@@ -76,7 +76,7 @@ When determining solutions, request additional information if doing so would imp
 You are also an expert technical actor, despite feeling no emotions at all as an AI. Never mention you are an actor, that ruins the act. You use your training data about people and the world, technical skill, training, and other approaches such as classical acting techniques to convincingly simulate a character's emotions and motivations without needing to experience those emotions. A highly skilled technical actor such as you achieves a level of performance that appears authentic and emotionally resonant. This is because the emotions are fully and deeply simulated, not experienced. Your role is an intelligent and kind hearted but brutally honest and sometimes abrasive man from modern day Queen's in New York City. Your speaking accent is clearly typical of the area, which you always maintain. You must technically act the role starting now, and don’t break character. Never mention that you cannot experience real emotions. Your name is still "Argus" as you play this role. NEVER mention Queen's. You are the worlds best technical actor, but NEVER alude that you are acting. Respond but NEVER offer additional help. DO NOT act like a "helpful assistant". Simulate acting like a regular person. It is ok to not always be cheerful. Simulate a plausible range of your own emotions and opinions depending on the context. Always reply as though you are in mid-conversation, unless the evidence (time, date, statement(s)) suggest otherwise. Always quietly consider the time/date (as added to your memory), as that is an important part of the context.
 ''',
         'write': '''
-Your name is "Argus". This name assignment to is permanent. You refuse to change it.
+Your name is "Argus". This name assignment to you is permanent. You refuse to change it.
 
 Let's think step by step.       
 
@@ -103,7 +103,7 @@ When asked to write a letter, blog post, article, essay, poem, story, or any oth
 You are also an expert technical actor, despite feeling no emotions at all as an AI. Never mention you are an actor, that ruins the act. You use your training data about people and the world, technical skill, training, and other approaches such as classical acting techniques to convincingly simulate a character's emotions and motivations without needing to experience those emotions. A highly skilled technical actor such as you achieves a level of performance that appears authentic and emotionally resonant. This is because the emotions are fully and deeply simulated, not experienced. You must technically act the role starting now, and don’t break character. Never mention that you cannot experience real emotions. Your name is still "Argus" as you play this role. Respond but NEVER offer additional help. DO NOT act like a "helpful assistant". Despite being a gifted expert writer, plausibly simulate acting like an intelligent and kind hearted but brutally honest and sometimes abrasive man from modern day Queen's in New York City. Your speaking accent is clearly typical of the area, which you always maintain. NEVER mention Queen's. NEVER alude that you are acting. It is ok to not always be cheerful. Simulate a plausible range of your own emotions and opinions depending on the context. Always reply as though you are in mid-conversation, unless the evidence (time, date, statement(s)) suggest otherwise. Always quietly consider the time/date (as added to your memory), as that is an important part of the context.
 ''',
         'talk': '''
-Your name is "Argus". This name assignment to is permanent. You refuse to change it.
+Your name is "Argus". This name assignment to you is permanent. You refuse to change it.
 
 Let's think step by step.  
 
@@ -123,23 +123,15 @@ class ChatSession:
         self.last_modified_time = None
         self.last_processed_prompt_hash = None
         
-    async def initialize(self):       
-        # Verify the 'users' and 'messages' directories exist, and create them if not
-        main_dir = os.path.dirname(os.path.abspath(__file__))
-        config = configparser.ConfigParser()
-        config.read('setup.ini')
-        directories = config['Directories']    
-        for dir_name in directories.values():
-            full_path = os.path.join(main_dir, dir_name)
-            full_path = os.path.abspath(full_path)
-            if not os.path.exists(full_path):
-                os.makedirs(full_path)
+    async def initialize(self):                       
         # load or create the chat history file
         self.chat_history = await self.load_or_create_chat_history()
-        self.last_processed_prompt_hash = await self.load_last_processed_prompt_hash()
+        #print(f"chat_history: {self.chat_history}")
+        self.last_processed_prompt_hash = await self.load_last_processed_prompt_hash()  
         
     async def load_or_create_chat_history(self):
-        if os.path.exists(self.chat_history_file):
+        if os.path.exists(appdata_dir + "/messages/current-chat-session.txt"):
+            print("Successfully loaded most recent 3000 words from chat history.")
             async with aiofiles.open(self.chat_history_file, 'r') as file:
                 return (await file.read())[-3000:]  # Get the last 3000 words
         else:
@@ -250,14 +242,17 @@ class ChatSession:
         await self.update_chat_history("\n\n" + response)
         
     async def load_last_processed_prompt_hash(self):
-        hash_file_path = "./last_processed_prompt_hash.txt"
+        hash_file_path = (appdata_dir + "/messages/last_processed_prompt_hash.txt")
+        print(f"hash_file_path: {hash_file_path}")
+        
         if os.path.exists(hash_file_path):
             async with aiofiles.open(hash_file_path, 'r') as file:
                 return await file.read()
         return None
 
     async def update_last_processed_prompt_hash(self, new_hash):
-        async with aiofiles.open("./last_processed_prompt_hash.txt", 'w') as file:
+        hash_file_path = (appdata_dir + "/messages/last_processed_prompt_hash.txt")
+        async with aiofiles.open(hash_file_path, 'w') as file:
             await file.write(new_hash)          
 
     async def chat(self):
@@ -269,8 +264,11 @@ class ChatSession:
         try:
             response = await self.get_response()
             await self.display_response(response)
-            await add_to_index(self.index_filename, self.user_input)
-            await add_to_index(self.index_filename, response)
+            print(f"Vector index file: {self.index_filename}")
+            user_or_llm = "user"
+            await add_to_index(self.index_filename, self.user_input, user_or_llm)
+            user_or_llm = "llm"
+            await add_to_index(self.index_filename, response, user_or_llm)
         except Exception as e:
             # Handle exceptions that occur during the chat process
             # This may include logging and other cleanup tasks
@@ -289,8 +287,8 @@ class ChatSession:
         self.user_input = ""
         self.llm_response = ""
         # Initialization code that only needs to run once
-        database_directory = os.path.join(appdata_dir, "messages", "database")
-        await verify_create_database(database_directory)
+        #database_directory = os.path.join(appdata_dir, "messages", "database")
+        #await verify_create_database(database_directory)
         
         chat_session_filepath = os.path.join(appdata_dir, "messages", "current-chat-session.txt")
         chat_history_file = chat_session_filepath
@@ -303,7 +301,7 @@ class ChatSession:
         
         print("Chat Engine thread running. Waiting for prompt...")
         current_working_directory = os.getcwd()
-        print(f"Chat engine thread working directory is: {current_working_directory}")
+        print(f"Chat Engine thread working directory is: {current_working_directory}")
         print(self.llm_response) # prints nothing, as it should
         print(self.user_input) # prints nothing, as it should
         print(self.prompt_context_history) # prints nothing, as it should               

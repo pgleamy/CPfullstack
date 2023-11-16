@@ -24,14 +24,10 @@ use std::time::SystemTime;
 use std::fs::{metadata, remove_file};
 
 
-
-
 use tauri::api::path::app_data_dir;
 //use serde_json;
 use std::fs;
 use std::path::PathBuf;
-
-
 
 extern crate keyring;
 use keyring::Keyring;
@@ -215,12 +211,16 @@ fn main() -> PyResult<()> {
 
     // Alerts the frontend that the llm response file has been updated with new information streamed into it
     let mut file_timestamps: HashMap<PathBuf, SystemTime> = HashMap::new();
-    let llm_response_file = messages_path.join("llm-response.txt"); // Use the messages_path from DirectoryPaths
+    let llm_response_file = messages_path.join("llm_response.txt"); // Use the messages_path from DirectoryPaths
     file_timestamps.insert(llm_response_file, SystemTime::now());
 
     // DB_CHANGED is the file that the backend creates when the database has been updated with a new entry.
     // This will trigger the backend to append the new entry to the chat_history json structure kept in memory
     let flag_files: Vec<PathBuf> = vec![database_path.join("DB_CHANGED")];
+
+
+    println!("Flag files: {:?}", flag_files); // debug
+
 
     // The files monitored are the DB_CHANGE flag file and the llm-response.txt file
     let monitor_thread = thread::spawn(move || {
@@ -274,7 +274,7 @@ fn main() -> PyResult<()> {
 
             app.emit_all("single-instance", Payload { args: argv, cwd }).unwrap();
         }))
-        .invoke_handler(tauri::generate_handler![store_openai_key, get_openai_key, send_prompt, fetch_conversation_history, get_num_messages, get_total_llm_user_messages, write_role_to_file])
+        .invoke_handler(tauri::generate_handler![store_openai_key, get_openai_key, send_prompt, fetch_conversation_history, get_num_messages, get_total_llm_user_messages, write_role_to_file, write_message_meta_file])
         .plugin(tauri_plugin_window_state::Builder::default().build()) // persist Window state plugin See: https://github.com/tauri-apps/plugins-workspace/tree/v1/plugins/window-state
         .plugin(tauri_plugin_printer::init()) // printer access plugin See: https://crates.io/crates/tauri-plugin-printer/versions version 0.5.2
         .plugin(tauri_plugin_fs_watch::init()) // file system watch plugin See: https://github.com/tauri-apps/plugins-workspace/tree/v1/plugins/fs-watch
@@ -383,7 +383,14 @@ fn write_role_to_file(role: &str, messages_path: PathBuf) -> Result<(), String> 
     Ok(())
 }
 
-
+#[tauri::command]
+fn write_message_meta_file(message_meta_json: &str, path: PathBuf) -> Result<(), String> {
+    use std::fs::File;
+    use std::io::Write;
+    let mut file = File::create(path).map_err(|e| e.to_string())?;
+    file.write_all(message_meta_json.as_bytes()).map_err(|e| e.to_string())?;
+    Ok(())
+}
 
 // Just clears the terminal screen :)
 use std::io::{self, Write};

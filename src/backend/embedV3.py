@@ -11,11 +11,18 @@ import spacy
 from datetime import datetime
 import json
 
+# obtain application data directory
+appdata_dir = os.getenv('APPDATA')
+# Append "Chatperfect" to the application data directory
+appdata_dir = os.path.join(appdata_dir, "Chatperfect")
+
 ## Database path
-db_path = os.path.join(os.getcwd(), '..', '..', 'src-tauri', 'messages', 'database', 'full_text_store.db')
+db_path = os.path.join(os.getcwd(), appdata_dir, 'messages', 'database', 'full_text_store.db')
+print("db_path is: ", db_path)
 
 ## message_meta.json path
-message_meta = os.path.join(os.getcwd(), '..', '..', 'src-tauri', 'messages', 'message_meta.json')
+message_meta = os.path.join(os.getcwd(), appdata_dir, 'messages', 'message_meta.json')
+#print("message_meta data path: ", message_meta)
 
 logging.set_verbosity_error()  # to only display error messages
 nlp = spacy.load("en_core_web_sm")
@@ -51,7 +58,7 @@ def timestamp():
 
 
 # All messages have the status of SEEN initially, until they are later marked as IGNORED
-async def add_to_index(index_filename: str, text: str, status: str = "SEEN") -> None:
+async def add_to_index(index_filename: str, text: str, user_or_llm: str, status: str = "SEEN", ) -> None:
     if os.path.exists(index_filename):
         index = faiss.read_index(index_filename)
         async with aiofiles.open(f"{index_filename}_metadata_mapping.pkl", "rb") as f:
@@ -115,7 +122,7 @@ async def add_to_index(index_filename: str, text: str, status: str = "SEEN") -> 
     # Get message metadata from message_meta.json
     async with aiofiles.open(message_meta, "r") as f:
         message_meta_json = json.loads(await f.read())
-        source = message_meta_json["source"]
+        source = user_or_llm
         llm_name = message_meta_json["llm_name"]
         llm_role = message_meta_json["llm_role"]
         username = message_meta_json["username"]
@@ -127,7 +134,7 @@ async def add_to_index(index_filename: str, text: str, status: str = "SEEN") -> 
         "block_id": block_id,  # Unique block_id representing this text in the vector index. Each message will encompass a range of block_ids
         "timestamp": timestamp(),  # The current timestamp
         "status": "SEEN",  # The status of the message, defaulted to SEEN via hardcoded value
-        "source": source,  # Extracted from the message_meta.json earlier
+        "source": source,  # passed into the function from main.py
         "llm_name": llm_name,  # from message_meta.json
         "llm_role": llm_role,  # from message_meta.json
         "username": username,  # from message_meta.json
@@ -159,7 +166,7 @@ async def add_to_index(index_filename: str, text: str, status: str = "SEEN") -> 
             
     # Set a file flag to 1 (dirty) to indicate that the database has been updated
     # This is used by the frontend to trigger a refresh of messages displayed in the UI
-    async with aiofiles.open(os.path.join("..", "users", "messages", "database", "DB_CHANGED.txt"), 'w') as f: await f.write(str(1))
+    async with aiofiles.open(os.path.join(appdata_dir, "messages", "database", "DB_CHANGED.txt"), 'w') as f: await f.write(str(1))
 
     # Update the metadata_mapping
     metadata_mapping[block_id] = (start_idx, end_idx, message_num)
