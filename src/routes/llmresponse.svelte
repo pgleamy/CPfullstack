@@ -12,6 +12,8 @@
     let status; // will hold the status of the message
     let block_id; // will hold the block id
     let formattedTimestamp = timestamp;
+    export let message_num;
+
     let roleClass;
     $: roleClass = llm_role;
 
@@ -69,7 +71,7 @@
     <div id="message-input" role="textbox" tabindex="0" on:keydown={handleLeftRightArrows}>
         <div id="title" contenteditable="false">
             <span><span class="circle1">o</span><span class="circle2">O</span><span class="circle3">o</span> {llm_name} <span class="circle4">o</span><span class="circle5">O</span><span class="circle6">o</span> <span class={roleClass}>{llm_role}</span></span>
-            <span id="timestamp"> - {formattedTimestamp} </span>
+            <span id="timestamp"> - {formattedTimestamp} ({message_num}) </span>
         </div>
         <textarea bind:this={textArea} readonly on:input={resizeTextarea} name="OpenAIKey">{text}</textarea>  
     </div>  
