@@ -3,16 +3,17 @@
     import { get } from '$lib/scrollStore.js'
 
     let user_name; // will hold the user name
-    export let text; // text from the message 
+    export let text = ''; // text from the message 
     let textArea;  
-    export let timestamp; // will hold the timestamp
+    let timestamp; // will hold the timestamp
     let source; // will hold the source of the message
-    export let llm_role; // will hold the llm role
+    let llm_name = get('Gender'); // will hold the llm name
+    let llm_role = get('Role') ; // will hold the llm role
     let status = "Not Set"; // will hold the status of the message
     let block_id_number = get('totalMessages') // it is last message, so get the number
     let block_id = `block_id_${block_id_number}`; // format it as "block_id_#""
-    export let message_num;
-
+    
+    
     let roleClass;
     $: roleClass = llm_role;
    

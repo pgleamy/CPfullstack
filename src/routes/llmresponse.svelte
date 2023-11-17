@@ -3,15 +3,15 @@
     import { onMount, onDestroy } from 'svelte';
 
     let user_name; // will hold the user name
-    let text = ''; // text from the message 
+    export let text = ''; // text from the message 
     let textArea; // will hold the textarea element  
-    let timestamp; // will hold the timestamp
+    export let timestamp; // will hold the timestamp
     let source; // will hold the source of the message
-    let llm_name; // will hold the llm name
-    let llm_role; // will hold the llm role
+    export let llm_name; // will hold the llm name
+    export let llm_role; // will hold the llm role
     let status; // will hold the status of the message
     let block_id; // will hold the block id
-    let formattedTimestamp = formatTimestamp(timestamp);
+    let formattedTimestamp = timestamp;
     let roleClass;
     $: roleClass = llm_role;
 
