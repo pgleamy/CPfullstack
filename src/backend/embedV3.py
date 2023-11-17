@@ -116,7 +116,7 @@ async def add_to_index(index_filename: str, text: str, user_or_llm: str, status:
         async with conn.cursor() as cursor:
             await cursor.execute("SELECT MAX(message_num) FROM text_blocks")
             result = await cursor.fetchone()
-            current_max_message_num = result[0] if result[0] is not None else 1
+            current_max_message_num = result[0] if result[0] is not None else 0 # else 0 so that first message in database will be 1
             message_num = current_max_message_num + 1
     
     # Get message metadata from message_meta.json
@@ -167,6 +167,8 @@ async def add_to_index(index_filename: str, text: str, user_or_llm: str, status:
     # Set a file flag to 1 (dirty) to indicate that the database has been updated
     # This is used by the frontend to trigger a refresh of messages displayed in the UI
     async with aiofiles.open(os.path.join(appdata_dir, "messages", "database", "DB_CHANGED.txt"), 'w') as f: await f.write(str(1))
+    # read the contents of the newly created file and write the contents to console
+    async with aiofiles.open(os.path.join(appdata_dir, "messages", "database", "DB_CHANGED.txt"), 'r') as f: print(f"DB_CHANGED.txt successfully written with: {await f.read()}")
 
     # Update the metadata_mapping
     metadata_mapping[block_id] = (start_idx, end_idx, message_num)

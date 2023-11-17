@@ -212,26 +212,24 @@ fn main() -> PyResult<()> {
     // Alerts the frontend that the llm response file has been updated with new information streamed into it
     let mut file_timestamps: HashMap<PathBuf, SystemTime> = HashMap::new();
     let llm_response_file = messages_path.join("llm_response.txt"); // Use the messages_path from DirectoryPaths
+    println!("LLM response file path: {:?}", llm_response_file); // debug
     file_timestamps.insert(llm_response_file, SystemTime::now());
 
-    // DB_CHANGED is the file that the backend creates when the database has been updated with a new entry.
+    // DB_CHANGED.txt is the file that the backend creates when the database has been updated with a new entry.
     // This will trigger the backend to append the new entry to the chat_history json structure kept in memory
-    let flag_files: Vec<PathBuf> = vec![database_path.join("DB_CHANGED")];
-
-
-    println!("Flag files: {:?}", flag_files); // debug
-
+    let flag_files: Vec<PathBuf> = vec![database_path.join("DB_CHANGED.txt")];
+    println!("DB_CHANGED.txt file path: {:?}", flag_files); // debug
 
     // The files monitored are the DB_CHANGE flag file and the llm-response.txt file
     let monitor_thread = thread::spawn(move || {
         println!("LLM message file monitoring thread started.");
         loop {
 
-            // DB_CHANGED file monitoring changed flag
+            // DB_CHANGED.txt file monitoring changed flag
             for file_path in &flag_files {
                 if metadata(file_path).is_ok() {
                     println!("Database has been updated.");
-                    // Logic for DB_CHANGED here:
+                    // Logic for DB_CHANGED.txt here:
 
                     // add a pause of 2 seconds for testing
                     //thread::sleep(std::time::Duration::from_secs_f32(2.0));

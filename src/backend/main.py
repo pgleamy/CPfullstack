@@ -168,8 +168,7 @@ class ChatSession:
             await asyncio.sleep(1)  # Sleep for a short duration before checking again
 
     async def query_result(self):
-        self.prompt_context_history = await query_index(self.index_filename, self.user_input)
-            
+        self.prompt_context_history = await query_index(self.index_filename, self.user_input)   
         return self.prompt_context_history
 
     async def get_response(self):
@@ -183,6 +182,7 @@ class ChatSession:
         date_time = now.strftime("CURRENT DATE: %B %d, %Y. CURRENT TIME: %I:%M%p. ")
         
         user_info_file = os.path.join(appdata_dir, "messages", "user_information.txt")
+        print(f"User information read from: {user_info_file}")
         if os.path.isfile(user_info_file):
            async with aiofiles.open(user_info_file, 'r') as f:
                 user_info = await f.read()
@@ -259,16 +259,23 @@ class ChatSession:
         # The logic for a single round of chatting
         self.prompt_context_history = ""
         self.user_input = await self.get_user_input()
+        print("Got user input.")
+        print(f"User input: {self.user_input}")
         await self.query_result()
+        print("Received query results.")
 
         try:
             response = await self.get_response()
+            print("Received response.")
             await self.display_response(response)
+            print("Displayed response.")
             print(f"Vector index file: {self.index_filename}")
             user_or_llm = "user"
             await add_to_index(self.index_filename, self.user_input, user_or_llm)
+            print("Added user input to index.")
             user_or_llm = "llm"
             await add_to_index(self.index_filename, response, user_or_llm)
+            print("Added LLM response to index.")
         except Exception as e:
             # Handle exceptions that occur during the chat process
             # This may include logging and other cleanup tasks
@@ -299,12 +306,14 @@ class ChatSession:
         chat_session = ChatSession(chat_history_file, index_filename)
         await chat_session.initialize()  # Load or create the chat history file
         
-        print("Chat Engine thread running. Waiting for prompt...")
-        current_working_directory = os.getcwd()
-        print(f"Chat Engine thread working directory is: {current_working_directory}")
-        print(self.llm_response) # prints nothing, as it should
-        print(self.user_input) # prints nothing, as it should
-        print(self.prompt_context_history) # prints nothing, as it should               
+        print("Chat Engine thread reset.")
+        
+        await main()
+        #current_working_directory = os.getcwd()
+        #print(f"Chat Engine thread working directory is: {current_working_directory}")
+        #print(self.llm_response) # prints nothing, as it should
+        #print(self.user_input) # prints nothing, as it should
+        #print(self.prompt_context_history) # prints nothing, as it should               
 
 
          
@@ -347,15 +356,15 @@ async def main():
             
         # Restarts the chat engine if an exception occurs during the chat process
         except Exception as e:
-            # Handle the exception and decide to restart the chat session
+            # Handle the exception and restart the chat session
+            print(f"\nERROR during chat: {e}\n")
             print(f"Restarting chat engine")
-            # Optionally, you can add a delay before restarting
+            # Delay before restarting
             await asyncio.sleep(1)
             # Reset the chat session state before restarting the chat
             await chat_session.reset()
     
     
-
 ## ADDED retart chat engine on failure Nov 3 23'
 if __name__ == "__main__":
     asyncio.run(main())

@@ -10,6 +10,9 @@ from retrieve_text import get_full_text
 import pdb
 import aiofiles
 
+
+relevance_threshold = 100 # the minimum similarity score for a message to be considered relevant. 0 is exact match, 100 is a fairly similar match
+
 ## DIAGNOSTICS. Set to 1 to run the testing print statements and 0 to not run them 
 testing = 0
 
@@ -47,13 +50,15 @@ The function works as follows:
 Returns:
 list: A list of full texts corresponding to each block_id, sorted by similarity score from highest to lowest.
 """
-async def query_index(index_filename: str, query_text: str, top_k=5): # the number of nearest neighbors to return is = top_k
+async def query_index(index_filename: str, query_text: str, top_k=4): # the number of nearest neighbors to return is = top_k
     if not os.path.exists(index_filename):
+        print(f"Index file {index_filename} not found.")
         return
 
     index = faiss.read_index(index_filename)
     async with aiofiles.open(f"{index_filename}_metadata_mapping.pkl", "rb") as f:
         metadata_mapping = pickle.loads(await f.read())
+        print("Faiss metadata_mapping loaded")
         if testing == 1:
             print("metadata_mapping: ", metadata_mapping)
 
@@ -63,6 +68,7 @@ async def query_index(index_filename: str, query_text: str, top_k=5): # the numb
     model = AutoModel.from_pretrained("../backend/models/bge-large-en-v1.5")
     tokenizer = AutoTokenizer.from_pretrained("../backend/models/bge-large-en-v1.5")
     model.eval()
+    print("BERT model loaded")
     
     # breaks query_text into sentences and stores in results
     doc = nlp(query_text)
@@ -81,13 +87,27 @@ async def query_index(index_filename: str, query_text: str, top_k=5): # the numb
             vector = vector[:index.d]
 
         D, I = index.search(vector.reshape(1, -1), top_k)
+        print("D: ", D)
+        print("I: ", I)
+        print("Searching faiss index...")
         for i in range(I.shape[1]):
+            if D[0, i] > relevance_threshold:
+                continue  # Skip this result as it exceeds the relevance threshold
+            
             idx = I[0, i]
-            metadata = next((block_id for block_id, (start, end) in metadata_mapping.items() if start <= idx <= end), None)
+            print(f"idx: {idx}")
+            print(list(metadata_mapping.items())[:5])
+            
+            # The third element of the tuple is the message number, which is ignored in the below line of code with the underscore
+            metadata = next((block_id for block_id, (start, end, _) in metadata_mapping.items() if start <= idx <= end), None)
+            
+            print(f"metadata: {metadata}")
+        
             if metadata is not None:
                 if testing == 1:
                     print(f"idx: {idx}, metadata: {metadata}")
                 relevant_vectors.append(metadata)
+                print(f"Relevant vector {metadata} added to relevant_vectors.")
             
     # Extract unique block_ids
     block_ids = list(set(relevant_vectors))
@@ -97,8 +117,10 @@ async def query_index(index_filename: str, query_text: str, top_k=5): # the numb
 
     # Use get_full_text to find the full text for each block_id
     full_texts = [await get_full_text(db_path, block_id) for block_id in block_ids]
+    print("Full texts retrieved.")
 
     if testing == 1:
         print("full_texts: ", full_texts)
     
+    print("Query complete. Returning full_texts...")
     return full_texts
