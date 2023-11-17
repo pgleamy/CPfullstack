@@ -507,10 +507,10 @@ async function fetchConversationPart(direction) {
   //console.log(`end: ${end}`);  // Debug line
 
   // Validate start and end ranges against num_user_llm_messages
-  if (start >= 0 && end <= num_user_llm_messages) {
+  if (start >= 1 && end <= num_user_llm_messages) { // change to start >= 1 from start >= 0 to prevent fetching the first message infinitely
 
     try {
-      const fetchedData = await invoke('fetch_conversation_history');
+      const fetchedData = await invoke('fetch_conversation_history', { params: {start, end} });
 
       // save to local storage conversationArray
       localStorage.setItem('conversationArray', JSON.stringify(fetchedData.message));
