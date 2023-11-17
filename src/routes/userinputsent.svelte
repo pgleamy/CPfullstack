@@ -2,13 +2,12 @@
     import { onMount, onDestroy } from 'svelte';
     import { get } from '$lib/scrollStore.js'
 
-    let user_name; // will hold the user name
+    export let user_name; // user name from the message
     export let text; // text from the message 
     let textArea;  
-    export let timestamp; // will hold the timestamp
-    let source; // will hold the source of the message
-    export let llm_role; // will hold the llm role
-    let status = "Not Set"; // will hold the status of the message
+    export let timestamp; // timestamp from the message
+    export let llm_role; // llm role from the message
+    export let status; // status of the message from the message. Defaults of "SEEN" but will later support "IGNORE" so queries ignore that message
     let block_id_number = get('totalMessages') // it is last message, so get the number
     let block_id = `block_id_${block_id_number}`; // format it as "block_id_#""
     export let message_num;
@@ -47,7 +46,7 @@
   <div id="wrapper">
     <div id="message-input" role="textbox" tabindex="0" on:keydown={handleLeftRightArrows}>
       <div id="title" contenteditable="false">
-        <span><span class="dots1">.:.</span> humans <span class="dots2">.:.</span> <span class={roleClass}>{llm_role}</span></span>
+        <span><span class="dots1">.:.</span> {user_name} <span class="dots2">.:.</span> <span class={roleClass}>{llm_role}</span></span>
         <span id="timestamp"> - {timestamp} ({message_num})</span>
       </div>
       <textarea bind:this={textArea} readonly name="message">{text}</textarea>  <!-- it is read-only -->
