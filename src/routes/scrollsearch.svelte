@@ -50,20 +50,29 @@
 
     if(isDragging) return;
     if(isJumpingToBottom) return;
+
     const container = document.getElementById("custom-scrollbar");
     let gripYCalculated = null; 
     let gripPositionCalculated = null;
+
     if (container) {
+      
       let num = get('totalMessages');
+      console.log("updateGripMetris num:", num);
       const lowerBound = radius + 19;
+      console.log("updateGripMetrics lowerBound:", lowerBound);
       const upperBound = container.clientHeight - radius - bottomPadding;
+      console.log("updateGripMetrics upperBound:", upperBound);
       const rangeOfMotion = upperBound - lowerBound;
+      console.log("updateGripMetrics rangeOfMotion:", rangeOfMotion);
 
       // Calculate gripPosition
       gripPositionCalculated = 1 - (middleVisibleBlockId / num);
+      console.log("updateGripMetrics gripPositionCalculated:", gripPositionCalculated);
 
       // Calculate gripY
       gripYCalculated = upperBound - gripPositionCalculated * rangeOfMotion;
+      console.log("updateGripMetrics gripYCalculated:", gripYCalculated);
 
       // Various console logs for debugging
       //const normalizedGripY = (gripYCalculated - lowerBound) / rangeOfMotion;
@@ -87,7 +96,6 @@
     // set dragspeed to 0
     setInLocalStorage('dragSpeedUpDown', 0);
   }
-
 
   function setInitialGripPosition() {
     const container = document.getElementById("custom-scrollbar");
