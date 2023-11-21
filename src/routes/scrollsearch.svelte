@@ -36,15 +36,13 @@
   // updateGroupMetrics()
   // Produces metrics of the user's precise position in the conversation and the
   // corresponding grip position
-
   // Function related declarations 
-  //const numMessagesStore = writable(0);
   let debounceTimer;
   $: topMessageNum = $scrollStore.topMessageNum;
   $: bottomMessageNum = $scrollStore.bottomMessageNum;
   const throttledAndDebouncedUpdateGripMetrics = throttle(debounce(updateGripMetrics, 200), 200);
   const throttledAndDebouncedSetInitialGripPosition = throttle(debounce(setInitialGripPosition, 200), 200);
-
+  let gripPositionCalculated = null;
 
   function updateGripMetrics() {
   clearTimeout(debounceTimer);  // Clear any existing timer
@@ -55,38 +53,48 @@
   if (!container) return;
 
   let num = get('totalMessages');
-  let topMessageNum = get('topMessageNum');
   let bottomMessageNum = get('bottomMessageNum');
   const lowerBound = radius + 19;
   const upperBound = container.clientHeight - radius - bottomPadding;
   const rangeOfMotion = upperBound - lowerBound;
-
-  let gripPositionCalculated = 0;
-
-  console.log(`Top Message Num: ${topMessageNum}, Bottom Message Num: ${bottomMessageNum}, Total Messages: ${num}`);
-
+  
   if (topMessageNum === 1) {
     gripPositionCalculated = 1;
-    console.log("At the top");
+    downArrowIsVisible = true;
   } else if (bottomMessageNum === num) {
     gripPositionCalculated = 0;
-    console.log("At the bottom");
-  } else {
-    // Calculate gripPosition for other cases
+  } else if (topMessageNum !== 1 && bottomMessageNum !== num) {
     gripPositionCalculated = 1 - (topMessageNum / num);
+    downArrowIsVisible = true;
   }
   
-  console.log("gripPositionCalculated:", gripPositionCalculated);
-
-  // Calculate gripY
+  let variableSteps;
+  if (num < 30) variableSteps = 30; 
+  if (num >= 50 && num < 100) variableSteps = 10;
+  if (num >= 100 && num < 300) variableSteps = 3;
+  if (num >= 300 && num < 500) variableSteps = 2;
+  if (num >= 500) variableSteps = 1;
   let gripYCalculated = upperBound - gripPositionCalculated * rangeOfMotion;
-  console.log("gripYCalculated:", gripYCalculated);
+  const oldGripY = gripY;
+  const diff = gripYCalculated - oldGripY;
+  const steps = variableSteps;
+  const stepIncrement = diff / steps;
 
-  // Set gripY to gripYCalculated
-  gripY = gripYCalculated;
-  setInLocalStorage('gripYCalculated', gripYCalculated);
+  function animateStep(stepNumber) {
+    if (stepNumber <= steps) {
+      gripY = oldGripY + stepIncrement * stepNumber;
+      
+
+      // Use setTimeout to control the timing of each step
+      setTimeout(() => animateStep(stepNumber + 1), 10); // ms for each step
+    }
+  }
+  animateStep(1); // Start the animation
+
+  setInLocalStorage('gripYCalculated', gripY);
   setInLocalStorage('gripPositionCalculated', gripPositionCalculated);
 }
+
 
 
 
@@ -205,7 +213,7 @@
     const range = upperBound - lowerBound;
 
     const duration = 100; // Duration in milliseconds
-    const steps = 50; // Number of animation steps
+    const steps = 7; // Number of animation steps
     const stepDuration = duration / steps; // Duration of each step
     let currentStep = 0;
 
@@ -468,13 +476,13 @@ function throttle(func, limit) {
           <!-- Invisible clickable area for the elastic grip -->
           <rect x="10" y="{gripY - 28}" width="40" height="33" fill="transparent" role="presentation" />
           <!-- Elastic Grip visual element (capsule shape) -->
-          <rect x="12" y="{gripY - 27}" width="16" height="30" rx="10" ry="5" stroke="{elasticGripColor}" stroke-width="3" fill="none" />
+          <rect x="12" y="{gripY - 27}" width="21" height="30" rx="10" ry="8" stroke="{elasticGripColor}" stroke-width="3" fill="none" />
           <!-- First dot -->
-          <circle cx="20" cy="{gripY - 4}" r="2.2" fill="{bottomDotColor}" />
+          <circle cx="22.5" cy="{gripY - 4}" r="2.5" fill="{bottomDotColor}" />
           <!-- Second dot (middle) -->
-          <circle cx="20" cy="{gripY - 11}" r="2.7" fill="{middleDotColor}" />
+          <circle cx="22.5" cy="{gripY - 11}" r="3" fill="{middleDotColor}" />
           <!-- Third dot -->
-          <circle cx="20" cy="{gripY - 18}" r="2.3" fill="{topDotColor}" />
+          <circle cx="22.5" cy="{gripY - 18}" r="2.5" fill="{topDotColor}" />
       </g>
       <!-- Grip element with drag functionality and ARIA attributes -->
       <g role="slider" aria-valuemin="0" aria-valuemax="1" aria-valuenow="{gripY}" tabindex="0"
@@ -482,9 +490,9 @@ function throttle(func, limit) {
         <!-- Invisible clickable area for the grip -->
         <rect x="10" y="{gripY + 11}" width="40" height="21" fill="transparent" role="presentation"/>
         <!-- Grip visual elements -->
-        <rect x="10" y="{gripY + 11}" rx="3" ry="3" width="20" height="4" fill="{gripColor}" />
-        <rect x="10" y="{gripY + 19}" rx="3" ry="3" width="20" height="4" fill="{gripColor}" />
-        <rect x="10" y="{gripY + 27}" rx="3" ry="3" width="20" height="4" fill="{gripColor}" />
+        <rect x="10" y="{gripY + 11}" rx="3" ry="3" width="25" height="4" fill="{gripColor}" />
+        <rect x="10" y="{gripY + 19}" rx="3" ry="3" width="25" height="4" fill="{gripColor}" />
+        <rect x="10" y="{gripY + 27}" rx="3" ry="3" width="25" height="4" fill="{gripColor}" />
       </g>
       <!-- Up arrow indicator for new messages -->
       <g id="up-arrow-indicator" role="presentation" on:click={handleUpArrowClick} visibility={upArrowIsVisible ? 'visible' : 'hidden'}>
@@ -498,7 +506,7 @@ function throttle(func, limit) {
         <!-- Invisible clickable area for the down arrow -->
         <rect x="10" y="{gripY + 38}" width="40" height="18" fill="transparent" role="presentation"/>
         <!-- Down arrow visual element -->
-        <path bind:this={arrowPath} id="down-arrow-path" d="M 7 0 L 23 0 L 15 12 Z" stroke="#00C040" stroke-width="2" fill="none" stroke-linejoin="round" transform="translate(5, {gripY + 38})" />
+        <path bind:this={arrowPath} id="down-arrow-path" d="M 8 0 L 26 0 L 17 14 Z" stroke="#00C040" stroke-width="3" fill="none" stroke-linejoin="round" transform="translate(5, {gripY + 38})" />
       </g>
     </svg>
   </div>
@@ -507,6 +515,8 @@ function throttle(func, limit) {
 
 
 <style>
+
+
   .flex-container {
     display: flex;
     flex-direction: column;
