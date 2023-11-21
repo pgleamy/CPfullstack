@@ -145,8 +145,15 @@ class ChatSession:
         self.chat_history += message + '\n'
 
     async def get_user_input(self):
+        
+        #print("get_user_input() called.")
+        
         while True:
-            new_modified_time = os.path.join(appdata_dir, "messages", "user_prompt.txt")
+            
+            #print("get_user_input() loop running.")
+            
+            user_prompt_file_path = os.path.join(appdata_dir, "messages", "user_prompt.txt")
+            new_modified_time = os.path.getmtime(user_prompt_file_path)
             
             if self.last_modified_time is None or new_modified_time > self.last_modified_time:
                 self.last_modified_time = new_modified_time
@@ -176,7 +183,7 @@ class ChatSession:
         
         # Set the system prompt based on the role. Checks .messages/role.txt for the role.
         system_prompt = get_system_prompt_for_role( get_role_from_file() )
-        print(get_role_from_file())
+        #print(get_role_from_file())
         
         now = ""
         now = datetime.now()
@@ -258,14 +265,24 @@ class ChatSession:
 
     async def chat(self):
         # The logic for a single round of chatting
-        self.prompt_context_history = ""
-        self.user_input = await self.get_user_input()
-        print("Got user input.")
-        print(f"User input: {self.user_input}")
-        await self.query_result()
-        print("Received query results.")
+        #self.prompt_context_history = ""
+        #self.user_input = await self.get_user_input()
+        #print("Got user input.")
+        #print(f"User input: {self.user_input}")
+        #await self.query_result()
+        #print("Received query results.")
 
         try:
+            
+            # The logic for a single round of chatting
+            self.prompt_context_history = ""
+            self.user_input = await self.get_user_input()
+            print("Got user input.")
+            print(f"User input: {self.user_input}")
+            await self.query_result()
+            print("Received query results.")
+            
+            
             response = await self.get_response()
             print("Received response.")
             await self.display_response(response)
@@ -277,6 +294,7 @@ class ChatSession:
             user_or_llm = "llm"
             await add_to_index(self.index_filename, response, user_or_llm)
             print("Added LLM response to index.")
+            
         except Exception as e:
             # Handle exceptions that occur during the chat process
             # This may include logging and other cleanup tasks

@@ -81,10 +81,13 @@ const load = () => {
     fetchedMessageCount: parseInt(get('fetchedMessageCount')) || 0, // The number of individual messages fetched from the server in one item group
     messagesItemHeight: parseInt(get('messagesItemHeight')) || 0, // The height of the fetched item group of messages in pixels
 
-    middleVisibleBlockId: parseInt(get('middleVisibleBlockId')) || 0,
+    //middleVisibleBlockId: parseInt(get('middleVisibleBlockId')) || 0,
 
     gripYCalculated: parseFloat(get('gripYCalculated')) || 0,
     gripPositionCalculated: parseFloat(get('gripPositionCalculated')) || 0,
+    
+    topMessageNum: parseInt(get('topMessageNum')) || 0,
+    bottomMessageNum: parseInt(get('bottomMessageNum')) || 0,
     
     //conversationArray: get('conversationArray') !== null ? JSON.parse(get('conversationArray')) : [[]],
 

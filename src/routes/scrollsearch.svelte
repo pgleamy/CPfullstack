@@ -37,59 +37,57 @@
   // Produces metrics of the user's precise position in the conversation and the
   // corresponding grip position
 
-  // Function related declarations
-  let middleVisibleBlockId;  
-  const numMessagesStore = writable(0);
+  // Function related declarations 
+  //const numMessagesStore = writable(0);
   let debounceTimer;
-  $: middleVisibleBlockId = $scrollStore.middleVisibleBlockId;
+  $: topMessageNum = $scrollStore.topMessageNum;
+  $: bottomMessageNum = $scrollStore.bottomMessageNum;
   const throttledAndDebouncedUpdateGripMetrics = throttle(debounce(updateGripMetrics, 200), 200);
   const throttledAndDebouncedSetInitialGripPosition = throttle(debounce(setInitialGripPosition, 200), 200);
 
+
   function updateGripMetrics() {
-    clearTimeout(debounceTimer);  // Clear any existing timer
+  clearTimeout(debounceTimer);  // Clear any existing timer
 
-    if(isDragging) return;
-    if(isJumpingToBottom) return;
+  if (isDragging || isJumpingToBottom) return;
 
-    const container = document.getElementById("custom-scrollbar");
-    let gripYCalculated = null; 
-    let gripPositionCalculated = null;
+  const container = document.getElementById("custom-scrollbar");
+  if (!container) return;
 
-    if (container) {
-      
-      let num = get('totalMessages');
-      console.log("updateGripMetris num:", num);
-      const lowerBound = radius + 19;
-      console.log("updateGripMetrics lowerBound:", lowerBound);
-      const upperBound = container.clientHeight - radius - bottomPadding;
-      console.log("updateGripMetrics upperBound:", upperBound);
-      const rangeOfMotion = upperBound - lowerBound;
-      console.log("updateGripMetrics rangeOfMotion:", rangeOfMotion);
+  let num = get('totalMessages');
+  let topMessageNum = get('topMessageNum');
+  let bottomMessageNum = get('bottomMessageNum');
+  const lowerBound = radius + 19;
+  const upperBound = container.clientHeight - radius - bottomPadding;
+  const rangeOfMotion = upperBound - lowerBound;
 
-      // Calculate gripPosition
-      gripPositionCalculated = 1 - (middleVisibleBlockId / num);
-      console.log("updateGripMetrics gripPositionCalculated:", gripPositionCalculated);
+  let gripPositionCalculated = 0;
 
-      // Calculate gripY
-      gripYCalculated = upperBound - gripPositionCalculated * rangeOfMotion;
-      console.log("updateGripMetrics gripYCalculated:", gripYCalculated);
+  console.log(`Top Message Num: ${topMessageNum}, Bottom Message Num: ${bottomMessageNum}, Total Messages: ${num}`);
 
-      // Various console logs for debugging
-      //const normalizedGripY = (gripYCalculated - lowerBound) / rangeOfMotion;
-      //console.log("middleVisibleBlockId", middleVisibleBlockId);
-      //console.log("gripPositionCalculated", gripPositionCalculated);
-      //console.log("gripYCalculated", gripYCalculated);
-      //console.log("Ran updateGripMetrics()"); // gives us a nice execution count in the console
-      //console.log("normalizedGripY", normalizedGripY);
-      //console.log("normalizedGripY plus gripPositionCalculated", normalizedGripY + gripPositionCalculated);
-
-      // Set gripY to gripYCalculated
-      gripY = gripYCalculated;
-      setInLocalStorage('gripYCalculated', gripYCalculated);
-      // Set gripPosition to gripPositionCalculated
-      setInLocalStorage('gripPositionCalculated', gripPositionCalculated);
-    }
+  if (topMessageNum === 1) {
+    gripPositionCalculated = 1;
+    console.log("At the top");
+  } else if (bottomMessageNum === num) {
+    gripPositionCalculated = 0;
+    console.log("At the bottom");
+  } else {
+    // Calculate gripPosition for other cases
+    gripPositionCalculated = 1 - (topMessageNum / num);
   }
+  
+  console.log("gripPositionCalculated:", gripPositionCalculated);
+
+  // Calculate gripY
+  let gripYCalculated = upperBound - gripPositionCalculated * rangeOfMotion;
+  console.log("gripYCalculated:", gripYCalculated);
+
+  // Set gripY to gripYCalculated
+  gripY = gripYCalculated;
+  setInLocalStorage('gripYCalculated', gripYCalculated);
+  setInLocalStorage('gripPositionCalculated', gripPositionCalculated);
+}
+
 
 
   function resetElasticGripToNeutral() {
@@ -255,7 +253,7 @@
     console.log("Up arrow clicked");
   }
 
-
+  // moves the scrubbing grip in relation to the actions of the elastic grip and the scroll wheel 
   let prevState = null;
   const unsubscribe = scrollStore.subscribe(currentState => {
     if (prevState) {
@@ -264,7 +262,7 @@
           // Existing logic for changes in any key
           
           // Additional logic specifically for middleVisibleBlockId
-          if (key === 'middleVisibleBlockId') {
+          if (key === 'topMessageNum') {
             throttledAndDebouncedUpdateGripMetrics();
             
           }

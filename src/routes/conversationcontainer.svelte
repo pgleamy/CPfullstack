@@ -61,7 +61,7 @@
     $: {
       if (isEndOfConversation) {
           paddingBottom = `padding-bottom: ${userInputFixedHeight}px;`;
-          // scroll to bottom of conversation container so the send button is always visible
+          // scroll to bottom of conversation container so the send button is always visibleconversation
           scrollToBottom();
       } else {
           paddingBottom = '';
@@ -141,11 +141,11 @@
       num_messages = await invoke('get_num_messages', {databasePath: database_path});
       setInLocalStorage('totalMessages', num_messages);
 
-      console.log("Current number of all user, llm and bright_memory messages: " + num_messages);
+      //console.log("Current number of all user, llm and bright_memory messages: " + num_messages);
 
       num_user_llm_messages = await invoke('get_total_llm_user_messages', {databasePath: database_path});
       //console.log("Current number of all user, llm and bright_memory messages: " + num_messages);
-      console.log("Current number of user and llm messages: " + num_user_llm_messages);
+      //console.log("Current number of user and llm messages: " + num_user_llm_messages);
       //console.log("Current gripLocation: " + gripLocation);
 
       // start a simple debugging timer
@@ -429,7 +429,7 @@ async function fetchConversationSlice(gripLocation, num_messages) {
     //console.log(`Initial gripLocation: ${gripLocation}, Initial num_messages: ${num_messages}`);
 
     const fetchedData = await invoke('fetch_conversation_history', { params: {start, end} });
-    console.log("Fetched conversation slice:", fetchedData);  // Debug line
+    //console.log("Fetched conversation slice:", fetchedData);  // Debug line
 
     // Additional logic to handle initial scroll position if grip at top or bottom
     if (gripLocation === 0 && container) {
@@ -507,7 +507,7 @@ async function fetchConversationPart(direction) {
   //console.log(`end: ${end}`);  // Debug line
 
   // Validate start and end ranges against num_user_llm_messages
-  if (start >= 1 && end <= num_user_llm_messages) { // change to start >= 1 from start >= 0 to prevent fetching the first message infinitely
+  if (start >= 1 && end <= num_user_llm_messages - 1 ) { // change to start >= 1 from start >= 0 to prevent fetching the first message infinitely
 
     try {
       const fetchedData = await invoke('fetch_conversation_history', { params: {start, end} });
@@ -649,7 +649,7 @@ function findMiddleVisibleMessage() {
 
     if (distanceToMiddle < closestDistance) {
       closestDistance = distanceToMiddle;
-      closestMessageIndex = i + 1; // add one to line up properly at start/end of conversation
+      closestMessageIndex = i + 1 ; // add one to line up properly at start/end of conversation
     }
   }
   return closestMessageIndex; // Returns the index of the message closest to the middle
@@ -662,21 +662,77 @@ $: {
       
       // Access the block_id of the middle visible message
       const middleVisibleMessage = conversation[middleVisibleMessageIndex];
-      const middleVisibleBlockId = middleVisibleMessage ? middleVisibleMessage.block_id : null;
+      //const middleVisibleBlockId = middleVisibleMessage ? middleVisibleMessage.block_id : null;
+      //console.log(`middleVisibleBlockId: ${middleVisibleBlockId}`);  // Debug line
+      const middleVisibleMessageNum = middleVisibleMessage ? middleVisibleMessage.message_num : null;
+      //console.log(`middleVisibleMessageNum: ${middleVisibleMessageNum}`);  // Debug line
       
-      // Do something with middleVisibleBlockId, for example, save it to local storage
-      if (middleVisibleBlockId !== null) {
+      if (middleVisibleMessageNum !== null) {
           // Extract the numeric part from the block_id
-          const blockIdNumber = middleVisibleBlockId.split('_').pop();
-          const totalMessages = num_user_llm_messages;
+          //const blockIdNumber = middleVisibleBlockId.split('_').pop();
+          //const totalMessages = num_user_llm_messages;
 
           // const gripPosition = 1 - (blockIdNumber / totalMessages) ;
           // Store only the numeric part in local storage
-          setInLocalStorage('middleVisibleBlockId', blockIdNumber);
+          //setInLocalStorage('middleVisibleBlockId', blockIdNumber);
+          setInLocalStorage('middleVisibleMessageNum', middleVisibleMessageNum );
       }
     }
   }
 }
+
+
+
+
+let topMessageNum = null;
+let bottomMessageNum = null;
+
+
+function findVisibleEdgeMessages() {
+  // Reset top and bottom message numbers at the start of each call
+  topMessageNum = null;
+  bottomMessageNum = null;
+
+  if (!container) {
+    return { topMessageNum: null, bottomMessageNum: null };
+  }
+
+  const messages = container.querySelectorAll('.message-class');
+
+  for (let i = 0; i < messages.length; i++) {
+    const rect = messages[i].getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+
+    // Calculate visible portion of the message
+    const visibleTop = Math.max(rect.top, containerRect.top);
+    const visibleBottom = Math.min(rect.bottom, containerRect.bottom);
+    const visibleHeight = visibleBottom - visibleTop;
+
+    // Check if at least 50% of the message is visible
+    if (visibleHeight > 0 && (visibleHeight >= rect.height / 2)) {
+      if (topMessageNum === null) {
+        topMessageNum = i;
+      }
+      bottomMessageNum = i; // Update continuously for each visible message
+    }
+  }
+  return { 
+    topMessageNum: topMessageNum !== null ? topMessageNum + 1 : null, // Adjust to match your indexing
+    bottomMessageNum: bottomMessageNum !== null ? bottomMessageNum + 1 : null
+  };
+}
+$: {
+  if (container) {
+    const { topMessageNum, bottomMessageNum } = findVisibleEdgeMessages();
+
+    if (topMessageNum !== null && bottomMessageNum !== null) {
+      // Optionally, you can store these indices in local storage or use them as needed
+      setInLocalStorage('topMessageNum', topMessageNum);
+      setInLocalStorage('bottomMessageNum', bottomMessageNum + 1);
+    }
+  }
+}
+
 
 </script>
 
