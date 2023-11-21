@@ -32,18 +32,21 @@
     unsubscribe();  // Unsubscribe from the store
   });
 
-
+  
   // updateGroupMetrics()
   // Produces metrics of the user's precise position in the conversation and the
   // corresponding grip position
   // Function related declarations 
-  let debounceTimer;
+  
+  //let debounceTimer;
   $: topMessageNum = $scrollStore.topMessageNum;
-  $: bottomMessageNum = $scrollStore.bottomMessageNum;
-  const throttledAndDebouncedUpdateGripMetrics = throttle(debounce(updateGripMetrics, 200), 200);
+  //$: bottomMessageNum = $scrollStore.bottomMessageNum;
+  //let bottomMessageNum;
+  //const throttledAndDebouncedUpdateGripMetrics = throttle(debounce(updateGripMetrics, 200), 200);
   const throttledAndDebouncedSetInitialGripPosition = throttle(debounce(setInitialGripPosition, 200), 200);
-  let gripPositionCalculated = null;
+  //let gripPositionCalculated = null;
 
+  /*
   function updateGripMetrics() {
   clearTimeout(debounceTimer);  // Clear any existing timer
 
@@ -53,7 +56,11 @@
   if (!container) return;
 
   let num = get('totalMessages');
+  console.log("num:", num);
   let bottomMessageNum = get('bottomMessageNum');
+  console.log("bottomMessageNum:", bottomMessageNum);
+  let topMessageNum = get('topMessageNum');
+  console.log("topMessageNum:", topMessageNum);
   const lowerBound = radius + 19;
   const upperBound = container.clientHeight - radius - bottomPadding;
   const rangeOfMotion = upperBound - lowerBound;
@@ -67,6 +74,10 @@
     gripPositionCalculated = 1 - (topMessageNum / num);
     downArrowIsVisible = true;
   }
+
+    // Calculate gripY
+  let gripYCalculated = upperBound - gripPositionCalculated * rangeOfMotion;
+  gripY = gripYCalculated;
   
   let variableSteps;
   if (num < 30) variableSteps = 30; 
@@ -74,7 +85,7 @@
   if (num >= 100 && num < 300) variableSteps = 3;
   if (num >= 300 && num < 500) variableSteps = 2;
   if (num >= 500) variableSteps = 1;
-  let gripYCalculated = upperBound - gripPositionCalculated * rangeOfMotion;
+  gripYCalculated = upperBound - gripPositionCalculated * rangeOfMotion;
   const oldGripY = gripY;
   const diff = gripYCalculated - oldGripY;
   const steps = variableSteps;
@@ -83,18 +94,18 @@
   function animateStep(stepNumber) {
     if (stepNumber <= steps) {
       gripY = oldGripY + stepIncrement * stepNumber;
-      
 
       // Use setTimeout to control the timing of each step
       setTimeout(() => animateStep(stepNumber + 1), 10); // ms for each step
     }
   }
   animateStep(1); // Start the animation
+  
 
   setInLocalStorage('gripYCalculated', gripY);
   setInLocalStorage('gripPositionCalculated', gripPositionCalculated);
 }
-
+*/
 
 
 
@@ -268,12 +279,9 @@
       for (const key in currentState) {
         if (!deepEqual(currentState[key], prevState[key])) {
           // Existing logic for changes in any key
+           
+
           
-          // Additional logic specifically for middleVisibleBlockId
-          if (key === 'topMessageNum') {
-            throttledAndDebouncedUpdateGripMetrics();
-            
-          }
         }
       }
     }

@@ -628,73 +628,15 @@ function throttle(func, limit) {
 const throttledFetch = throttle(fetchConversationSlice, 90);
 
 
-// Track the message displayed in the very middle of user's viewable area
-function findMiddleVisibleMessage() {
-  if (!container) {
-    return null;
-  }
-  
-  const messages = container.querySelectorAll('.message-class');
-  const middle = container.scrollTop + container.clientHeight / 2;
-
-  let closestMessageIndex = null;
-  let closestDistance = Infinity;
-
-  for (let i = 0; i < messages.length; i++) {
-    const rect = messages[i].getBoundingClientRect();
-    const containerRect = container.getBoundingClientRect();
-    const messageMiddle = rect.top - containerRect.top + container.scrollTop + rect.height / 2;
-    
-    const distanceToMiddle = Math.abs(middle - messageMiddle);
-
-    if (distanceToMiddle < closestDistance) {
-      closestDistance = distanceToMiddle;
-      closestMessageIndex = i + 1 ; // add one to line up properly at start/end of conversation
-    }
-  }
-  return closestMessageIndex; // Returns the index of the message closest to the middle
-}
-$: {
-  if (container) {
-    const middleVisibleMessageIndex = findMiddleVisibleMessage();
-    if (middleVisibleMessageIndex !== null) {
-      //setInLocalStorage('middleVisibleMessageIndex', middleVisibleMessageIndex);
-      
-      // Access the block_id of the middle visible message
-      const middleVisibleMessage = conversation[middleVisibleMessageIndex];
-      //const middleVisibleBlockId = middleVisibleMessage ? middleVisibleMessage.block_id : null;
-      //console.log(`middleVisibleBlockId: ${middleVisibleBlockId}`);  // Debug line
-      const middleVisibleMessageNum = middleVisibleMessage ? middleVisibleMessage.message_num : null;
-      //console.log(`middleVisibleMessageNum: ${middleVisibleMessageNum}`);  // Debug line
-      
-      if (middleVisibleMessageNum !== null) {
-          // Extract the numeric part from the block_id
-          //const blockIdNumber = middleVisibleBlockId.split('_').pop();
-          //const totalMessages = num_user_llm_messages;
-
-          // const gripPosition = 1 - (blockIdNumber / totalMessages) ;
-          // Store only the numeric part in local storage
-          //setInLocalStorage('middleVisibleBlockId', blockIdNumber);
-          setInLocalStorage('middleVisibleMessageNum', middleVisibleMessageNum );
-      }
-    }
-  }
-}
-
-
 
 
 let topMessageNum = null;
-let bottomMessageNum = null;
-
-
-function findVisibleEdgeMessages() {
+function findTopMessage() {
   // Reset top and bottom message numbers at the start of each call
   topMessageNum = null;
-  bottomMessageNum = null;
 
   if (!container) {
-    return { topMessageNum: null, bottomMessageNum: null };
+    return { topMessageNum: null };
   }
 
   const messages = container.querySelectorAll('.message-class');
@@ -713,25 +655,23 @@ function findVisibleEdgeMessages() {
       if (topMessageNum === null) {
         topMessageNum = i;
       }
-      bottomMessageNum = i; // Update continuously for each visible message
     }
   }
   return { 
     topMessageNum: topMessageNum !== null ? topMessageNum + 1 : null, // Adjust to match your indexing
-    bottomMessageNum: bottomMessageNum !== null ? bottomMessageNum + 1 : null
   };
 }
-$: {
-  if (container) {
-    const { topMessageNum, bottomMessageNum } = findVisibleEdgeMessages();
-
-    if (topMessageNum !== null && bottomMessageNum !== null) {
-      // Optionally, you can store these indices in local storage or use them as needed
-      setInLocalStorage('topMessageNum', topMessageNum);
-      setInLocalStorage('bottomMessageNum', bottomMessageNum + 1);
-    }
-  }
+$: if (container) {
+    persistTopMessageNumber();
 }
+async function persistTopMessageNumber() {
+    const { topMessageNum } = findTopMessage();
+    if (topMessageNum !== null) {
+        // For Tauri secure storage, replace the below line with a Tauri invoke command
+        localStorage.setItem('topMessageNum', topMessageNum);
+    }
+}
+
 
 
 </script>
