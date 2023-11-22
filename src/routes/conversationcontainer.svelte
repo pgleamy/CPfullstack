@@ -74,12 +74,13 @@
     // or to prevent operations for seeking out of bounds of the conversation
     function updateEdgeFlags(fetchedMessages) {
       //console.log(`updateEdgeFlags ran`);  // Debug line
-      hasReachedStart = fetchedMessages.some(msg => msg.block_id === "block_id_1"); 
+      hasReachedStart = fetchedMessages.some(msg => msg.message_num === '1'); 
       //console.log(fetchedMessages);  // Debug line
-      //console.log(`hasReachedStart: ${hasReachedStart}`);  // Debug line
-      hasReachedEnd = fetchedMessages.some(msg => msg.block_id === `block_id_${num_user_llm_messages}`);
-      //console.log(`hasReachedEnd: ${hasReachedEnd}`);  // Debug line
-    } // end of updateEdgeFlags function %% currently failing to update the flags correctly when user elastic scrolls in from prior message group
+      console.log(`updateEdgeFlags() hasReachedStart: ${hasReachedStart}`);  // Debug line
+      hasReachedEnd = fetchedMessages.some(msg => msg.message_num === '16');
+      console.log(`updateEdgeFlags() hasReachedEnd: ${hasReachedEnd}`);  // Debug line
+      //console.log(fetchedMessages);  // Debug line
+    } // end of updateEdgeFlags function
 
     function scrollToBottom() {
       if (isEndOfConversation && !isScrolling) {
@@ -95,6 +96,24 @@
         });
       }
     } // end of scrollToBottom function
+
+
+
+
+
+    // Scrolls to the specified message number in the conversation
+    function scrollToMessage(topMessageNum) {
+        const messageElement = document.querySelector(`[data-message-num="${topMessageNum}"]`);
+        console.log(`messageElement: ${messageElement}`);  // Debug line
+        if (messageElement) {
+            container.scrollTop = messageElement.offsetTop;
+        }
+    } // end of scrollToMessage function
+
+
+
+
+
 
 
     // Start/End of conversation flags
@@ -150,8 +169,14 @@
 
       // start a simple debugging timer
       //const startTime = Date.now();
+      
+      //fetchConversationSlice(gripLocation, num_messages);
 
-      fetchConversationSlice(gripLocation, num_messages);
+      // get topMessageNum from local storage
+      let messageNumToRestore = localStorage.getItem('topMessageNum');
+      console.log(`messageNumToRestore: ${messageNumToRestore}`);  // Debug line
+      fetchConversationRestore(messageNumToRestore);
+
      
       //const endTime = Date.now();
       //const elapsed = endTime - startTime;
@@ -168,36 +193,34 @@
       // due to the user fine scrolling with the elastic grip element up or down respectively
 
 
+      const observerCallback = async (entries, observer) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            if (entry.target.id === 'top-observer') {
+              shouldFetchUp = true;
+            } else if (entry.target.id === 'bottom-observer') {
+              shouldFetchDown = true;
+            }
+            
+            const dragSpeedUpDown = parseFloat(localStorage.getItem('dragSpeedUpDown')) || 0;
+            const direction = Math.sign(dragSpeedUpDown);  // 1 for down, -1 for up
 
-
-const observerCallback = async (entries, observer) => {
-  for (const entry of entries) {
-    if (entry.isIntersecting) {
-      if (entry.target.id === 'top-observer') {
-        shouldFetchUp = true;
-      } else if (entry.target.id === 'bottom-observer') {
-        shouldFetchDown = true;
-      }
-      
-      const dragSpeedUpDown = parseFloat(localStorage.getItem('dragSpeedUpDown')) || 0;
-      const direction = Math.sign(dragSpeedUpDown);  // 1 for down, -1 for up
-
-      if (direction > 0 && shouldFetchDown) {
-        if (hasReachedEnd) {
-          return;  // Skip the fetch operation
+            if (direction > 0 && shouldFetchDown) {
+              if (hasReachedEnd) {
+                return;  // Skip the fetch operation
+              }
+              await fetchConversationPart("DOWN");
+              shouldFetchDown = false; // Reset the flag
+            } else if (direction < 0 && shouldFetchUp) {
+              if (hasReachedStart) {
+                return;  // Skip the fetch operation
+              }
+              await fetchConversationPart("UP");
+              shouldFetchUp = false; // Reset the flag
+            }
+          }
         }
-        await fetchConversationPart("DOWN");
-        shouldFetchDown = false; // Reset the flag
-      } else if (direction < 0 && shouldFetchUp) {
-        if (hasReachedStart) {
-          return;  // Skip the fetch operation
-        }
-        await fetchConversationPart("UP");
-        shouldFetchUp = false; // Reset the flag
-      }
-    }
-  }
-};
+      };
 
 
 
@@ -383,6 +406,9 @@ function handleWheelScroll(event) {
       return currentHeight;
   }
 
+  
+
+/*
 // Fetches a slice of the conversation history from the backend for the scrubbing grip element
 async function fetchConversationSlice(gripLocation, num_messages) {
   const buffer = 10;
@@ -468,6 +494,84 @@ async function fetchConversationSlice(gripLocation, num_messages) {
     return null;
   }
 } // end of fetchConversationSlice function
+*/
+
+
+
+
+
+// Fetches a slice of the conversation history from the backend for the scrubbing grip element
+async function fetchConversationRestore(topMessageNum) {
+
+  const buffer = 10;
+  const totalMessagesToFetch = 20;
+  let databasePath = get('database_path');
+  const total_messages = await invoke('get_total_llm_user_messages', {databasePath: database_path});
+
+  // Initialize start and end with defaults
+  let start = topMessageNum - buffer;
+  let end = (topMessageNum - 1) + buffer;
+
+  // Step 2 and 3: Adjust start and end for edge cases
+  if (start < 1) {
+    // Shift 'end' if 'start' is less than 0
+    end += Math.abs(start);
+    start = 0;
+  }
+  
+  if (end > total_messages - 1) {
+    // Shift 'start' if 'end' is more than total messages
+    start -= (end - total_messages);
+    end = total_messages;
+  }
+  
+  // Ensure start is not negative after the above adjustment
+  if (start < 0) start = 0;
+
+  // Debug line
+  console.log(`Adjusted start and end for Restore function: ${start}, ${end}`);
+
+  // Step 4: If total messages < 20, then just fetch all of them
+  if (total_messages < totalMessagesToFetch) {
+    start = 0;
+    end = total_messages;
+  }
+  
+  // Step 5: Fetch the conversation slice & handle top and bottom properly
+  try {
+
+    const fetchedData = await invoke('fetch_conversation_history', { params: {start, end} });
+    console.log("Restored conversation location successfully:", fetchedData);  // Debug line
+    
+    if (fetchedData && Array.isArray(fetchedData.message)) {
+      conversation = fetchedData.message;
+
+      // save to local storage conversationArray
+      localStorage.setItem('conversationArray', JSON.stringify(fetchedData.message));
+
+          // scrolls to topMessageNum so it is at the top of visible conversation
+      scrollToMessage(topMessageNum);
+
+      updateEdgeFlags(fetchedData.message); // Update the edge flags
+      //console.log(`Updated conversation slice: ${conversation}`);  // Debug line
+      //console.log*(conversation);  // Debug line
+    } else {
+      console.warn("Fetched data is not in the expected format:", fetchedData);
+      conversation = [];
+    }
+
+    return conversation;
+  } catch (error) {
+    console.error(`Failed to restore conversation location: ${error}`);
+    conversation = [];
+    return null;
+  }
+} // end of fetchConversationRestore function
+
+
+
+
+
 
 
 // Fetches a part of the conversation history from the backend for the infinite scrolling elastic grip element
@@ -609,7 +713,7 @@ function debounce(func, wait) {
     }, wait);
   };
 }
-const debouncedFetch = debounce(fetchConversationSlice, 90);
+const debouncedFetch = debounce(fetchConversationRestore, 90);
 
 // throttle function to prevent excessive calls to fetchConversationSlice
 
@@ -625,7 +729,7 @@ function throttle(func, limit) {
         }
     }
 }
-const throttledFetch = throttle(fetchConversationSlice, 90);
+const throttledFetch = throttle(fetchConversationRestore, 90);
 
 
 
@@ -683,18 +787,18 @@ async function persistTopMessageNumber() {
     <div bind:this={topObserverElement} id="top-observer" ></div>
 
     {#each conversation as entry, index}
-      <div class="{index === conversation.length - 1 ? 'last-message-class' : 'message-class'}" 
-      style="{index === conversation.length - 1 ? paddingBottom : ''} width: 100%;" 
-      >
-          {#if entry.source === 'user' || entry.source === 'llm'}
+    <div class="{index === conversation.length - 1 ? 'last-message-class' : 'message-class'}" 
+        data-message-num={entry.message_num}
+        style="{index === conversation.length - 1 ? paddingBottom : ''} width: 100%;">
+        {#if entry.source === 'user' || entry.source === 'llm'}
             {#if entry.source === 'user'}
-              <UserInputSent {...entry} />
+                <UserInputSent {...entry} />
             {:else if entry.source === 'llm'}
-              <LLMResponse {...entry} />
+                <LLMResponse {...entry} />
             {/if}
-          {/if}
-      </div>
-    {/each}
+        {/if}
+    </div>
+ {/each}
     <div bind:this={bottomObserverElement} id="bottom-observer" ></div>
   </div> <!-- End of conversation-container -->
 </div> <!-- End of clip-container -->
