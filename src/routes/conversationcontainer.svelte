@@ -49,9 +49,10 @@
     // Variables for infinite scroll logic
     $: totalMessages = $scrollStore.totalMessages; // total number of messages in the entire conversation
     const firstDBMessageNum = 1; // First message number in the entire conversation. Is always 1 
-    $: lastDBMessageNum = $scrollStore.totalMessages; //Last message number in the entire conversation
-    $: firstConversationArrayMessageNum = conversation[0] ? parseInt(conversation[0].message_num) : null; //First message number in the conversation array
-    $: lastConversationArrayMessageNum = conversation[conversation.length - 1] ? parseInt(conversation[conversation.length - 1].message_num) : null; // Last message number in the conversation array
+    $: firstConversationArrayMessageNum = conversation.length > 0 ? parseInt(conversation[0].message_num) : null; //First message number in the conversation array
+    $: if (firstConversationArrayMessageNum !== null) localStorage.setItem('firstConversationArrayMessageNum', firstConversationArrayMessageNum.toString());
+    $: lastConversationArrayMessageNum = conversation.length > 0 ? parseInt(conversation[conversation.length - 1].message_num) : null // Last message number in the conversation array
+    $: if (lastConversationArrayMessageNum !== null) localStorage.setItem('lastConversationArrayMessageNum', lastConversationArrayMessageNum.toString());
     let firstVisibleMessageNum = null; // First user-visible message number. Must be set dynamically
     let lastVisibleMessageNum = null; // Last user-visible message number. Must be set dynamically
     
@@ -89,7 +90,7 @@
       // Assuming the last message in your conversation array is the latest
       const lastConversationArrayMessageNum = parseInt(conversation[conversation.length - 1].message_num);
       //console.log(`lastMessageNum: ${lastMessageNum}`);  // Debug line
-      hasReachedEnd = lastConversationArrayMessageNum === num_user_llm_messages; // will be true if the last message in the conversation array is the last message in the entire conversation
+      hasReachedEnd = lastConversationArrayMessageNum === totalMessages; // will be true if the last message in the conversation array is the last message in the entire conversation
       //console.log(`updateEdgeFlags() \nhasReachedStart: ${hasReachedStart} \nhasReachedEnd: ${hasReachedEnd}`);
       if (hasReachedEnd) { 
         // add userInputFixedHeight to the bottom of the conversation container 
@@ -144,8 +145,8 @@
     // controls the fetching of the conversation slice based on gripLocation for smooth interaction
     $: {
       if (totalMessages > 0) {
-        throttledFetch(gripLocation, num_messages);
-        debouncedFetch(gripLocation, num_messages);
+        throttledFetch(gripLocation, totalMessages);
+        debouncedFetch(gripLocation, totalMessages);
       }
     } // end of reactive statement to fetch conversation slice based on local variable gripLocation (throttled and debounced)
 
@@ -170,7 +171,7 @@
       //num_user_llm_messages = await invoke('get_total_llm_user_messages', {databasePath: database_path});
 
       let firstVisibleMessageNum = localStorage.getItem('firstVisibleMessageNum')
-      console.log(`topMessageNum: ${topMessageNum}`);  // Debug line
+      console.log(`firstVisibleMessageNum: ${firstVisibleMessageNum}`);  // Debug line
       fetchConversationRestore(firstVisibleMessageNum); // restore the conversation location to the last known position
 
       // Infinite scroll logic
@@ -430,7 +431,7 @@ async function fetchConversationRestore(firstVisibleMessageNum) {
   
   if (end > totalMessages) {
     // Shift 'start' if 'end' is more than total messages
-    end = total_messages;
+    end = totalMessages;
   }
   
   // Ensure start is not negative after the above adjustment
@@ -576,7 +577,7 @@ function findFirstVisibleMessage() {
 
     // Check if at least 50% of the message is visible
     if (visibleHeight > 0 && (visibleHeight >= rect.height / 2)) {
-      firstVisibleMessageNum = parseInt(message.dataset.messageNum); // Assuming each message has a 'data-message-num' attribute
+      firstVisibleMessageNum = message.dataset.messageNum; // Assuming each message has a 'data-message-num' attribute
       break; // Exit loop once the first visible message is found
     }
   }

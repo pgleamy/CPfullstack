@@ -69,7 +69,7 @@ const load = () => {
     unsentPrompt: get('unsentPrompt') || "", // The unsent prompt contents
     unsentPromptQUILL: get('unsentPromptQUILL') || "", // The unsent prompt conten
 
-    fetchedMessageCount: parseInt(get('fetchedMessageCount')) || 0, // The number of individual messages fetched from the server in one item group
+    //fetchedMessageCount: parseInt(get('fetchedMessageCount')) || 0, // The number of individual messages fetched from the server in one item group
     messagesItemHeight: parseInt(get('messagesItemHeight')) || 0, // The height of the fetched item group of messages in pixels
     
     firstVisibleMessageNum: parseInt(get('firstVisibleMessageNum')) || 0,
