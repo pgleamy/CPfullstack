@@ -67,28 +67,16 @@ const load = () => {
     targetMessagesPixelHeight: parseInt(get('targetMessagesPixelHeight')) || 0, // Height of the conversation-container contents in pixels
 
     unsentPrompt: get('unsentPrompt') || "", // The unsent prompt contents
-    unsentPromptQUILL: get('unsentPromptQUILL') || "", // The unsent prompt contents
-
-    //unsentPromptHeight: parseInt(get('unsentPromptHeight')) || 0, // Height of the unsent prompt component elements in pixels
-
-    // variables for the persistent scroll restoration feature
-    //block_idDisplayedInMiddleOfDOM: get('block_idDisplayedInMiddleOfDom') || "", // The message currently displayed in the middle of the DOM
-    //startRestore: get('startRestore') || "", // The start block_id of the restore range
-    //endRestore: get('endRestore') || "", // The end block_id of the restore range
-    //targetMessagesPixelHeightRestore: parseInt(get('targetMessagesPixelHeightRestore')) || 0, // The target messages pixel height restoring into
-    //scrollTopRestore: parseInt(get('scrollTopRestore')) || 0, // Calculated ScrollTop value to restore to
+    unsentPromptQUILL: get('unsentPromptQUILL') || "", // The unsent prompt conten
 
     fetchedMessageCount: parseInt(get('fetchedMessageCount')) || 0, // The number of individual messages fetched from the server in one item group
     messagesItemHeight: parseInt(get('messagesItemHeight')) || 0, // The height of the fetched item group of messages in pixels
-
-    //middleVisibleBlockId: parseInt(get('middleVisibleBlockId')) || 0,
-
-    //gripYCalculated: parseFloat(get('gripYCalculated')) || 0,
-    //gripPositionCalculated: parseFloat(get('gripPositionCalculated')) || 0,
     
-    topMessageNum: parseInt(get('topMessageNum')) || 0,
-    
-    //conversationArray: get('conversationArray') !== null ? JSON.parse(get('conversationArray')) : [[]],
+    firstVisibleMessageNum: parseInt(get('firstVisibleMessageNum')) || 0,
+    lastVisibleMessageNum: parseInt(get('lastVisibleMessageNum')) || 0,
+    firstConversationArrayMessageNum: parseInt(get('firstConversationArrayMessageNum')) || 0,
+    lastConversationArrayMessageNum: parseInt(get('lastConversationArrayMessageNum')) || 0,
+    targetMessage: parseInt(get('targetMessage')) || 0,
 
     Role: get('Role') || "Write",
 
