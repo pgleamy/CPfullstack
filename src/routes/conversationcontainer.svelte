@@ -55,6 +55,7 @@
     $: if (lastConversationArrayMessageNum !== null) localStorage.setItem('lastConversationArrayMessageNum', lastConversationArrayMessageNum.toString());
     let firstVisibleMessageNum = null; // First user-visible message number. Must be set dynamically
     let lastVisibleMessageNum = null; // Last user-visible message number. Must be set dynamically
+    $: targetMessage = $scrollStore.targetMessage; // targetMessage is the message number to target based on the gripLocation
     
     // used by the mouse wheel event listener to determine the direction of the scroll and execution limiting
     let shouldFetchUp = false;
@@ -325,13 +326,15 @@ function handleWheelScroll(event) {
       return currentHeight;
   }
 
+
+
 // Fetches a slice of the conversation history from the backend for the scrubbing grip element
 async function fetchConversationSlice() {
   const buffer = 10;
   const totalMessagesToFetch = 20;
 
   // calculate message to target based on gripLocation
-  let targetMessage = Math.round(gripLocation * num_messages); // targetMessage is the message number to target based on the gripLocation
+  let targetMessage = Math.round(totalMessages * (1 - gripLocation)); // targetMessage is the message number to target based on the gripLocation
 
   // Initialize start and end
   let start = targetMessage - buffer;
@@ -443,7 +446,7 @@ async function fetchConversationRestore(firstVisibleMessageNum) {
   // Step 4: If total messages < 20, then just fetch all of them
   if (totalMessages < totalMessagesToFetch) {
 
-    start =0;
+    start = 0;
     end = totalMessages;
   }
   
@@ -557,11 +560,12 @@ function throttle(func, limit) {
 const throttledFetch = throttle(fetchConversationSlice, 90);
 
 
-function findFirstVisibleMessage() {
+function findTopBottomVisibleMessages() {
   firstVisibleMessageNum = null; // reset the firstVisibleMessageNum variable
+  lastVisibleMessageNum = null; // reset the lastVisibleMessageNum variable
 
   if (!container) {
-    return { firstVisibleMessageNum: null };
+    return { firstVisibleMessageNum: null, lastVisibleMessageNum: null };
   }
 
   const messages = container.querySelectorAll('.message-class');
@@ -577,20 +581,26 @@ function findFirstVisibleMessage() {
 
     // Check if at least 50% of the message is visible
     if (visibleHeight > 0 && (visibleHeight >= rect.height / 2)) {
-      firstVisibleMessageNum = message.dataset.messageNum; // Assuming each message has a 'data-message-num' attribute
-      break; // Exit loop once the first visible message is found
+        lastVisibleMessageNum = message.dataset.messageNum; // Update the last visible message
+        if (firstVisibleMessageNum === null) {
+            firstVisibleMessageNum = message.dataset.messageNum; // Update the first visible message
+        }
     }
   }
-  return { firstVisibleMessageNum };
+  return { firstVisibleMessageNum, lastVisibleMessageNum };
 }
 $: if (container) {
     persistFirstVisibleMessageNumber();
 }
 async function persistFirstVisibleMessageNumber() {
-    const { topVisibleMessageNum } = findFirstVisibleMessage();
+    const { topVisibleMessageNum } = findTopBottomVisibleMessages();
     if (firstVisibleMessageNum !== null) {
         // For Tauri secure storage, replace the below line with a Tauri invoke command
         localStorage.setItem('firstVisibleMessageNum', firstVisibleMessageNum);
+    }
+    if (lastVisibleMessageNum !== null) {
+        // For Tauri secure storage, replace the below line with a Tauri invoke command
+        localStorage.setItem('lastVisibleMessageNum', lastVisibleMessageNum);
     }
 }
 
