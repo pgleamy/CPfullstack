@@ -189,7 +189,7 @@
       // Infinite scroll logic
       const observerOptions = {
         root: container,
-        rootMargin: '10px', // how early to start fetching the next part of the conversation
+        rootMargin: '150px', // how early to start fetching the next part of the conversation
         threshold: 0
       };
 
