@@ -51,18 +51,11 @@
     let firstVisibleMessageNum;
     let lastVisibleMessageNum
 
-
     // Variables for infinite scroll logic
-    //$: totalMessages = $scrollStore.totalMessages; // total number of messages in the entire conversation
-    //console.log(`totalMessages: ${totalMessages}`);  // Debug line
     $: firstConversationArrayMessageNum = conversation.length > 0 ? parseInt(conversation[0].message_num) : null; //First message number in the conversation array
     $: if (firstConversationArrayMessageNum !== null) localStorage.setItem('firstConversationArrayMessageNum', firstConversationArrayMessageNum.toString());
     $: lastConversationArrayMessageNum = conversation.length > 0 ? parseInt(conversation[conversation.length - 1].message_num) : null // Last message number in the conversation array
     $: if (lastConversationArrayMessageNum !== null) localStorage.setItem('lastConversationArrayMessageNum', lastConversationArrayMessageNum.toString());
-    //let firstVisibleMessageNum = null;
-    //$: firstVisibleMessageNum = $scrollStore.firstVisibleMessageNum; // First user-visible message number. Must be set dynamically
-    //let lastVisibleMessageNum = null; // Last user-visible message number. Must be set dynamically
-    //$: targetMessage = $scrollStore.targetMessage; // targetMessage is the message number to target based on the gripLocation
     
     // used by the mouse wheel event listener to determine the direction of the scroll and execution limiting
     let shouldFetchUp = false;
@@ -84,8 +77,6 @@
       }
     } // end of reactive statement to update paddingBottom
     
-
-
     // Set flags indicating the conversation array contains the first and/or last message in the entire conversation.
     // Flags can then be use for various logic, e.g. to prevent the user from scrolling past the start or end of the conversation
     // or to prevent operations for seeking out of bounds of the conversation, or to add padding to the very last message 
@@ -523,7 +514,7 @@ async function fetchConversationRestore() {
             // Update the conversation array
             conversation = fetchedData.message;
             // save to local storage conversationArray
-            localStorage.setItem('conversationArray', JSON.stringify(fetchedData.message));
+            localStorage.setItem('conversationArray', JSON.stringify(conversation));
             updateEdgeFlags();  // Update UI flags
             scrollToMessage(firstVisibleMessageNum);  // Scroll to the target message
         } else {
@@ -572,10 +563,14 @@ async function fetchConversationPart(direction) {
                 afterContainerHeight = container.scrollHeight;
                 containerHeightDifference = afterContainerHeight - beforeContainerHeight;
                 newScrollTop = beforeScrollTop + containerHeightDifference;
-                container.scrollTop = newScrollTop;             
+                container.scrollTop = newScrollTop;     
+                 // save to local storage conversationArray
+                localStorage.setItem('conversationArray', JSON.stringify(conversation));        
             } else if (direction === "DOWN") {
                 // Append new messages at the end
                 conversation = [...conversation, ...fetchedData.message];
+                 // save to local storage conversationArray
+                localStorage.setItem('conversationArray', JSON.stringify(conversation));
             }
 
             updateEdgeFlags(); // Update edge flags after fetching new messages
