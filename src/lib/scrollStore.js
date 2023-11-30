@@ -45,17 +45,7 @@ const load = () => {
     downArrow: {
       isVisible: get('downArrow_isVisible') !== null ? JSON.parse(get('downArrow_isVisible')) : false
     },
-    //upArrow: {
-      //isVisible: get('upArrow_isVisible') !== null ? JSON.parse(get('upArrow_isVisible')) : false
-    //},
-    //searchModal: {
-      //isOpen: get('searchModal_isOpen') !== null ? JSON.parse(get('searchModal_isOpen')) : false,
-      //query: get('searchModal_query') || "",
-    //},
-    //markingSystem: {
-      //hits: get('markingSystem_hits') !== null ? JSON.parse(get('markingSystem_hits')) : [],
-      //consolidatedHits: get('markingSystem_consolidatedHits') !== null ? JSON.parse(get('markingSystem_consolidatedHits')) : [],
-    //},
+    
     totalMessages: parseInt(get('totalMessages')) || 0,
 
     targetMessage: parseInt(get('targetMessage')) || 0, // The target message of the fetchConversationSlice function
@@ -69,7 +59,6 @@ const load = () => {
     unsentPrompt: get('unsentPrompt') || "", // The unsent prompt contents
     unsentPromptQUILL: get('unsentPromptQUILL') || "", // The unsent prompt conten
 
-    //fetchedMessageCount: parseInt(get('fetchedMessageCount')) || 0, // The number of individual messages fetched from the server in one item group
     messagesItemHeight: parseInt(get('messagesItemHeight')) || 0, // The height of the fetched item group of messages in pixels
     
     firstVisibleMessageNum: parseInt(get('firstVisibleMessageNum')) || 0,
@@ -82,6 +71,8 @@ const load = () => {
 
   };
 };
+
+
 
 // Function to save all settings to Local Storage from an object
 const save = (settings) => {
