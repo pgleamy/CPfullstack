@@ -178,12 +178,12 @@
 
       totalMessages = await invoke('get_num_messages', {databasePath: database_path}); // total number of messages in the entire conversation
       localStorage.setItem('totalMessages', totalMessages); // get the totalMessages from local storage and set the local variable
-      console.log(`onMount totalMessages: ${totalMessages}`);  // Debug line
+      //console.log(`onMount totalMessages: ${totalMessages}`);  // Debug line
 
       // This variable will only be needed if I implement bright memories
       //num_user_llm_messages = await invoke('get_total_llm_user_messages', {databasePath: database_path});
 
-      console.log(`onMount firstVisibleMessageNum: ${firstVisibleMessageNum}`);  // Debug line
+      //console.log(`onMount firstVisibleMessageNum: ${firstVisibleMessageNum}`);  // Debug line
       fetchConversationRestore(firstVisibleMessageNum); // restore the conversation location to the last known position
 
       // Infinite scroll logic
@@ -549,17 +549,17 @@ async function fetchConversationPart(direction) {
         beforeContainerHeight = container.scrollHeight;
         beforeScrollTop = container.scrollTop;
         const firstMessageNum = parseInt(conversation[0].message_num);
-        console.log(`FETCHING UP before message: ${firstMessageNum}`);  // Debug line
+        //console.log(`FETCHING UP before message: ${firstMessageNum}`);  // Debug line
         start = Math.max(firstMessageNum - MessagesToFetch, 0);
         end = firstMessageNum - 1;
     } else if (direction === "DOWN") {
         const lastMessageNum = parseInt(conversation[conversation.length - 1].message_num);
-        console.log(`FETCHING DOWN after message: ${lastMessageNum}`);  // Debug line
+        //console.log(`FETCHING DOWN after message: ${lastMessageNum}`);  // Debug line
         start = lastMessageNum;
         end = Math.min(lastMessageNum + MessagesToFetch, totalMessages);
     }
 
-    console.log(`Fetching messages ${start} to ${end}`);  // Debug line
+    //console.log(`Fetching messages ${start} to ${end}`);  // Debug line
 
     try {
         const fetchedData = await invoke('fetch_conversation_history', { params: { start, end } });
