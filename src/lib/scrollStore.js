@@ -54,8 +54,6 @@ const load = () => {
 
     //userInputComponentHeight: parseInt(get('userInputComponentHeight')) || 0, // Height of the user input component elements in pixels
 
-    targetMessagesPixelHeight: parseInt(get('targetMessagesPixelHeight')) || 0, // Height of the conversation-container contents in pixels
-
     unsentPrompt: get('unsentPrompt') || "", // The unsent prompt contents
     unsentPromptQUILL: get('unsentPromptQUILL') || "", // The unsent prompt conten
 
