@@ -1,5 +1,6 @@
 <script>
-    import ConversationContainer from './conversationcontainer.svelte'; 
+    //import ConversationContainer from './conversationcontainer.svelte'; // old conversation container component
+    import VirtualScroller from './virtualScroller.svelte'; // new virtual scroller component
     import UserInput from './userinput.svelte';
     import { writable } from 'svelte/store';
     import { fade } from "svelte/transition";
@@ -40,7 +41,7 @@
 
     <section class="chatWindow">
         <div transition:fade="{{ duration: 25, delay: 0 }}">  
-            <ConversationContainer />
+            <VirtualScroller />
         </div>
     </section>
     <div class="scrollSearchWrapper" transition:fade="{{ duration: 25, delay: 0 }}">
