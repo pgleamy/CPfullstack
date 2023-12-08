@@ -1,19 +1,19 @@
 <script>
 
 /*
-
-Bi-directional infinite scroll with elastic grip element
-
-    * conversation-container holds messages. The messages are placed absolutely relative to the mid-point of the container height. This container does not scroll.
-    * The conversation-container has a height of 10000000px. 
-    * virtual-container sits on top of the conversation-container and it a 'window' into the conversation-container below it
-
+Bi-directional infinite virtual scroll with elastic grip and scrubbing grip elements (plus up/down keys and scroll wheel of course)
+    * The conversation-container holds messages. The messages are placed absolutely, relative to the mid-point of the container height. This container does not scroll.
+    * The conversation-container has a height of 40000000px. This equals very roughly 2 million lines of text. This is the maximum chat session length.
+    * onMount fetchConversationRestore places a block of messages at the starting point mid-way down the conversation-container. The block is based on where the user last left off in the conversation. It could be anywhere in the overall conversation.
+    * The virtual-container sits on top of the conversation-container and is a 'window' into the conversation-container below it.
+    * The virtual-container has a height of 100vh and overflow-y: auto. It is sized to fit the viewable UI window. It is the only container that scrolls.
+    * The virtual-container must account while scrolling for the mid-point offset of the conversation-container message placement. So all scrollTop values must be adjusted by the variable halfWayPoint which is defined to equal the halfway point of the the conversation-container height
+    * When messages are added to conversation-container there is no need to adjust them using halfWayPoint because halfWayPoint is hardcoded into conversation-container CSS. So a message placed at "top: 200px" will be placed at the halfway point of the conversation-container height + 200px automatically.
+    * As the user scrolls, messages are loaded and pruned from the conversation-container as needed, and then the virtual container is scrolled to the appropriate position to see what is there.
+    * Only a small number of messages remain loaded in the conversation-container at any time. Excess messages are pruned as the user scrolls away from them. This is very memory efficient and supports apparently instant scrolling of conversations of hundreds of thousands of messages. 
 */
 
-
-
-
-const halfWayPoint = 20000000; // Halfway point of the virtual-container & conversation-container heights
+const halfWayPoint = 20000000; // Halfway point of the conversation-container height
 
 import UserInput from './userinput.svelte';
 
@@ -115,9 +115,6 @@ function scrollToMessage(targetMessageNum) {
         console.error(`No message element found with message_num: ${targetMessageNum}`);
     }
 }
-
-
-
 
 
 // Scrubbing grip control logic
@@ -632,7 +629,7 @@ onMount( async () => {
         height: 100vh; /* takes up the whole viewport */
         background-color: transparent;
     }
-    
+
     ::-webkit-scrollbar {
             display: none; /* Hide scrollbar in Chrome */
     }
