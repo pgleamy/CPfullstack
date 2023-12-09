@@ -449,7 +449,7 @@ function throttle(func, limit) {
 const throttledFetch = throttle(fetchConversationSlice, 90);
 
 
-const throttledFindFirstVisibleMessage = throttle(findFirstVisibleMessage, 300);
+const throttledFindFirstVisibleMessage = throttle(findFirstVisibleMessage, 300); // call this !!!!!
 function findFirstVisibleMessage() {
     if (!conversationcontainer || !virtualcontainer) {
         return;
@@ -474,7 +474,8 @@ function findFirstVisibleMessage() {
 
     // Update the firstVisibleMessageNum if a message was found
     if (firstVisibleMessageNum !== null) {
-        console.log(`First visible message number: ${firstVisibleMessageNum}`);
+        //console.log(`First visible message number: ${firstVisibleMessageNum}`);
+        setInLocalStorage('firstVisibleMessageNum', firstVisibleMessageNum);
         
     } else {
         console.log("No visible messages found");
@@ -483,7 +484,7 @@ function findFirstVisibleMessage() {
 
 
 // function to find the top and bottom visible messages in DOM
-const throttledFindBottomVisibleMessage = throttle(findBottomVisibleMessage, 300);
+const throttledFindBottomVisibleMessage = throttle(findBottomVisibleMessage, 300); // call this !!!!!
 function findBottomVisibleMessage() {
   if (!conversationcontainer || !virtualcontainer) {
     return;
@@ -510,7 +511,8 @@ function findBottomVisibleMessage() {
   // Update the reactive variables if the values have changed
   if (tempLastVisibleMessageNum !== null) {
     lastVisibleMessageNum = tempLastVisibleMessageNum;
-    console.log(`lastVisibleMessageNum: ${lastVisibleMessageNum}`);  // Debug line
+    //console.log(`lastVisibleMessageNum: ${lastVisibleMessageNum}`);  // Debug line
+    setInLocalStorage('lastVisibleMessageNum', lastVisibleMessageNum);
   }
 }
 
