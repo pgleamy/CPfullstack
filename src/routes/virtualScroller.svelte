@@ -449,7 +449,7 @@ function throttle(func, limit) {
 const throttledFetch = throttle(fetchConversationSlice, 90);
 
 
-const throttledFindFirstVisibleMessage = throttle(findFirstVisibleMessage, 300); // call this !!!!!
+const throttledFindFirstVisibleMessage = throttle(findFirstVisibleMessage, 100); // call this !!!!!
 function findFirstVisibleMessage() {
     if (!conversationcontainer || !virtualcontainer) {
         return;
@@ -463,6 +463,7 @@ function findFirstVisibleMessage() {
         const rect = message.getBoundingClientRect();
 
         // Calculate the absolute distance from the top of the viewport
+        // finds the message with it top closest to the top of the viewport then exits
         const distanceFromTop = Math.abs(rect.top);
 
         // Update closestTop and firstVisibleMessageNum if this message is closer to the top
@@ -484,7 +485,7 @@ function findFirstVisibleMessage() {
 
 
 // function to find the top and bottom visible messages in DOM
-const throttledFindBottomVisibleMessage = throttle(findBottomVisibleMessage, 300); // call this !!!!!
+const throttledFindBottomVisibleMessage = throttle(findBottomVisibleMessage, 100); // call this !!!!!
 function findBottomVisibleMessage() {
   if (!conversationcontainer || !virtualcontainer) {
     return;
@@ -504,6 +505,7 @@ function findBottomVisibleMessage() {
       const messageNum = message.getAttribute('messagenum'); // Or just 'messagenum' if it's not a data attribute
 
       // Update last visible message number for each message in the viewport
+      // continues until the last message in the viewport is found then exits
       tempLastVisibleMessageNum = messageNum;
     }
 
