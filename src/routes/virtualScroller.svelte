@@ -160,6 +160,30 @@ async function handleWheelScroll(event) {
 }
 
 // Fetches a slice of the conversation history from the backend for the scrubbing grip element
+// reacts to the location of the scrubbing grip as moved by the user
+async function fetchConversationSlice () {
+    // New version simply waits for user grip movement and calls fetchConversationRestore.
+    // As user moves the scrubbing grip the firstVisibleMessageNum is updated based on the
+    // relative place in the whole conversation
+    if (userMovingGrip === false) {
+        return;
+    }
+    console.log(`fetchConversationSlice ran with unchanged first visible message`);  // Debug line
+    let currentFirstVisibleMessageNum = parseInt(localStorage.getItem('firstVisibleMessageNum')) || 0;
+    console.log(`currentFirstVisibleMessageNum: ${currentFirstVisibleMessageNum}`);  // Debug line
+    let newFirstVisibleMessageNum = Math.round(totalMessages * (1 - gripLocation));
+    console.log(`newFirstVisibleMessageNum: ${newFirstVisibleMessageNum}`);  // Debug line
+    // Only fetch if the firstVisibleMessageNum has changed based on current gripLocation
+    if (newFirstVisibleMessageNum !== currentFirstVisibleMessageNum) {
+        setInLocalStorage('firstVisibleMessageNum', newFirstVisibleMessageNum);
+        console.log(`Scrubbed quickly to message: ${newFirstVisibleMessageNum}`);  // Debug line
+        fetchConversationRestore(newfirstVisibleMessageNum);
+    }
+}
+
+
+
+/* old version
 async function fetchConversationSlice(gripLocation, totalMessages) {
 
     console.log(`fetchConversationSlice ran`);  // Debug line
@@ -214,6 +238,7 @@ async function fetchConversationSlice(gripLocation, totalMessages) {
     }
 
   }
+  */
 
 // script level store of each message in the conversation array and each message's pixel height.
 let messageHeights = {};
@@ -448,7 +473,7 @@ function throttle(func, limit) {
 }
 const throttledFetch = throttle(fetchConversationSlice, 90);
 
-
+// function to find the top visible message in DOM (throttled to 100ms)
 const throttledFindFirstVisibleMessage = throttle(findFirstVisibleMessage, 100); // call this !!!!!
 function findFirstVisibleMessage() {
     if (!conversationcontainer || !virtualcontainer) {
@@ -484,7 +509,7 @@ function findFirstVisibleMessage() {
 }
 
 
-// function to find the top and bottom visible messages in DOM
+// function to find the bottom visible message in DOM (throttled to 100ms)
 const throttledFindBottomVisibleMessage = throttle(findBottomVisibleMessage, 100); // call this !!!!!
 function findBottomVisibleMessage() {
   if (!conversationcontainer || !virtualcontainer) {
@@ -566,7 +591,6 @@ onMount( async () => {
     conversationcontainer.addEventListener('keydown', handleArrowKeyScroll), () => {
         userHasScrolled = true;
     }
-
     
     virtualcontainer.addEventListener('scroll', throttledFindFirstVisibleMessage);
     virtualcontainer.addEventListener('scroll', throttledFindBottomVisibleMessage);
