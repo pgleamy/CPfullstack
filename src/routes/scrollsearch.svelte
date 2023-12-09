@@ -32,86 +32,11 @@
     unsubscribe();  // Unsubscribe from the store
   });
 
-  
-  // updateGroupMetrics()
-  // Produces metrics of the user's precise position in the conversation and the
-  // corresponding grip position
-  // Function related declarations 
-  
-  //let debounceTimer;
-  $: topMessageNum = $scrollStore.topMessageNum;
-  //$: bottomMessageNum = $scrollStore.bottomMessageNum;
-  //let bottomMessageNum;
-  //const throttledAndDebouncedUpdateGripMetrics = throttle(debounce(updateGripMetrics, 200), 200);
   const throttledAndDebouncedSetInitialGripPosition = throttle(debounce(setInitialGripPosition, 200), 200);
-  //let gripPositionCalculated = null;
-
-  /*
-  function updateGripMetrics() {
-  clearTimeout(debounceTimer);  // Clear any existing timer
-
-  if (isDragging || isJumpingToBottom) return;
-
-  const container = document.getElementById("custom-scrollbar");
-  if (!container) return;
-
-  let num = get('totalMessages');
-  console.log("num:", num);
-  let bottomMessageNum = get('bottomMessageNum');
-  console.log("bottomMessageNum:", bottomMessageNum);
-  let topMessageNum = get('topMessageNum');
-  console.log("topMessageNum:", topMessageNum);
-  const lowerBound = radius + 19;
-  const upperBound = container.clientHeight - radius - bottomPadding;
-  const rangeOfMotion = upperBound - lowerBound;
-  
-  if (topMessageNum === 1) {
-    gripPositionCalculated = 1;
-    downArrowIsVisible = true;
-  } else if (bottomMessageNum === num) {
-    gripPositionCalculated = 0;
-  } else if (topMessageNum !== 1 && bottomMessageNum !== num) {
-    gripPositionCalculated = 1 - (topMessageNum / num);
-    downArrowIsVisible = true;
-  }
-
-    // Calculate gripY
-  let gripYCalculated = upperBound - gripPositionCalculated * rangeOfMotion;
-  gripY = gripYCalculated;
-  
-  let variableSteps;
-  if (num < 30) variableSteps = 30; 
-  if (num >= 50 && num < 100) variableSteps = 10;
-  if (num >= 100 && num < 300) variableSteps = 3;
-  if (num >= 300 && num < 500) variableSteps = 2;
-  if (num >= 500) variableSteps = 1;
-  gripYCalculated = upperBound - gripPositionCalculated * rangeOfMotion;
-  const oldGripY = gripY;
-  const diff = gripYCalculated - oldGripY;
-  const steps = variableSteps;
-  const stepIncrement = diff / steps;
-
-  function animateStep(stepNumber) {
-    if (stepNumber <= steps) {
-      gripY = oldGripY + stepIncrement * stepNumber;
-
-      // Use setTimeout to control the timing of each step
-      setTimeout(() => animateStep(stepNumber + 1), 10); // ms for each step
-    }
-  }
-  animateStep(1); // Start the animation
-  
-
-  setInLocalStorage('gripYCalculated', gripY);
-  setInLocalStorage('gripPositionCalculated', gripPositionCalculated);
-}
-*/
-
-
 
   function resetElasticGripToNeutral() {
     // set dragspeed to 0
-    setInLocalStorage('dragSpeedUpDown', 0);
+    localStorage.setItem('dragSpeedUpDown', 0);
   }
 
   function setInitialGripPosition() {
@@ -152,7 +77,6 @@
 
     window.addEventListener('resize', setInitialGripPosition);
 
-    
   }); // End of onMount()
 
 
@@ -164,6 +88,7 @@
     document.body.style.cursor = "none";
     window.addEventListener('mousemove', drag);
     window.addEventListener('mouseup', stopDrag);
+
   } // End of startDrag()
 
   function stopDrag(e) {
@@ -174,6 +99,7 @@
     document.body.style.cursor = "auto";
     window.removeEventListener('mousemove', drag);
     window.removeEventListener('mouseup', stopDrag);
+
   } // End of stopDrag()
 
   
@@ -182,6 +108,7 @@
     if (isDragging) {
       if (isElasticDragging) return; // If elastic drag is active, exit
       e.preventDefault();
+
       const container = document.getElementById("custom-scrollbar");
       const rect = container.getBoundingClientRect();
       const offsetY = e.clientY - rect.top - 21;
@@ -208,6 +135,7 @@
           downArrowIsVisible = true;
         }
       }
+
   } // End of drag(e)
   
   

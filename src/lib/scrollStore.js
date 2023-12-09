@@ -67,6 +67,8 @@ const load = () => {
 
     Role: get('Role') || "Write",
 
+    userMovingGrip: get('userMovingGrip') || false,
+
   };
 };
 

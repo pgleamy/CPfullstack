@@ -1,7 +1,6 @@
 <script>
-
 /*
-Bi-directional infinite virtual scroll with elastic grip and scrubbing grip elements (plus up/down keys and scroll wheel of course)
+Bi-directional infinite virtual scrolling with elastic grip and scrubbing grip custom elements (plus up/down keys and scroll wheel of course)
     * The conversation-container holds messages. The messages are placed absolutely, relative to the mid-point of the container height. This container does not scroll.
     * The conversation-container has a height of 40000000px. This equals very roughly 2 million lines of text. This is the maximum chat session length.
     * onMount fetchConversationRestore places a block of messages at the starting point mid-way down the conversation-container. The block is based on where the user last left off in the conversation. It could be anywhere in the overall conversation.
@@ -13,7 +12,7 @@ Bi-directional infinite virtual scroll with elastic grip and scrubbing grip elem
     * Only a small number of messages remain loaded in the conversation-container at any time. Excess messages are pruned as the user scrolls away from them. This is very memory efficient and supports apparently instant scrolling of conversations of hundreds of thousands of messages. 
 */
 
-const halfWayPoint = 20000000; // Halfway point of the conversation-container height
+const halfWayPoint = 10000000; // Halfway point of the conversation-container height
 
 import UserInput from './userinput.svelte';
 
@@ -34,48 +33,31 @@ let docs_drop_path = get('docs_drop_path');
 
 let num_messages = 0; // total number of user, llm and bright_memory messages in the conversation
 let num_user_llm_messages = 0; // total number of user and llm messages in the conversation
-let container; // reference to the conversation container element   
-let virtualcontainer; // reference to the virtual container element
+let conversationcontainer; // reference to the #conversation-container element   
+let virtualcontainer; // reference to the #virtual-container element
 
 // Infinite scroll observers
 let topObserverElement;
 let bottomObserverElement;
-let isUserInteraction = false; // Initialize the flag for user interaction with the scrubbing grip element
 
 let userInputComponent; // Initialize the variable to bind the UserInput component
-
-// UP scroll positioning calculation variables for infinite scroll logic in UP direction
-let beforeScrollTop; // original scrollTop
-let afterScrollTop; // new scrollTop
-let scrollTopDifference; // difference between beforeScrollTop and afterScrollTop
-let beforeContainerHeight; // original height of entire conversation container before any changes
-let afterContainerHeight; // new height of entire conversation container after any changes
-let containerHeightDifference; // difference between beforeContainerHeight and afterContainerHeight
-let newScrollTop; // new scrollTop after accounting for the difference between before and after scrollTop and containerHeight
 
 let hasReachedStart = false; // Initialize the flag for the start of the conversation
 let hasReachedEnd = false; // Initialize the flag for the end of the conversation
 
-let lastScrollTop = 0;
-let isScrolling = false;
-
-let totalMessages;
 let firstVisibleMessageNum;
-let lastVisibleMessageNum
+$: firstVisibleMessageNum = $scrollStore.firstVisibleMessageNum; // Keep firstVisibleMessageNum in sync with the scrollStore
+let lastVisibleMessageNum;
+$: lastVisibleMessageNum = $scrollStore.lastVisibleMessageNum; // Keep lastVisibleMessageNum in sync with the scrollStore
 
-// Variables for infinite scroll logic
-$: firstConversationArrayMessageNum = conversation.length > 0 ? parseInt(conversation[0].message_num) : null; //First message number in the conversation array
+$: firstConversationArrayMessageNum = conversation.length > 0 ? parseInt(conversation[0].message_num) : null; //First message number in the current conversation array
 $: if (firstConversationArrayMessageNum !== null) localStorage.setItem('firstConversationArrayMessageNum', firstConversationArrayMessageNum.toString());
-$: lastConversationArrayMessageNum = conversation.length > 0 ? parseInt(conversation[conversation.length - 1].message_num) : null // Last message number in the conversation array
+$: lastConversationArrayMessageNum = conversation.length > 0 ? parseInt(conversation[conversation.length - 1].message_num) : null // Last message number in the current conversation array
 $: if (lastConversationArrayMessageNum !== null) localStorage.setItem('lastConversationArrayMessageNum', lastConversationArrayMessageNum.toString());
-
 
 // used by the mouse wheel event listener to determine the direction of the scroll and execution limiting
 let shouldFetchUp = false;
 let shouldFetchDown = false;
-
-// locking variable to control execution of complementary scrolling and restore functions
-let fetchLock = false;
 
 // Set flags indicating the conversation array contains the first and/or last message in the entire conversation.
 // Flags can then be use for various logic, e.g. to prevent the user from scrolling past the start or end of the conversation
@@ -86,53 +68,44 @@ function updateEdgeFlags() {
         hasReachedEnd = false;
         return;
     }
-    // Assuming the first message in your conversation array is the earliest
     firstConversationArrayMessageNum = parseInt(conversation[0].message_num);
     localStorage.setItem('firstConversationArrayMessageNum', firstConversationArrayMessageNum);
-    //console.log(`firstMessageNum: ${firstMessageNum}`);  // Debug line
     hasReachedStart = (firstConversationArrayMessageNum === 1); // will be true if the first message in the conversation array is the first message in the entire conversation
-    // Assuming the last message in your conversation array is the latest
     let lastConversationArrayMessageNum = parseInt(conversation[conversation.length - 1].message_num);
-    localStorage.setItem('lastConversationArrayMessageNum', lastConversationArrayMessageNum);
-    //console.log(`lastMessageNum: ${lastMessageNum}`);  // Debug line
-    hasReachedEnd = (lastConversationArrayMessageNum === totalMessages); // will be true if the last message in the conversation array is the last message in the entire conversation
-    //console.log(`updateEdgeFlags() \nhasReachedStart: ${hasReachedStart} \nhasReachedEnd: ${hasReachedEnd}`);
+    localStorage.setItem('lastConversationArrayMessageNum', lastConversationArrayMessageNum);   
+    hasReachedEnd = (lastConversationArrayMessageNum === totalMessages); // will be true if the last message in the conversation array is the last message in the entire conversation 
 }
 
-// Scrolls to the specified message number in the conversation
-function scrollToMessage(targetMessageNum) {
-
-    console.log(`Attempting to scroll to message number: ${targetMessageNum}`);
-    
-    const targetMessageElement = container.querySelector(`[messagenum="${targetMessageNum}"]`);
-
+// Scrolls virtual-container to the specified message number in the conversation
+// The message must be in the conversation array and await tick(); must be called before calling this function
+function scrollToMessage(firstVisibleMessageNum) {    
+    const targetMessageElement = conversationcontainer.querySelector(`[messagenum="${firstVisibleMessageNum}"]`);
     if (targetMessageElement) {
         let messageTop = parseFloat(targetMessageElement.style.top);
-
-        console.log(`Scrolling to message number ${targetMessageNum} at position: ${messageTop}`);
-        virtualcontainer.scrollTop = halfWayPoint + messageTop;
+        virtualcontainer.scrollTop = halfWayPoint + messageTop; // adding halfWaying is necessary to account for the conversation-container mid-point offset
     } else {
         console.error(`No message element found with message_num: ${targetMessageNum}`);
     }
 }
 
-
 // Scrubbing grip control logic
 // gripLocation is a number between 0 and 1 that represents the position of the grip relative to the whole conversation
 // This calls throttled and debounced versions of fetchConversationSlice to fetch the conversation slice based on gripLocation
-$: gripLocation = parseFloat(localStorage.getItem('gripPosition')); // sets gripLocation to the current gripPosition in scrollStore
-// controls the fetching of the conversation slice based on gripLocation for smooth interaction
-$: {
-    if (isUserInteraction && typeof totalMessages !== 'undefined' && totalMessages > 0) {
+//$: gripLocation = $scrollStore.gripPosition; // sets gripLocation to the current gripPosition in scrollStore
+let totalMessages;
+$: totalMessages = $scrollStore.totalMessages; // Keep totalMessages in sycn with the scrollStore
+let gripLocation; // Initialize gripLocation to the current gripPosition in scrollStore
+$: gripLocation = $scrollStore.gripPosition; // sets gripLocation to the current gripPosition in scrollStore
+let userMovingGrip = false; // Flag to track user grip movement
+$: userMovingGrip = $scrollStore.userMovingGrip; // Keep userMovingGrip in sync with the scrollStore
+
+$: if (userMovingGrip === true && typeof totalMessages !== 'undefined' && totalMessages > 0) {
+    handleGripMovement();
+}
+function handleGripMovement() {
+    console.log('User is Moving the Scrubbing Grip');  // Debug line
     throttledFetch(gripLocation, totalMessages);
     debouncedFetch(gripLocation, totalMessages);
-    isUserInteraction = false; // Reset the flag
-    }
-} // end of reactive statement to fetch conversation slice based on local variable gripLocation (throttled and debounced)
-// This function should be called when the user interacts with the grip
-function userMovedGrip(newGripLocation) {
-        isUserInteraction = true;
-        gripLocation = newGripLocation; // Update gripLocation based on user interaction
 }
 
 // Infinite scroll animation speed control logic used by the elastic grip element
@@ -143,10 +116,10 @@ const animateScroll = () => {
     lastRenderTime = currentTime;
     // the numeric value controls the relative speed of fine scrolling
     const dragSpeedUpDown = parseFloat(localStorage.getItem('dragSpeedUpDown')) * 0.6 || 0; // 0.6 is the normal speed multiplier
-    if (container) { container.scrollTop += dragSpeedUpDown * deltaTime; requestAnimationFrame(animateScroll); }
+    if (virtualcontainer) { virtualcontainer.scrollTop += dragSpeedUpDown * deltaTime; requestAnimationFrame(animateScroll); }
 }; // end of elastic grip animateScroll function. 
 
-// This function will contain the logic to be executed when UP or DOWN arrow keys are pressed.
+// Executed when UP or DOWN arrow keys are pressed.
 async function handleArrowKeyScroll(event) {
   // Determine the direction based on the key pressed
   let direction = null;
@@ -163,7 +136,7 @@ async function handleArrowKeyScroll(event) {
     if (hasReachedEnd) {
       return;  // Skip the fetch operation
     }
-   await fetchConversationPart("DOWN");
+    await fetchConversationPart("DOWN");
     shouldFetchDown = false; // Reset the flag after fetching
   } else if (direction === "UP" && shouldFetchUp && !hasReachedStart) {
     if (hasReachedStart) {
@@ -185,24 +158,11 @@ async function handleWheelScroll(event) {
     shouldFetchDown = false; // Reset the flag after fetching
   }
 }
-  
-// Non-reactive function to return the container pixel height
-function getContainerHeight() {
-    const container = document.getElementById('conversation-container');
-    const currentHeight = container.scrollHeight;
-    return currentHeight;
-    console.log(`getContainerHeight() currentHeight: ${currentHeight}`);  // Debug line
-}
 
 // Fetches a slice of the conversation history from the backend for the scrubbing grip element
 async function fetchConversationSlice(gripLocation, totalMessages) {
 
-  console.log('fetchConversationSlice() TRIED to run!');
-
-  if (fetchLock) return;
-  fetchLock = true
-
-  console.log(`fetchConversationSlice() RAN!`);  // Debug line
+    console.log(`fetchConversationSlice ran`);  // Debug line
 
     const MessagesToFetch = 20; // Maximum number of messages to fetch
 
@@ -212,7 +172,8 @@ async function fetchConversationSlice(gripLocation, totalMessages) {
 
     let targetMessage = Math.round(totalMessages * (1 - gripLocation));
     // Store targetMessage in local storage
-    localStorage.setItem('targetMessage', targetMessage);
+    setInLocalStorage('targetMessage', targetMessage);
+    //localStorage.setItem('targetMessage', targetMessage);
 
     let start = Math.max(targetMessage - buffer, 0); // buffer is 10
     let end = Math.min(targetMessage + buffer, totalMessages);
@@ -292,15 +253,11 @@ async function fetchConversationRestore() {
         if (fetchedData && Array.isArray(fetchedData.message)) {
             conversation = fetchedData.message;
             await tick(); 
-
-            await updateMessageHeights(conversation);
-            
-            await placeMessagesPrecisely(conversation);
-            
+            await updateMessageHeights(conversation);           
+            await placeMessagesPrecisely(conversation);          
             await scrollToMessage(firstVisibleMessageNum);  // Scroll to the target message
             // save to local storage conversationArray
-            localStorage.setItem('conversationArray', JSON.stringify(conversation));
-            
+            localStorage.setItem('conversationArray', JSON.stringify(conversation));            
             await updateEdgeFlags();  // Update UI flags
                    
         } else {
@@ -327,29 +284,26 @@ function calculateHeightOfMessage(message) {
     return messageElement ? messageElement.offsetHeight : 0; // Return 0 if the message is not found
 }
 
-async function placeMessagesPrecisely(messages) {
-    
+// Places messages precisely in the conversation container based on their pixel height
+// There is no need to adjust for the conversation-container mid-point offset because it is hardcoded into the conversation-container CSS
+async function placeMessagesPrecisely(messages) { 
     let cumulativeHeight = 0; // starting point
-
     messages.forEach(message => {
         const messageElement = document.querySelector(`[messagenum='${message.message_num}']`);
         if (messageElement) {
             messageElement.style.position = 'absolute';
             messageElement.style.top = `${cumulativeHeight}px`;
-            console.log(`Message ${message.message_num} placed at ${cumulativeHeight}px`);  // Debug line
+            //console.log(`Message ${message.message_num} placed at ${cumulativeHeight}px`);  // Debug line
             cumulativeHeight += messageHeights[message.message_num];
         }
     });
-
     await tick();
-
-    // Position topObserverElement just before the first message
+    // Position topObserverElement just after the first message
     if (topObserverElement) {
         topObserverElement.style.position = 'absolute';
         topObserverElement.style.top = `${messageHeights[messages[0].message_num]}px`;
         console.log(`topObserverElement placed at ${messageHeights[messages[0].message_num]}px`);
     }
-
     // Position bottomObserverElement just after the last message
     if (bottomObserverElement) {
         bottomObserverElement.style.position = 'absolute';
@@ -422,7 +376,7 @@ async function fetchConversationPart(direction) {
             // Adjust scroll position
             if (direction === "UP") {
                 let newHeight = calculateTotalHeightOfConversation();
-                container.scrollTop += newHeight - oldHeight - prunedHeight;
+                conversationcontainer.scrollTop += newHeight - oldHeight - prunedHeight;
             }
 
             // Update edge flags and local storage
@@ -456,7 +410,7 @@ function pruneMessages(direction, numAdded) {
 }
 
 function adjustScrollPosition(oldHeight, newHeight) {
-    container.scrollTop += (newHeight - oldHeight);
+    conversationcontainer.scrollTop += (newHeight - oldHeight);
 }
 
 function calculateTotalHeightOfConversation() {
@@ -494,59 +448,98 @@ function throttle(func, limit) {
 }
 const throttledFetch = throttle(fetchConversationSlice, 90);
 
-// reactive statement to find the top and bottom visible messages in the conversation container
-function findTopBottomVisibleMessages() {
 
-  if (!container) {
-    return { firstVisibleMessageNum: null, lastVisibleMessageNum: null };
-  }
-
-  const messages = container.querySelectorAll('.message-class');
-
-  for (let message of messages) {
-    const rect = message.getBoundingClientRect();
-    const containerRect = container.getBoundingClientRect();
-
-    // Calculate visible portion of the message
-    const visibleTop = Math.max(rect.top, containerRect.top);
-    const visibleBottom = Math.min(rect.bottom, containerRect.bottom);
-    const visibleHeight = visibleBottom - visibleTop;
-
-    // Check if at least 50% of the message is visible
-    if (visibleHeight > 0 && (visibleHeight >= rect.height / 2)) {
-        lastVisibleMessageNum = message.dataset.messageNum; // Update the last visible message
-        //setFirstVisibleMessageNum(message.dataset.messageNum); // Update the first visible message
-        firstVisibleMessageNum = message.dataset.messageNum; // Update the first visible message
+const throttledFindFirstVisibleMessage = throttle(findFirstVisibleMessage, 300);
+function findFirstVisibleMessage() {
+    if (!conversationcontainer || !virtualcontainer) {
+        return;
     }
+
+    const messages = conversationcontainer.querySelectorAll('.message-class');
+    let closestTop = Infinity; // Initialize with a large number
+    let firstVisibleMessageNum = null;
+
+    for (const message of messages) {
+        const rect = message.getBoundingClientRect();
+
+        // Calculate the absolute distance from the top of the viewport
+        const distanceFromTop = Math.abs(rect.top);
+
+        // Update closestTop and firstVisibleMessageNum if this message is closer to the top
+        if (distanceFromTop < closestTop) {
+            closestTop = distanceFromTop;
+            firstVisibleMessageNum = message.getAttribute('messagenum');
+        }
+    }
+
+    // Update the firstVisibleMessageNum if a message was found
+    if (firstVisibleMessageNum !== null) {
+        console.log(`First visible message number: ${firstVisibleMessageNum}`);
+        
+    } else {
+        console.log("No visible messages found");
+    }
+}
+
+
+// function to find the top and bottom visible messages in DOM
+const throttledFindBottomVisibleMessage = throttle(findBottomVisibleMessage, 300);
+function findBottomVisibleMessage() {
+  if (!conversationcontainer || !virtualcontainer) {
+    return;
   }
-  console.log(`FOUND firstVisibleMessageNum: ${firstVisibleMessageNum}`);  // Debug line
-  console.log(`FOUND lastVisibleMessageNum: ${lastVisibleMessageNum}`);  // Debug line
-  return { firstVisibleMessageNum, lastVisibleMessageNum };
+
+  const messages = conversationcontainer.querySelectorAll('.message-class');
+  let tempLastVisibleMessageNum = null;
+
+  for (const message of messages) {
+    const rect = message.getBoundingClientRect();
+    const containerRect = virtualcontainer.getBoundingClientRect();
+
+    // Check if the message is within the viewport of virtualcontainer
+    const isWithinViewport = (rect.bottom > containerRect.top) && (rect.top < containerRect.bottom);
+
+    if (isWithinViewport) {
+      const messageNum = message.getAttribute('messagenum'); // Or just 'messagenum' if it's not a data attribute
+
+      // Update last visible message number for each message in the viewport
+      tempLastVisibleMessageNum = messageNum;
+    }
+
+  }
+  // Update the reactive variables if the values have changed
+  if (tempLastVisibleMessageNum !== null) {
+    lastVisibleMessageNum = tempLastVisibleMessageNum;
+    console.log(`lastVisibleMessageNum: ${lastVisibleMessageNum}`);  // Debug line
+  }
 }
 
 const observerOptions = {
-    root: container,
-    rootMargin: '100px', // how early to start fetching the next part of the conversation
-    threshold:0 // how much of the observer element needs to be visible before the callback is executed
-    };
-    // Callback function to be executed when the top or bottom observer elements intersect
-    // due to the user fine scrolling with the elastic grip element up or down respectively
-    const observerCallback = async (entries, observer) => {
-        for (const entry of entries) {
-            if (entry.isIntersecting) {
-                if (entry.target.id === 'top-observer' && !hasReachedStart) {
-                    await fetchConversationPart("UP");
-                } else if (entry.target.id === 'bottom-observer' && !hasReachedEnd) {
-                    await fetchConversationPart("DOWN");
-                }
+    root: virtualcontainer,
+    rootMargin: '0px', // how early to start fetching the next part of the conversation
+    threshold: 1 // how much of the observer element needs to be visible before the callback is executed
+};
+// Callback function to be executed when the top or bottom observer elements intersect
+// due to the user fine scrolling with the elastic grip element up or down respectively
+const observerCallback = async (entries, observer) => {
+    for (const entry of entries) {
+        if (entry.isIntersecting) {
+            if (entry.target.id === 'top-observer' && !hasReachedStart) {
+                await fetchConversationPart("UP");
+                console.log(`top-observer is intersecting`);  // Debug line
+            } else if (entry.target.id === 'bottom-observer' && !hasReachedEnd) {
+                await fetchConversationPart("DOWN");
+                console.log(`bottom-observer is intersecting`);  // Debug line
             }
         }
-    };
+    }
+};
 
 
 onMount( async () => {
 
     firstVisibleMessageNum = parseInt(localStorage.getItem('firstVisibleMessageNum')); // get the firstVisibleMessageNum from local storage and set the local variable
+    lastVisibleMessageNum = parseInt(localStorage.getItem('lastVisibleMessageNum')); // get the lastVisibleMessageNum from local storage and set the local variable
 
     totalMessages = await invoke('get_num_messages', {databasePath: database_path}); // total number of messages in the entire conversation
     localStorage.setItem('totalMessages', totalMessages); // get the totalMessages from local storage and set the local variable
@@ -558,25 +551,21 @@ onMount( async () => {
     //console.log(`onMount firstVisibleMessageNum: ${firstVisibleMessageNum}`);  // Debug line
     await fetchConversationRestore(firstVisibleMessageNum); // restore the conversation location to the last known position
 
-    // Infinite scroll logic
-
-    // removed observer callback function from here and placed it at script level
-
-    //const observer = new IntersectionObserver(observerCallback, observerOptions);
-    //observer.observe(topObserverElement);
-    //observer.observe(bottomObserverElement);
-
     requestAnimationFrame(animateScroll);
 
     // Add the mouse wheel event listener
-    container.addEventListener('wheel', handleWheelScroll);
+    conversationcontainer.addEventListener('wheel', handleWheelScroll), () => {
+        userHasScrolled = true;
+    }
 
     // Add the keydown event listener for the UP and DOWN arrow keys
-    container.addEventListener('keydown', handleArrowKeyScroll);
-
-    container.addEventListener('scroll', () => {
+    conversationcontainer.addEventListener('keydown', handleArrowKeyScroll), () => {
         userHasScrolled = true;
-    });
+    }
+
+    
+    virtualcontainer.addEventListener('scroll', throttledFindFirstVisibleMessage);
+    virtualcontainer.addEventListener('scroll', throttledFindBottomVisibleMessage);
 
 }); // end of onMount()
 
@@ -586,7 +575,7 @@ onMount( async () => {
 
 
 <div id="virtual-container" bind:this={virtualcontainer}>
-    <div id="conversation-container" bind:this={container}>
+    <div id="conversation-container" bind:this={conversationcontainer}>
 
         <div bind:this={topObserverElement} id="top-observer" style="background-color: red;"></div>
 
@@ -640,11 +629,11 @@ onMount( async () => {
         align-items: flex-start;
         width: 100%;
         position: absolute; 
-        height:  40000000px;
-        top:     20000000px;
+        height:  20000000px;
+        top:     10000000px;
         padding-right: 0px;
         user-select: none;
-        opacity: 0.9;
+        opacity: 0.99;
         overflow-y: hidden; /* hides default scrolling bars */
         scroll-behavior: smooth;
         position: absolute;
@@ -661,11 +650,11 @@ onMount( async () => {
         bottom: 0px;
         left: 0px;
         right: 0px;
-        padding: 0px;
+        padding: 5px;
     }
 
     #top-observer, #bottom-observer {
-        width: 50%;
+        width: 100%;
         height: 2px;
     }
 
