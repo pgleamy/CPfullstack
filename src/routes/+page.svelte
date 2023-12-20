@@ -6,7 +6,8 @@
     import { fade } from "svelte/transition";
     import ScrollSearch from './scrollsearch.svelte';
     import { activePage } from '$lib/headerchange.js';
-    import { get } from '$lib/scrollStore.js';
+    import { scrollStore, get } from '$lib/scrollStore.js';
+    import { onMount, onDestroy, tick } from 'svelte';
     $activePage = 'chatPage';
 
     let CurrentPage; // Reference to the current page component
@@ -33,6 +34,8 @@
     }
     
 
+
+
 </script>
 
 
@@ -41,11 +44,11 @@
 
     <section class="chatWindow">
         <div transition:fade="{{ duration: 25, delay: 0 }}">  
-            <VirtualScroller />
+            <VirtualScroller  />
         </div>
     </section>
     <div class="scrollSearchWrapper" transition:fade="{{ duration: 25, delay: 0 }}">
-        <ScrollSearch />
+        <ScrollSearch  />
     </div>
 
 </div>

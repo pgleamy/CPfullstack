@@ -12,13 +12,17 @@ Bi-directional infinite virtual scrolling with elastic grip and scrubbing grip c
     * Only a small number of messages remain loaded in the conversation-container at any time. Excess messages are pruned as the user scrolls away from them. This is very memory efficient and supports apparently instant scrolling of conversations of hundreds of thousands of messages. 
 */
 
+
+//export let gripPosition; // reactive variable to track the position of the scrubbing grip
+
+
 const halfWayPoint = 10000000; // Halfway point of the conversation-container height
 
 import UserInput from './userinput.svelte';
 
 import UserInputSent from './userinputsent.svelte';
 import LLMResponse from './llmresponse.svelte';
-import {scrollStore, get, setInLocalStorage, updateScrollSettings} from '$lib/scrollStore.js';
+import {scrollStore, get, setInLocalStorage, updateScrollStore} from '$lib/scrollStore.js';
 import { onMount, onDestroy } from 'svelte';
 import { invoke } from "@tauri-apps/api/tauri";
 import { tick } from 'svelte';
@@ -79,14 +83,49 @@ function updateEdgeFlags() {
 // Scrolls virtual-container to the specified message number in the conversation
 // The message must be in the conversation array and await tick(); must be called before calling this function
 function scrollToMessage(firstVisibleMessageNum) {    
+    let targetMessageNum;
     const targetMessageElement = conversationcontainer.querySelector(`[messagenum="${firstVisibleMessageNum}"]`);
     if (targetMessageElement) {
         let messageTop = parseFloat(targetMessageElement.style.top);
         virtualcontainer.scrollTop = halfWayPoint + messageTop; // adding halfWaying is necessary to account for the conversation-container mid-point offset
     } else {
-        console.error(`No message element found with message_num: ${targetMessageNum}`);
+        console.error(`No message element found with message_num: ${firstVisibleMessageNum}`);
     }
 }
+
+
+
+    function setGripPosition() {
+
+        console.log("Hello GUMBY!!");
+
+        let savedGripPosition = parseFloat(localStorage.getItem('gripPosition')) || 0; // get the gripPosition from local storage and set the local variable
+
+        const radius = 10;
+        const bottomPadding = 90;
+        let gripY = 0;
+
+        const container = document.getElementById("custom-scrollbar");
+
+        // Initial bottom position
+        gripY = container.clientHeight - radius - bottomPadding;
+
+        if (savedGripPosition !== null) {
+        // Calculate gripY based on new calculated gripPosition
+        const lowerBound = radius + 19;
+        const upperBound = container.clientHeight - radius - bottomPadding;
+        const rangeOfMotion = upperBound - lowerBound;
+        
+        gripY = upperBound - savedGripPosition * rangeOfMotion;
+
+        // Update down arrow visibility based on saved grip position
+        setInLocalStorage('downArrow_isVisible', savedGripPosition > 0);
+        } else {
+            setInLocalStorage('downArrow_isVisible', false);
+        }
+
+    } // End of setGripPosition()
+
 
 // Scrubbing grip control logic
 // gripLocation is a number between 0 and 1 that represents the position of the grip relative to the whole conversation
@@ -96,9 +135,8 @@ let totalMessages;
 $: totalMessages = $scrollStore.totalMessages; // Keep totalMessages in sycn with the scrollStore
 let gripLocation; // Initialize gripLocation to the current gripPosition in scrollStore
 $: gripLocation = $scrollStore.gripPosition; // sets gripLocation to the current gripPosition in scrollStore
-let userMovingGrip = false; // Flag to track user grip movement
-$: userMovingGrip = $scrollStore.userMovingGrip; // Keep userMovingGrip in sync with the scrollStore
 
+/*
 $: if (userMovingGrip === true && typeof totalMessages !== 'undefined' && totalMessages > 0) {
     handleGripMovement();
 }
@@ -107,6 +145,7 @@ function handleGripMovement() {
     throttledFetch(gripLocation, totalMessages);
     debouncedFetch(gripLocation, totalMessages);
 }
+*/
 
 // Infinite scroll animation speed control logic used by the elastic grip element
 let lastRenderTime = Date.now();
@@ -160,85 +199,50 @@ async function handleWheelScroll(event) {
 }
 
 // Fetches a slice of the conversation history from the backend for the scrubbing grip element
-// reacts to the location of the scrubbing grip as moved by the user
+// reacts to any movement of the scrubbing grip as moved by the user and restores to the new position
+
+let gripMoving; // Flag to track user grip movement
+let currentFirstVisibleMessageNum;
+let newFirstVisibleMessageNum;
+/*
+$: if (gripMoving) { // If the user is not moving the grip, then set the gripLocation to the current firstVisibleMessageNum
+    tick();
+    currentFirstVisibleMessageNum = parseInt(localStorage.getItem('firstVisibleMessageNum')) || 0;
+    console.log(`currentFirstVisibleMessageNum: ${currentFirstVisibleMessageNum}`);  // Debug line
+}
+$: gripMoving = $scrollStore.userMovingGrip; // Keep userMovingGrip in sync with the scrollStore
+$: if (gripMoving) {
+    console.log(`User moved the GRIP: ${gripMoving}`);  // Debug line
+    tick();
+    throttledFetch();
+    //debouncedFetch();
+}
+*/
+//$: if ($scrollStore.userMovingGrip) {
+    //throttledFetch(); 
+//}
 async function fetchConversationSlice () {
+    //currentFirstVisibleMessageNum = parseInt(localStorage.getItem('firstVisibleMessageNum')) || 0;
+    //console.log(`currentFirstVisibleMessageNum: ${currentFirstVisibleMessageNum}`);  // Debug line
     // New version simply waits for user grip movement and calls fetchConversationRestore.
     // As user moves the scrubbing grip the firstVisibleMessageNum is updated based on the
     // relative place in the whole conversation
-    if (userMovingGrip === false) {
-        return;
-    }
-    console.log(`fetchConversationSlice ran with unchanged first visible message`);  // Debug line
-    let currentFirstVisibleMessageNum = parseInt(localStorage.getItem('firstVisibleMessageNum')) || 0;
-    console.log(`currentFirstVisibleMessageNum: ${currentFirstVisibleMessageNum}`);  // Debug line
-    let newFirstVisibleMessageNum = Math.round(totalMessages * (1 - gripLocation));
+    
+    newFirstVisibleMessageNum = Math.round(totalMessages * (1 - gripLocation));
     console.log(`newFirstVisibleMessageNum: ${newFirstVisibleMessageNum}`);  // Debug line
     // Only fetch if the firstVisibleMessageNum has changed based on current gripLocation
     if (newFirstVisibleMessageNum !== currentFirstVisibleMessageNum) {
+        if (newFirstVisibleMessageNum === 0) {
+            newFirstVisibleMessageNum = 1;
+        }
         setInLocalStorage('firstVisibleMessageNum', newFirstVisibleMessageNum);
+        
+        requestAnimationFrame(animateScroll);
+
         console.log(`Scrubbed quickly to message: ${newFirstVisibleMessageNum}`);  // Debug line
-        fetchConversationRestore(newfirstVisibleMessageNum);
+        //await fetchConversationRestore(newfirstVisibleMessageNum);
     }
 }
-
-
-
-/* old version
-async function fetchConversationSlice(gripLocation, totalMessages) {
-
-    console.log(`fetchConversationSlice ran`);  // Debug line
-
-    const MessagesToFetch = 20; // Maximum number of messages to fetch
-
-    if (gripLocation < 0 || gripLocation > 1 || isNaN(totalMessages)) {
-      throw new Error('Invalid Input');
-    }
-
-    let targetMessage = Math.round(totalMessages * (1 - gripLocation));
-    // Store targetMessage in local storage
-    setInLocalStorage('targetMessage', targetMessage);
-    //localStorage.setItem('targetMessage', targetMessage);
-
-    let start = Math.max(targetMessage - buffer, 0); // buffer is 10
-    let end = Math.min(targetMessage + buffer, totalMessages);
-
-    if (totalMessages < MessagesToFetch) {
-      start = 0;
-      end = totalMessages;
-    } else {
-      if (targetMessage < buffer) {
-        start = 0;
-        end = Math.min(MessagesToFetch, totalMessages);
-      }
-      if (totalMessages - targetMessage < buffer) {
-        end = totalMessages;
-        start = Math.max(totalMessages - MessagesToFetch, 0);
-      }
-    }
-
-    try {
-        const fetchedData = await invoke('fetch_conversation_history', { params: { start, end } });
-
-        // Check if the fetched data is in the expected format and update the conversation
-        if (fetchedData && Array.isArray(fetchedData.message)) {
-            conversation = fetchedData.message; // Update the conversation array
-            localStorage.setItem('conversationArray', JSON.stringify(conversation)); // Store in local storage
-            updateEdgeFlags(); // Update edge flags as necessary
-            // Any additional logic for UI updates, scrolling adjustments, etc.
-        } else {
-            console.warn("Fetched data is not in the expected format:", fetchedData);
-            conversation = []; // Reset the conversation array if data format is not as expected
-        }
-
-        return conversation; // Return the updated conversation
-    } catch (error) {
-        console.error('Failed to fetch conversation slice:', error);
-        conversation = []; // Reset the conversation array in case of error
-        return null;
-    }
-
-  }
-  */
 
 // script level store of each message in the conversation array and each message's pixel height.
 let messageHeights = {};
@@ -249,6 +253,10 @@ const buffer =  10;
 // THIS WORKS WITH THE CONVERSATION_HISTORY array from the backend which is indexed from 0. The
 // topMessageNum is already adjusted -1 to match the array indexing BEFORE being passed to this function.
 async function fetchConversationRestore() {
+
+    console.log("fetchConversationRestore called");  // Debug line
+
+
     firstVisibleMessageNum = parseInt(localStorage.getItem('firstVisibleMessageNum')) || 0;
     totalMessages = parseInt(localStorage.getItem('totalMessages')) || 0;
 
@@ -284,6 +292,10 @@ async function fetchConversationRestore() {
             // save to local storage conversationArray
             localStorage.setItem('conversationArray', JSON.stringify(conversation));            
             await updateEdgeFlags();  // Update UI flags
+
+            // Update the gripPosition in the scrollStore
+            let gripPosition = 1 - (firstVisibleMessageNum / totalMessages);
+            setInLocalStorage('gripPosition', gripPosition);
                    
         } else {
             console.warn("Fetched data is not in the expected format:", fetchedData);
@@ -300,9 +312,9 @@ async function updateMessageHeights(messages) {
     messages.forEach(message => {
         const height = calculateHeightOfMessage(message);
         messageHeights[message.message_num] = height;
-        console.log(`Message ${message.message_num} has height ${height}`);  // Debug line
+        //console.log(`Message ${message.message_num} has height ${height}`);  // Debug line
     });
-    console.log(`messageHeights: ${JSON.stringify(messageHeights)}`);  // Debug line
+    //console.log(`messageHeights: ${JSON.stringify(messageHeights)}`);  // Debug line
 }
 function calculateHeightOfMessage(message) {
     const messageElement = document.querySelector(`[messagenum='${message.message_num}']`);
@@ -497,16 +509,23 @@ function findFirstVisibleMessage() {
             firstVisibleMessageNum = message.getAttribute('messagenum');
         }
     }
-
     // Update the firstVisibleMessageNum if a message was found
     if (firstVisibleMessageNum !== null) {
         //console.log(`First visible message number: ${firstVisibleMessageNum}`);
         setInLocalStorage('firstVisibleMessageNum', firstVisibleMessageNum);
         
+
+
+        // Update the gripPosition in the scrollStore
+        let gripPosition = 1 - (firstVisibleMessageNum / totalMessages);
+        //console.log(firstVisibleMessageNum, totalMessages, gripPosition);
+        setInLocalStorage('gripPosition', gripPosition);
+        gripLocation = gripPosition;
+        
     } else {
         console.log("No visible messages found");
     }
-}
+} // end of findFirstVisibleMessage function
 
 
 // function to find the bottom visible message in DOM (throttled to 100ms)
@@ -573,9 +592,6 @@ onMount( async () => {
     totalMessages = await invoke('get_num_messages', {databasePath: database_path}); // total number of messages in the entire conversation
     localStorage.setItem('totalMessages', totalMessages); // get the totalMessages from local storage and set the local variable
     //console.log(`onMount totalMessages: ${totalMessages}`);  // Debug line
-
-    // This variable will only be needed if I implement bright memories
-    //num_user_llm_messages = await invoke('get_total_llm_user_messages', {databasePath: database_path});
 
     //console.log(`onMount firstVisibleMessageNum: ${firstVisibleMessageNum}`);  // Debug line
     await fetchConversationRestore(firstVisibleMessageNum); // restore the conversation location to the last known position

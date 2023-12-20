@@ -48,8 +48,6 @@ const load = () => {
     
     totalMessages: parseInt(get('totalMessages')) || 0,
 
-    targetMessage: parseInt(get('targetMessage')) || 0, // The target message of the fetchConversationSlice function
-
     dragSpeedUpDown: parseFloat(get('dragSpeedUpDown')) || 0, // Elastic grip scroll speed. Defaults to 0 to signify 0 drag velocity, otherwise is a positive number for up and a negative number for down
 
     //userInputComponentHeight: parseInt(get('userInputComponentHeight')) || 0, // Height of the user input component elements in pixels
@@ -57,13 +55,12 @@ const load = () => {
     unsentPrompt: get('unsentPrompt') || "", // The unsent prompt contents
     unsentPromptQUILL: get('unsentPromptQUILL') || "", // The unsent prompt conten
 
-    messagesItemHeight: parseInt(get('messagesItemHeight')) || 0, // The height of the fetched item group of messages in pixels
+    //messagesItemHeight: parseInt(get('messagesItemHeight')) || 0, // The height of the fetched item group of messages in pixels
     
     firstVisibleMessageNum: parseInt(get('firstVisibleMessageNum')) || 0,
     lastVisibleMessageNum: parseInt(get('lastVisibleMessageNum')) || 0,
     firstConversationArrayMessageNum: parseInt(get('firstConversationArrayMessageNum')) || 0,
     lastConversationArrayMessageNum: parseInt(get('lastConversationArrayMessageNum')) || 0,
-    targetMessage: parseInt(get('targetMessage')) || 0,
 
     Role: get('Role') || "Write",
 
@@ -104,8 +101,11 @@ const unsubscribe = scrollStore.subscribe(currentSettings => {
 });
 
 // Function to update settings
-function updateScrollSettings(newSettings) {
-  scrollStore.set(newSettings);
+// usage: updateScrollSettings({ gripPosition: 50 }); will update the gripPosition setting to 50
+function updateScrollStore(newSettings) {
+  scrollStore.update(store => {
+    return { ...store, ...newSettings };
+  });
 }
 
 // Function to manually reload the Svelte store (scrollStore) from Local Storage
@@ -116,7 +116,7 @@ function reloadScrollStore() {
 // Export the utility functions for external use
 export {
   reloadScrollStore,
-  updateScrollSettings,
+  updateScrollStore,
   setInLocalStorage,
   get,
   remove,

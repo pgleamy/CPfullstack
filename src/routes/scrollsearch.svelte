@@ -16,6 +16,7 @@
   const bottomPadding = 90;
 
   let arrowPath;
+  let scrollbarContainer;
  
   let upArrowIsVisible = false;  
   let downArrowIsVisible = $scrollStore.downArrow.isVisible;  
@@ -26,6 +27,8 @@
   let searchModal = { isOpen: false, query: "" };
   let markingSystem = { hits: [], consolidatedHits: [] };
   let totalMessages = 0;
+
+  $: console.log($scrollStore);
 
   onDestroy(() => {
     window.removeEventListener('resize', setInitialGripPosition);
@@ -38,6 +41,9 @@
     // set dragspeed to 0
     localStorage.setItem('dragSpeedUpDown', 0);
   }
+
+
+  
 
   function setInitialGripPosition() {
     const container = document.getElementById("custom-scrollbar");
@@ -64,6 +70,8 @@
 
   } // End of setInitialGripPosition()
 
+  
+
   onMount(() => {
 
     resetElasticGripToNeutral();
@@ -89,6 +97,10 @@
     window.addEventListener('mousemove', drag);
     window.addEventListener('mouseup', stopDrag);
 
+    // user is moving the grip
+    // this signals virtualScroller.svelte to start scrubbing
+    setInLocalStorage('userMovingGrip', "true");
+
   } // End of startDrag()
 
   function stopDrag(e) {
@@ -99,6 +111,10 @@
     document.body.style.cursor = "auto";
     window.removeEventListener('mousemove', drag);
     window.removeEventListener('mouseup', stopDrag);
+
+    // user stopped moving the grip
+    // this signals virtualScroller.svelte to stop scrubbing
+    setInLocalStorage('userMovingGrip', "false");
 
   } // End of stopDrag()
 
