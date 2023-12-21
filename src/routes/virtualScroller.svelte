@@ -12,10 +12,6 @@ Bi-directional infinite virtual scrolling with elastic grip and scrubbing grip c
     * Only a small number of messages remain loaded in the conversation-container at any time. Excess messages are pruned as the user scrolls away from them. This is very memory efficient and supports apparently instant scrolling of conversations of hundreds of thousands of messages. 
 */
 
-
-//export let gripPosition; // reactive variable to track the position of the scrubbing grip
-
-
 const halfWayPoint = 10000000; // Halfway point of the conversation-container height
 
 import UserInput from './userinput.svelte';
@@ -93,59 +89,10 @@ function scrollToMessage(firstVisibleMessageNum) {
     }
 }
 
-
-
-    function setGripPosition() {
-
-        console.log("Hello GUMBY!!");
-
-        let savedGripPosition = parseFloat(localStorage.getItem('gripPosition')) || 0; // get the gripPosition from local storage and set the local variable
-
-        const radius = 10;
-        const bottomPadding = 90;
-        let gripY = 0;
-
-        const container = document.getElementById("custom-scrollbar");
-
-        // Initial bottom position
-        gripY = container.clientHeight - radius - bottomPadding;
-
-        if (savedGripPosition !== null) {
-        // Calculate gripY based on new calculated gripPosition
-        const lowerBound = radius + 19;
-        const upperBound = container.clientHeight - radius - bottomPadding;
-        const rangeOfMotion = upperBound - lowerBound;
-        
-        gripY = upperBound - savedGripPosition * rangeOfMotion;
-
-        // Update down arrow visibility based on saved grip position
-        setInLocalStorage('downArrow_isVisible', savedGripPosition > 0);
-        } else {
-            setInLocalStorage('downArrow_isVisible', false);
-        }
-
-    } // End of setGripPosition()
-
-
-// Scrubbing grip control logic
-// gripLocation is a number between 0 and 1 that represents the position of the grip relative to the whole conversation
-// This calls throttled and debounced versions of fetchConversationSlice to fetch the conversation slice based on gripLocation
-//$: gripLocation = $scrollStore.gripPosition; // sets gripLocation to the current gripPosition in scrollStore
 let totalMessages;
 $: totalMessages = $scrollStore.totalMessages; // Keep totalMessages in sycn with the scrollStore
 let gripLocation; // Initialize gripLocation to the current gripPosition in scrollStore
 $: gripLocation = $scrollStore.gripPosition; // sets gripLocation to the current gripPosition in scrollStore
-
-/*
-$: if (userMovingGrip === true && typeof totalMessages !== 'undefined' && totalMessages > 0) {
-    handleGripMovement();
-}
-function handleGripMovement() {
-    console.log('User is Moving the Scrubbing Grip');  // Debug line
-    throttledFetch(gripLocation, totalMessages);
-    debouncedFetch(gripLocation, totalMessages);
-}
-*/
 
 // Infinite scroll animation speed control logic used by the elastic grip element
 let lastRenderTime = Date.now();
@@ -204,23 +151,7 @@ async function handleWheelScroll(event) {
 let gripMoving; // Flag to track user grip movement
 let currentFirstVisibleMessageNum;
 let newFirstVisibleMessageNum;
-/*
-$: if (gripMoving) { // If the user is not moving the grip, then set the gripLocation to the current firstVisibleMessageNum
-    tick();
-    currentFirstVisibleMessageNum = parseInt(localStorage.getItem('firstVisibleMessageNum')) || 0;
-    console.log(`currentFirstVisibleMessageNum: ${currentFirstVisibleMessageNum}`);  // Debug line
-}
-$: gripMoving = $scrollStore.userMovingGrip; // Keep userMovingGrip in sync with the scrollStore
-$: if (gripMoving) {
-    console.log(`User moved the GRIP: ${gripMoving}`);  // Debug line
-    tick();
-    throttledFetch();
-    //debouncedFetch();
-}
-*/
-//$: if ($scrollStore.userMovingGrip) {
-    //throttledFetch(); 
-//}
+
 async function fetchConversationSlice () {
     //currentFirstVisibleMessageNum = parseInt(localStorage.getItem('firstVisibleMessageNum')) || 0;
     //console.log(`currentFirstVisibleMessageNum: ${currentFirstVisibleMessageNum}`);  // Debug line

@@ -47,6 +47,11 @@
   $: if ($scrollStore.gripPosition && container) {
     throttledAndDebouncedMoveGrip();
   }
+  $: if ($scrollStore.gripPosition && container && $scrollStore.gripPosition === 0) {
+    downArrowIsVisible = false;
+  } else if ($scrollStore.gripPosition && container && $scrollStore.gripPosition > 0) {
+    downArrowIsVisible = true;
+  }
   function moveGrip() {
 
     container = document.getElementById("custom-scrollbar");
@@ -64,13 +69,7 @@
       const rangeOfMotion = upperBound - lowerBound;
       
       gripY = upperBound - savedGripPosition * rangeOfMotion;
-    
-      // Update down arrow visibility based on saved grip position
-      setInLocalStorage('downArrow_isVisible', savedGripPosition > 0);
-    } else {
-      setInLocalStorage('downArrow_isVisible', false);
     }
-
   } // End of moveGrip()
 
   onMount(() => {
@@ -79,8 +78,7 @@
 
     resetElasticGripToNeutral();
 
-    //throttledAndDebouncedSetInitialGripPosition(); 
-    moveGrip();
+    throttledAndDebouncedMoveGrip();
 
     let gripAtBottom = get('gripPosition');
     if (gripAtBottom > 0) {
