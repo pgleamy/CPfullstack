@@ -3,7 +3,7 @@
   import { onMount, onDestroy } from "svelte";
   import { writable } from 'svelte/store';
   import { scrollStore, setInLocalStorage, get, load } from '$lib/scrollStore.js';
-  import { createEventDispatcher } from 'svelte';
+  import { createEventDispatcher, tick } from 'svelte';
   import { invoke } from '@tauri-apps/api/tauri';
 
   let isDragging = false;
@@ -28,23 +28,51 @@
   let markingSystem = { hits: [], consolidatedHits: [] };
   let totalMessages = 0;
 
-  $: console.log($scrollStore);
+  let container;
+  //$: console.log($scrollStore);
 
   onDestroy(() => {
-    window.removeEventListener('resize', setInitialGripPosition);
+    window.removeEventListener('resize', moveGrip);
     unsubscribe();  // Unsubscribe from the store
   });
 
-  const throttledAndDebouncedSetInitialGripPosition = throttle(debounce(setInitialGripPosition, 200), 200);
+  const throttledAndDebouncedSetInitialGripPosition = throttle(debounce(moveGrip, 200), 200);
 
   function resetElasticGripToNeutral() {
     // set dragspeed to 0
     localStorage.setItem('dragSpeedUpDown', 0);
   }
 
+  $: if ($scrollStore.gripPosition && container) {
+    moveGrip();
+  }
+  function moveGrip() {
 
-  
+    container = document.getElementById("custom-scrollbar");
+    
+    // Initial bottom position
+    gripY = container.clientHeight - radius - bottomPadding;
+    
+    // Load saved gripPosition from local storage
+    const savedGripPosition = $scrollStore.gripPosition;
+    
+    if (savedGripPosition !== null) {
+      // Calculate gripY based on saved gripPosition
+      const lowerBound = radius + 19;
+      const upperBound = container.clientHeight - radius - bottomPadding;
+      const rangeOfMotion = upperBound - lowerBound;
+      
+      gripY = upperBound - savedGripPosition * rangeOfMotion;
+    
+      // Update down arrow visibility based on saved grip position
+      setInLocalStorage('downArrow_isVisible', savedGripPosition > 0);
+    } else {
+      setInLocalStorage('downArrow_isVisible', false);
+    }
 
+  }
+
+  /*
   function setInitialGripPosition() {
     const container = document.getElementById("custom-scrollbar");
     
@@ -69,21 +97,24 @@
     }
 
   } // End of setInitialGripPosition()
-
+  */
   
 
   onMount(() => {
 
+    container = document.getElementById("custom-scrollbar");
+
     resetElasticGripToNeutral();
 
-    throttledAndDebouncedSetInitialGripPosition(); 
+    //throttledAndDebouncedSetInitialGripPosition(); 
+    moveGrip();
 
     let gripAtBottom = get('gripPosition');
     if (gripAtBottom > 0) {
       setInLocalStorage('downArrow_isVisible', true);
     }
 
-    window.addEventListener('resize', setInitialGripPosition);
+    window.addEventListener('resize', moveGrip);
 
   }); // End of onMount()
 
