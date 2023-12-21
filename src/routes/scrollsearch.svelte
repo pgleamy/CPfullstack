@@ -31,9 +31,6 @@
   let container;
   //$: console.log($scrollStore);
 
-  // limits calls due to moving the scrubbing grip
-  const throttledAndDebouncedMoveGrip = throttle(debounce(moveGrip, 200), 200);
-
   onDestroy(() => {
     window.removeEventListener('resize', moveGrip);
     unsubscribe();  // Unsubscribe from the store
@@ -52,6 +49,8 @@
   } else if ($scrollStore.gripPosition && container && $scrollStore.gripPosition > 0) {
     downArrowIsVisible = true;
   }
+  // limits calls due to moving the scrubbing grip
+  const throttledAndDebouncedMoveGrip = throttle(debounce(moveGrip, 10), 10);
   function moveGrip() {
 
     container = document.getElementById("custom-scrollbar");
@@ -70,6 +69,13 @@
       
       gripY = upperBound - savedGripPosition * rangeOfMotion;
     }
+
+    // Update the grip's y position smoothly
+    const gripElement = document.querySelector('#grip-svg g[role="slider"]');
+    if (gripElement) {
+      gripElement.style.transition = 'y 0.1s ease'; // Set the same duration as in CSS
+      gripElement.setAttribute('y', gripY);
+    }
   } // End of moveGrip()
 
   onMount(() => {
@@ -78,12 +84,8 @@
 
     resetElasticGripToNeutral();
 
+    // Set initial grip position
     throttledAndDebouncedMoveGrip();
-
-    let gripAtBottom = get('gripPosition');
-    if (gripAtBottom > 0) {
-      setInLocalStorage('downArrow_isVisible', true);
-    }
 
     window.addEventListener('resize', moveGrip);
 
@@ -118,6 +120,12 @@
     // this signals virtualScroller.svelte to stop scrubbing
     setInLocalStorage('userMovingGrip', "false");
 
+    // Remove the transition after dragging stops
+    const gripElement = document.querySelector('#grip-svg g[role="slider"]');
+    if (gripElement) {
+      gripElement.style.transition = 'none';
+    }
+
   } // End of stopDrag()
 
   
@@ -140,20 +148,7 @@
       gripPosition = 1 - (currentRelativePosition / rangeOfMotion); // 1 at the top, 0 at the bottom
       // Update local storage grip position
       setInLocalStorage('gripPosition', gripPosition);
-
-      // Update downArrowIsVisible
-      const isVisible = gripPosition !== 0;
-      downArrowIsVisible = isVisible;
-      
-      if (isVisible === false) {
-          setInLocalStorage('downArrow_isVisible', false);
-          downArrowIsVisible = false;
-        } else {
-          setInLocalStorage('downArrow_isVisible', true);
-          downArrowIsVisible = true;
-        }
-      }
-
+    }
   } // End of drag(e)
   
   
@@ -201,9 +196,6 @@
         gripY = upperBound;
         gripPosition = 0;
         setInLocalStorage('gripPosition', gripPosition);
-
-        downArrowIsVisible = false;
-        setInLocalStorage('downArrow_isVisible', false);
      
       }
       isJumpingToBottom = false; // Reset the flag  
@@ -521,6 +513,11 @@ function throttle(func, limit) {
 /* Add pointer cursor for the clickable areas */
 #grip-svg rect, #up-arrow-indicator rect, #down-arrow-indicator rect {
   cursor: pointer;
+}
+
+/* Add this to your CSS */
+#custom-scrollbar g[role="slider"] {
+  transition: y 0.1s ease; /* Adjust the duration (0.3s) as needed */
 }
 
 </style>
