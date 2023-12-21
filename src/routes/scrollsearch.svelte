@@ -31,12 +31,13 @@
   let container;
   //$: console.log($scrollStore);
 
+  // limits calls due to moving the scrubbing grip
+  const throttledAndDebouncedMoveGrip = throttle(debounce(moveGrip, 200), 200);
+
   onDestroy(() => {
     window.removeEventListener('resize', moveGrip);
     unsubscribe();  // Unsubscribe from the store
   });
-
-  const throttledAndDebouncedSetInitialGripPosition = throttle(debounce(moveGrip, 200), 200);
 
   function resetElasticGripToNeutral() {
     // set dragspeed to 0
@@ -44,7 +45,7 @@
   }
 
   $: if ($scrollStore.gripPosition && container) {
-    moveGrip();
+    throttledAndDebouncedMoveGrip();
   }
   function moveGrip() {
 
@@ -70,35 +71,7 @@
       setInLocalStorage('downArrow_isVisible', false);
     }
 
-  }
-
-  /*
-  function setInitialGripPosition() {
-    const container = document.getElementById("custom-scrollbar");
-    
-    // Initial bottom position
-    gripY = container.clientHeight - radius - bottomPadding;
-    
-    // Load saved gripPosition from local storage
-    const savedGripPosition = get('gripPosition');
-    
-    if (savedGripPosition !== null) {
-      // Calculate gripY based on saved gripPosition
-      const lowerBound = radius + 19;
-      const upperBound = container.clientHeight - radius - bottomPadding;
-      const rangeOfMotion = upperBound - lowerBound;
-      
-      gripY = upperBound - savedGripPosition * rangeOfMotion;
-    
-      // Update down arrow visibility based on saved grip position
-      setInLocalStorage('downArrow_isVisible', savedGripPosition > 0);
-    } else {
-      setInLocalStorage('downArrow_isVisible', false);
-    }
-
-  } // End of setInitialGripPosition()
-  */
-  
+  } // End of moveGrip()
 
   onMount(() => {
 
@@ -241,7 +214,6 @@
     animateGrip(); // Initial call to start the animation
 
   }  // End of handleDownArrowClick()
-  
 
   function handleUpArrowClick() {
     console.log("Up arrow clicked");
@@ -253,10 +225,7 @@
     if (prevState) {
       for (const key in currentState) {
         if (!deepEqual(currentState[key], prevState[key])) {
-          // Existing logic for changes in any key
-           
-
-          
+          // Existing logic for changes in any key          
         }
       }
     }
