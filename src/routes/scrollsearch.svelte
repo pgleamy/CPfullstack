@@ -50,7 +50,8 @@
     downArrowIsVisible = true;
   }
   // limits calls due to moving the scrubbing grip
-  const throttledAndDebouncedMoveGrip = throttle(debounce(moveGrip, 10), 10);
+  const throttledAndDebouncedMoveGrip = throttle(debounce(moveGrip, 50), 50);
+
   function moveGrip() {
 
     container = document.getElementById("custom-scrollbar");
@@ -85,7 +86,7 @@
     resetElasticGripToNeutral();
 
     // Set initial grip position
-    throttledAndDebouncedMoveGrip();
+    moveGrip();
 
     window.addEventListener('resize', moveGrip);
 
@@ -208,6 +209,7 @@
   function handleUpArrowClick() {
     console.log("Up arrow clicked");
   }
+
 
   // moves the scrubbing grip in relation to the actions of the elastic grip and the scroll wheel 
   let prevState = null;
