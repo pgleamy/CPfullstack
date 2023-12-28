@@ -315,9 +315,9 @@ let initialDragY;  // Y-coordinate of where the drag started
       const deltaY = e.clientY - startY; // Use the initial Y position for delta calculation
 
       // Determine the direction based on deltaY
-      if (deltaY > 0) {
+      if (deltaY < 0) { // was >
           dragDirection = 'down';
-      } else if (deltaY < 0) {
+      } else if (deltaY > 0) { // was <
           dragDirection = 'up';
       } // If deltaY is 0, dragDirection remains unchanged
 
@@ -344,7 +344,7 @@ let initialDragY;  // Y-coordinate of where the drag started
       const middleRed = "#FF0000";
       const brightRed = "#33FF00";
       
-      if (dragDirection === 'up') {
+      if (dragDirection === 'down') {
           elasticGripColor = "#00FF00";  // Green color for the elastic grip
           
           bottomDotColor = "#003300";  // keep the bottom dot green
