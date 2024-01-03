@@ -69,8 +69,6 @@ const load = () => {
   };
 };
 
-
-
 // Function to save all settings to Local Storage from an object
 const save = (settings) => {
   for (const [key, value] of Object.entries(settings)) {

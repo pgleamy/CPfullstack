@@ -1,13 +1,17 @@
-<script>
-  //@ts-nocheck
+<script lang='ts'>
+  
   import { onMount, onDestroy } from "svelte";
   import { writable } from 'svelte/store';
   import { scrollStore, setInLocalStorage, get, load } from '$lib/scrollStore.js';
+
+  import { scroll } from '$lib/scrollStore.ts'
+  //$: console.log('Scroll position is:', $scroll);
+  
   import { createEventDispatcher, tick } from 'svelte';
   import { invoke } from '@tauri-apps/api/tauri';
 
   let isDragging = false;
-  let isJumpingToBottom = false;
+ //let isJumpingToBottom = false;
   let gripY = 0; // Y-coordinate of the grip
   let gripColor = "#00C040"; // Default color for grip
   const radius = 10;
@@ -19,8 +23,7 @@
   let scrollbarContainer;
  
   let upArrowIsVisible = false;  
-  let downArrowIsVisible = $scrollStore.downArrow.isVisible;  
-  let gripPosition = $scrollStore.gripPosition;
+  let downArrowIsVisible = false;  
 
   let downArrow = { isVisible: false };
   let upArrow = { isVisible: false };
@@ -29,10 +32,9 @@
   let totalMessages = 0;
 
   let container;
-  //$: console.log($scrollStore);
 
   onDestroy(() => {
-    window.removeEventListener('resize', moveGrip);
+    window.removeEventListener('resize', throttledAndDebouncedPositionGrip);
     unsubscribe();  // Unsubscribe from the store
   });
 
@@ -41,34 +43,48 @@
     localStorage.setItem('dragSpeedUpDown', 0);
   }
 
-  $: if ($scrollStore.gripPosition && container) {
-    throttledAndDebouncedMoveGrip();
+  // move the grip as the user scrolls
+  $: if ($scroll) {
+    if (isDragging === false) { // If normal drag is active, exit
+    console.log("Grip moved due to scrolling");
+    throttledAndDebouncedPositionGrip();
+    console.log("scroll position is", $scroll);
+    }
   }
-  $: if ($scrollStore.gripPosition && container && $scrollStore.gripPosition === 0) {
-    downArrowIsVisible = false;
-  } else if ($scrollStore.gripPosition && container && $scrollStore.gripPosition > 0) {
-    downArrowIsVisible = true;
-  }
-  // limits calls due to moving the scrubbing grip
-  const throttledAndDebouncedMoveGrip = throttle(debounce(moveGrip, 50), 50);
 
-  function moveGrip() {
+  $: if ($scroll === 0) {
+    downArrowIsVisible = false;
+    console.log("down arrow HIDDEN");
+  } else if ($scroll > 0) {
+    downArrowIsVisible = true;
+    console.log("down arrow VISIBLE");
+  }
+
+  // limits calls due to moving the scrubbing grip
+  const throttledAndDebouncedPositionGrip = throttle(debounce(positionGrip, 100), 100);
+  const throttledDrag = throttle(drag, 300);
+
+  function positionGrip() {
+
+    if (isDragging === true) return; // If normal drag is active, exit
+
+    console.log("positionGrip() called");
 
     container = document.getElementById("custom-scrollbar");
     
     // Initial bottom position
     gripY = container.clientHeight - radius - bottomPadding;
+
+    // Load saved gripPosition
+    //const savedGripPosition = $scroll;
     
-    // Load saved gripPosition from local storage
-    const savedGripPosition = $scrollStore.gripPosition;
-    
-    if (savedGripPosition !== null) {
+    if ($scroll !== null) {
       // Calculate gripY based on saved gripPosition
       const lowerBound = radius + 19;
       const upperBound = container.clientHeight - radius - bottomPadding;
       const rangeOfMotion = upperBound - lowerBound;
       
-      gripY = upperBound - savedGripPosition * rangeOfMotion;
+      gripY = upperBound - $scroll * rangeOfMotion;
     }
 
     // Update the grip's y position smoothly
@@ -77,7 +93,7 @@
       gripElement.style.transition = 'y 0.1s ease'; // Set the same duration as in CSS
       gripElement.setAttribute('y', gripY);
     }
-  } // End of moveGrip()
+  } // End of positionGrip()
 
   onMount(() => {
 
@@ -86,9 +102,9 @@
     resetElasticGripToNeutral();
 
     // Set initial grip position
-    moveGrip();
+    positionGrip();
 
-    window.addEventListener('resize', moveGrip);
+    window.addEventListener('resize', throttledAndDebouncedPositionGrip);
 
   }); // End of onMount()
 
@@ -99,7 +115,7 @@
     gripColor = "#00FF00";
     document.body.style.userSelect = "none";
     document.body.style.cursor = "none";
-    window.addEventListener('mousemove', drag);
+    window.addEventListener('mousemove', throttledDrag);
     window.addEventListener('mouseup', stopDrag);
 
     // user is moving the grip
@@ -114,7 +130,7 @@
     gripColor = "#00C040";
     document.body.style.userSelect = "auto";
     document.body.style.cursor = "auto";
-    window.removeEventListener('mousemove', drag);
+    window.removeEventListener('mousemove', throttledDrag);
     window.removeEventListener('mouseup', stopDrag);
 
     // user stopped moving the grip
@@ -146,20 +162,13 @@
       // Normalize grip position
       const rangeOfMotion = upperBound - lowerBound;
       const currentRelativePosition = gripY - lowerBound;
-      gripPosition = 1 - (currentRelativePosition / rangeOfMotion); // 1 at the top, 0 at the bottom
-      // Update local storage grip position
-      setInLocalStorage('gripPosition', gripPosition);
+      scroll.setPosition(1 - (currentRelativePosition / rangeOfMotion)); // 1 at the top, 0 at the bottom
     }
   } // End of drag(e)
   
   
   function handleDownArrowClick() {
     
-    //console.log("isJumpingToBottom before:", isJumpingToBottom);
-    isJumpingToBottom = true;
-    //console.log("isJumpingToBottom after:", isJumpingToBottom);
-    
-    //console.log("Down arrow clicked");
     const container = document.getElementById("custom-scrollbar");
     const upperBound = container.clientHeight - radius - bottomPadding;
     const lowerBound = radius + 19;
@@ -182,29 +191,20 @@
         const targetGripY = initialGripY + delta * easeIn(t);
 
         const relativePosition = targetGripY - lowerBound;
-        gripPosition = 1 - (relativePosition / range);
-
-        gripPosition = Math.min(1, Math.max(0, gripPosition));
-
-        setInLocalStorage('gripPosition', gripPosition);
-        
-        //console.log(`Frame ${currentStep}: gripPosition = ${gripPosition}`);
+        scroll.setPosition(1 - (relativePosition / range));
 
         gripY = targetGripY;
 
         setTimeout(animateGrip, stepDuration); // Use setTimeout to control speed
       } else {
         gripY = upperBound;
-        gripPosition = 0;
-        setInLocalStorage('gripPosition', gripPosition);
-     
-      }
-      isJumpingToBottom = false; // Reset the flag  
+        scroll.setPosition(0);
+        console.log('Final scroll position is:', $scroll);
+      }      
     };
-
     animateGrip(); // Initial call to start the animation
-
   }  // End of handleDownArrowClick()
+
 
   function handleUpArrowClick() {
     console.log("Up arrow clicked");
@@ -315,9 +315,9 @@ let initialDragY;  // Y-coordinate of where the drag started
       const deltaY = e.clientY - startY; // Use the initial Y position for delta calculation
 
       // Determine the direction based on deltaY
-      if (deltaY < 0) { // was >
+      if (deltaY < 0) { // before intuitive ajustment, was >
           dragDirection = 'down';
-      } else if (deltaY > 0) { // was <
+      } else if (deltaY > 0) { // before intuitive adjustment, was <
           dragDirection = 'up';
       } // If deltaY is 0, dragDirection remains unchanged
 
@@ -344,7 +344,7 @@ let initialDragY;  // Y-coordinate of where the drag started
       const middleRed = "#FF0000";
       const brightRed = "#33FF00";
       
-      if (dragDirection === 'down') {
+      if (dragDirection === 'down') {  // before intuitive adjustment, was 'up'
           elasticGripColor = "#00FF00";  // Green color for the elastic grip
           
           bottomDotColor = "#003300";  // keep the bottom dot green

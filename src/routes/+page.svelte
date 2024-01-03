@@ -44,11 +44,11 @@
 
     <section class="chatWindow">
         <div transition:fade="{{ duration: 25, delay: 0 }}">  
-            <VirtualScroller  />
+            <VirtualScroller />
         </div>
     </section>
     <div class="scrollSearchWrapper" transition:fade="{{ duration: 25, delay: 0 }}">
-        <ScrollSearch  />
+        <ScrollSearch />
     </div>
 
 </div>

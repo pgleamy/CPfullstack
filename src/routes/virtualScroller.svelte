@@ -23,6 +23,8 @@ import { onMount, onDestroy } from 'svelte';
 import { invoke } from "@tauri-apps/api/tauri";
 import { tick } from 'svelte';
 
+import { scroll } from '$lib/scrollStore.ts'
+
 // reactive state management for scrollsearch component
 let conversation = []; // conversation history slice as requested from the backend
 let conversationArray = []; // conversation history copied from conversation[]
@@ -54,6 +56,7 @@ $: firstConversationArrayMessageNum = conversation.length > 0 ? parseInt(convers
 $: if (firstConversationArrayMessageNum !== null) localStorage.setItem('firstConversationArrayMessageNum', firstConversationArrayMessageNum.toString());
 $: lastConversationArrayMessageNum = conversation.length > 0 ? parseInt(conversation[conversation.length - 1].message_num) : null // Last message number in the current conversation array
 $: if (lastConversationArrayMessageNum !== null) localStorage.setItem('lastConversationArrayMessageNum', lastConversationArrayMessageNum.toString());
+
 
 // used by the mouse wheel event listener to determine the direction of the scroll and execution limiting
 let shouldFetchUp = false;
@@ -91,8 +94,6 @@ function scrollToMessage(firstVisibleMessageNum) {
 
 let totalMessages;
 $: totalMessages = $scrollStore.totalMessages; // Keep totalMessages in sycn with the scrollStore
-let gripLocation; // Initialize gripLocation to the current gripPosition in scrollStore
-$: gripLocation = $scrollStore.gripPosition; // sets gripLocation to the current gripPosition in scrollStore
 
 // Infinite scroll animation speed control logic used by the elastic grip element
 let lastRenderTime = Date.now();
@@ -159,7 +160,7 @@ async function fetchConversationSlice () {
     // As user moves the scrubbing grip the firstVisibleMessageNum is updated based on the
     // relative place in the whole conversation
     
-    newFirstVisibleMessageNum = Math.round(totalMessages * (1 - gripLocation));
+    newFirstVisibleMessageNum = Math.round(totalMessages * (1 - $scroll));
     console.log(`newFirstVisibleMessageNum: ${newFirstVisibleMessageNum}`);  // Debug line
     // Only fetch if the firstVisibleMessageNum has changed based on current gripLocation
     if (newFirstVisibleMessageNum !== currentFirstVisibleMessageNum) {
@@ -183,6 +184,7 @@ const buffer =  10;
 // Fetches a slice of the conversation history from the backend for the scrubbing grip element
 // THIS WORKS WITH THE CONVERSATION_HISTORY array from the backend which is indexed from 0. The
 // topMessageNum is already adjusted -1 to match the array indexing BEFORE being passed to this function.
+
 async function fetchConversationRestore() {
 
     console.log("fetchConversationRestore called");  // Debug line
@@ -227,6 +229,7 @@ async function fetchConversationRestore() {
             // Update the gripPosition in the scrollStore
             let gripPosition = 1 - (firstVisibleMessageNum / totalMessages);
             setInLocalStorage('gripPosition', gripPosition);
+            scroll.setPosition(gripPosition);
                    
         } else {
             console.warn("Fetched data is not in the expected format:", fetchedData);
@@ -237,6 +240,7 @@ async function fetchConversationRestore() {
         conversation = [];
     }
 } // end of fetchConversationRestore function
+
 
 // Universal helper functions for infinite scroll message measurement and precise placement
 async function updateMessageHeights(messages) {
@@ -451,7 +455,7 @@ function findFirstVisibleMessage() {
         let gripPosition = 1 - (firstVisibleMessageNum / totalMessages);
         //console.log(firstVisibleMessageNum, totalMessages, gripPosition);
         setInLocalStorage('gripPosition', gripPosition);
-        gripLocation = gripPosition;
+        scroll.setPosition(gripPosition);
         
     } else {
         console.log("No visible messages found");
@@ -525,7 +529,7 @@ onMount( async () => {
     //console.log(`onMount totalMessages: ${totalMessages}`);  // Debug line
 
     //console.log(`onMount firstVisibleMessageNum: ${firstVisibleMessageNum}`);  // Debug line
-    await fetchConversationRestore(firstVisibleMessageNum); // restore the conversation location to the last known position
+    await fetchConversationRestore(); // restore the conversation location to the last known position
 
     requestAnimationFrame(animateScroll);
 
