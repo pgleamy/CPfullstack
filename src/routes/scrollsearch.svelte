@@ -59,7 +59,7 @@
   }
 
   // limits calls due to moving the scrubbing grip
-  const throttledAndDebouncedPositionGrip = throttle(debounce(positionGrip, 100), 100);
+  const throttledAndDebouncedPositionGrip = throttle(debounce(positionGrip, 50), 200);
 
   function positionGrip() {
 

@@ -1,5 +1,3 @@
-
-
 import { writable } from 'svelte/store';
 
 // Define the interface for the store
