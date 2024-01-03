@@ -45,11 +45,9 @@
 
   // move the grip as the user scrolls
   $: if ($scroll) {
-    if (isDragging === false) { // If normal drag is active, exit
-    console.log("Grip moved due to scrolling");
-    throttledAndDebouncedPositionGrip();
-    console.log("scroll position is", $scroll);
-    }
+      console.log("Grip moved due to scrolling");
+      throttledAndDebouncedPositionGrip();
+      console.log("scroll position is", $scroll);
   }
 
   $: if ($scroll === 0) {
@@ -62,11 +60,8 @@
 
   // limits calls due to moving the scrubbing grip
   const throttledAndDebouncedPositionGrip = throttle(debounce(positionGrip, 100), 100);
-  const throttledDrag = throttle(drag, 300);
 
   function positionGrip() {
-
-    if (isDragging === true) return; // If normal drag is active, exit
 
     console.log("positionGrip() called");
 
@@ -115,7 +110,7 @@
     gripColor = "#00FF00";
     document.body.style.userSelect = "none";
     document.body.style.cursor = "none";
-    window.addEventListener('mousemove', throttledDrag);
+    window.addEventListener('mousemove', drag);
     window.addEventListener('mouseup', stopDrag);
 
     // user is moving the grip
@@ -130,7 +125,7 @@
     gripColor = "#00C040";
     document.body.style.userSelect = "auto";
     document.body.style.cursor = "auto";
-    window.removeEventListener('mousemove', throttledDrag);
+    window.removeEventListener('mousemove', drag);
     window.removeEventListener('mouseup', stopDrag);
 
     // user stopped moving the grip
