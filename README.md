@@ -41,7 +41,10 @@ Features of the Svelte frontend (scr/routes & src/routes/roles src/routes/lib):
 * diplay of past prompts and LLM messages does not yet implement the same markdown support as the prompt area. They are currently just plain text. This is UNFINISHED.
 * The interface is designed to 'get out of the way' most of the time. So the header menu auto hides when not needed. The user prompt area is large and fixed, but uses opacity changes to mostly disappear if the user wants it out of the way. Makes for a mostly clean interface for scrolling and reviewing the conversation. The only elements that stay on the screen are the scrolling user elements. The "Search" feature is UNFINISHED (not started) and is supposed to occupy the right side of the autohidden header, which is why the right side of the header is empty. Search results are supposed to occupy a vertical line to the right of the scrolling elements. This is why there is extra space there. Search hits are supposed to appear as bright red dots on that thin vertical line. The interface then would allow for quick jumping between those hits up or down.
 
+![screenshot3](https://github.com/pgleamy/CPfullstack/assets/28472888/74b88d47-859d-4aab-ad22-5450d5577dc3)
+<img width="1114" alt="screenshot2" src="https://github.com/pgleamy/CPfullstack/assets/28472888/b82aebda-e16a-49c9-8c6b-c296fe3a1473">
 <img width="1115" alt="Screenshot 2024-01-30 161316" src="https://github.com/pgleamy/CPfullstack/assets/28472888/80e636d5-b568-4320-b8ce-08d8c33dcae9">
-<img width="1116" alt="Screenshot 2024-01-30 161330" src="https://github.com/pgleamy/CPfullstack/assets/28472888/bc07abb4-038b-45d4-be6f-eb837beb0c26">
+
+
 
 
